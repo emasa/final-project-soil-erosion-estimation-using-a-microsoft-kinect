@@ -3,26 +3,26 @@
 #define UTILS_H
 
 #include <pcl/common/common.h>
+#include <pcl/recognition/color_gradient_dot_modality.h>
+#include <pcl/visualization/common/common.h>
+#include <pcl/visualization/pcl_visualizer.h>
 #include <opencv2/core/core.hpp>
 
-void rgbCloudToImage(const pcl::PointCloud<pcl::PointXYZRGBA>& cloud, cv::Mat& image)
+#include "Features.h"
+
+void rgbCloudToImage(const pcl::PointCloud<pcl::PointXYZRGBA>& cloud, cv::Mat& image);
+
+namespace features
 {
-    if (!cloud.isOrganized()) 
-        throw pcl::UnorganizedPointCloudException("require Organized cloud to be converted to image");
-    
-    image.create(cloud.height, cloud.width, CV_8UC3);
 
-    if (!cloud.empty()) {
-        for (int h=0; h<image.rows; ++h) {
-            for (int w=0; w<image.cols; ++w) {
-                const auto& point = cloud.at(w, h);
+void displayKeypoints(const pcl::PointCloud<pcl::PointXYZRGBA>::Ptr &cloud, 
+                      const pcl::PointCloud<BaseKeypoint>::Ptr &keypoints, 
+                      pcl::visualization::PCLVisualizer &viewer, 
+                      pcl::PointRGB color = pcl::PointRGB(0, 255, 0),
+                      unsigned int size = 3, 
+                      const std::string &cloud_id = "cloud",
+                      const std::string &keypoints_id = "keypoints", 
+                      int viewport = 0);
 
-                image.at<cv::Vec3b>(h, w)[0] = point.b;
-                image.at<cv::Vec3b>(h, w)[1] = point.g;
-                image.at<cv::Vec3b>(h, w)[2] = point.r;
-            }
-        }
-    }
 }
-
 #endif

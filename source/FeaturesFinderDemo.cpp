@@ -9,8 +9,10 @@
 #include <opencv2/features2d/features2d.hpp>
 #include <boost/thread/thread.hpp>
 
-#include "../include/Features.h"
+#include "Features.h"
 #include "OrganizedFeaturesFinder.h"
+#include "Utils.h"
+
 
 using namespace std;
 using namespace pcl;
@@ -35,33 +37,24 @@ int main(int argc, char* argv[])
 	}
 
 	// ORB (default parameters)
-	// OrganizedFeaturesFinder featuresFinder(FeatureDetector::create("ORB"),
-	// 									   	  DescriptorExtractor::create("ORB"));
-	OrganizedFeaturesFinder featuresFinder;
-	featuresFinder.setKeypointDetector(FeatureDetector::create("ORB"));	
-	featuresFinder.setDescriptorExtractor(DescriptorExtractor::create("ORB"));
+	OrganizedFeaturesFinder featuresFinder(FeatureDetector::create("ORB"),
+										   DescriptorExtractor::create("ORB"));
 	featuresFinder.setCloud(cloud);
 
 	// features
 	PointCloud<BaseKeypoint>::Ptr keypoints(new PointCloud<features::BaseKeypoint>);
-	features::Descriptors descriptors;
+	Descriptors descriptors;
 
 	// find features
 	featuresFinder.find(*keypoints, descriptors);
 
 	// visualize features
 	PCLVisualizer viewer;
+ 	viewer.initCameraParameters();
 
-	PointCloudColorHandlerRGBField<pcl::PointXYZRGBA> cloud_handler(cloud);
-	viewer.addPointCloud(cloud, cloud_handler, "cloud");
+	displayKeypoints(cloud, keypoints, viewer);
 
-	PointCloudColorHandlerCustom<BaseKeypoint> keypoints_handler(keypoints, 0, 255, 0);
-	viewer.addPointCloud(keypoints, keypoints_handler, "keypoints");
- 	viewer.setPointCloudRenderingProperties (PCL_VISUALIZER_POINT_SIZE, 3, "keypoints");
-
- 	vector<Camera> cameras;
- 	viewer.getCameras(cameras);
-
+ 	// displays cloud until a key is pressed
 	while (!viewer.wasStopped())
 	{
 		viewer.spinOnce (100);

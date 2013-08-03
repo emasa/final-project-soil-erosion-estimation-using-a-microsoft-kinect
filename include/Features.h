@@ -12,10 +12,10 @@ typedef pcl::PointWithScale BaseKeypoint;
 typedef cv::Mat Descriptors;
 
 // TODO: decidir como implementarlo
-struct VisualKeypoint {
-	BaseKeypoint base_keypoint;
-	cv::KeyPoint keypoint2D;
-};
+// struct VisualKeypoint {
+// 	BaseKeypoint base_keypoint;
+// 	cv::KeyPoint keypoint2D;
+// };
 
 } // namespace features
 

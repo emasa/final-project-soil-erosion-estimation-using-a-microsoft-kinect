@@ -19,13 +19,12 @@ set(PROJECT_INCLUDE_DIRS include)
 set(PROJECT_SOURCE_DIR source)
 include_directories(${PROJECT_INCLUDE_DIRS})
 
-add_executable( FeaturesFinderDemo.out ${PROJECT_SOURCE_DIR}/FeaturesFinderDemo.cpp 
-			  					   ${PROJECT_SOURCE_DIR}/OrganizedFeaturesFinder.cpp
+add_executable( FeaturesFinderDemo.out  ${PROJECT_SOURCE_DIR}/FeaturesFinderDemo.cpp 
+			  					   		${PROJECT_SOURCE_DIR}/OrganizedFeaturesFinder.cpp
+			  					   		${PROJECT_SOURCE_DIR}/Utils.cpp
 			  )
 
 target_link_libraries( FeaturesFinderDemo.out ${OpenCV_LIBS}
-											  # ${PCL_COMMON_LIBRARIES} 
-											  # ${PCL_IO_LIBRARIES} 
 											  ${PCL_LIBRARIES} 
 					 )
 
