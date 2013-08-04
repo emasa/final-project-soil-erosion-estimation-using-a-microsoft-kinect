@@ -19,8 +19,8 @@ public:
 
 	virtual ~FeaturesFinder() {};
 
-	virtual void find(pcl::PointCloud<BaseKeypoint> &keypoints, 
-					  Descriptors &descriptors) = 0;
+	virtual void computeKeypointsAndDescriptors(pcl::PointCloud<BaseKeypoint> &keypoints, 
+				  				   				Descriptors &descriptors) = 0;
 
 	virtual void setCloud(const pcl::PointCloud<pcl::PointXYZRGBA>::Ptr &cloud) = 0;
 };

@@ -36,23 +36,34 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 
+	// TODO: utilizar mejores paramatros
+	// fx, fy son sacados de una kinect de internet, cx, cy defaults 
+	double fx = 529.215080, fy = 525.563936;
+	double cx = (cloud->width - 1.f) / 2.f, cy = (cloud->height - 1.f) / 2.f;
+
 	// ORB (default parameters)
-	OrganizedFeaturesFinder featuresFinder(FeatureDetector::create("ORB"),
+	OrganizedFeaturesFinder featuresFinder(fx, fy, cx, cy,
+										   FeatureDetector::create("ORB"),
 										   DescriptorExtractor::create("ORB"));
 	featuresFinder.setCloud(cloud);
 
-	// features
-	PointCloud<BaseKeypoint>::Ptr keypoints(new PointCloud<features::BaseKeypoint>);
-	Descriptors descriptors;
-
-	// find features
-	featuresFinder.find(*keypoints, descriptors);
-
+	PointCloud<BaseKeypoint>::Ptr keypoints0(new PointCloud<features::BaseKeypoint>);
+	PointCloud<BaseKeypoint>::Ptr tmp_keypoints0(new PointCloud<features::BaseKeypoint>);
+	PointCloud<BaseKeypoint>::Ptr keypoints1(new PointCloud<features::BaseKeypoint>);
+	
+	Descriptors descriptors0, descriptors1;
+	
+	featuresFinder.computeKeypoints(*tmp_keypoints0);
+	featuresFinder.computeDescriptors(*tmp_keypoints0, descriptors0, *keypoints0);
+	
+	featuresFinder.computeKeypointsAndDescriptors(*keypoints1, descriptors1);
+	
 	// visualize features
 	PCLVisualizer viewer;
  	viewer.initCameraParameters();
 
-	displayKeypoints(cloud, keypoints, viewer);
+	displayKeypoints(cloud, keypoints0, viewer, PointRGB(255, 0, 0), 3, "c0", "k0-blue");
+	displayKeypoints(cloud, keypoints1, viewer, PointRGB(0, 0, 255), 3, "c1", "k1-red");
 
  	// displays cloud until a key is pressed
 	while (!viewer.wasStopped())

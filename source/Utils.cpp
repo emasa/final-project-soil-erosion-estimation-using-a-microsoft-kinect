@@ -50,14 +50,14 @@ void displayKeypoints(const PointCloud<PointXYZRGBA>::Ptr &cloud,
     viewer.addPointCloud(cloud, cloud_handler, cloud_id, viewport);
 
     PointCloudColorHandlerCustom<BaseKeypoint> keypoints_handler (keypoints, 
-    															  color.r, 
-    															  color.g, 
-    															  color.b);
+                                  															  color.r, 
+                                  															  color.g, 
+                                  															  color.b);
    
     viewer.addPointCloud(keypoints, keypoints_handler, keypoints_id, viewport);
     
     viewer.setPointCloudRenderingProperties (PCL_VISUALIZER_POINT_SIZE, size, 
-    										 keypoints_id, viewport);
+    										                     keypoints_id, viewport);
 
     // set the same pose (a bug in PCLVisualizer flip the keypoints 180 degrees)
     auto pose = viewer.getViewerPose(viewport);

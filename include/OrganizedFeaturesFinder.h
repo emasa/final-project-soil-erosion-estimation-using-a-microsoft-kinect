@@ -19,41 +19,57 @@ public:
 	typedef std::shared_ptr<OrganizedFeaturesFinder> Ptr;
 	typedef std::shared_ptr<const OrganizedFeaturesFinder> ConstPtr;
 
-	OrganizedFeaturesFinder() = default;
-	OrganizedFeaturesFinder(const cv::Ptr<cv::FeatureDetector> &keypointDetector_, 
-						 	const cv::Ptr<cv::DescriptorExtractor> &descriptorExtractor_);
+	OrganizedFeaturesFinder(const cv::Ptr<cv::FeatureDetector> &keypointDetector_= cv::Ptr<cv::FeatureDetector>(), 
+						 	const cv::Ptr<cv::DescriptorExtractor> &descriptorExtractor = cv::Ptr<cv::DescriptorExtractor>());
+
+	OrganizedFeaturesFinder(double fx, double fy, double cx, double cy,
+							const cv::Ptr<cv::FeatureDetector> &keypointDetector = cv::Ptr<cv::FeatureDetector>(), 
+						 	const cv::Ptr<cv::DescriptorExtractor> &descriptorExtractor = cv::Ptr<cv::DescriptorExtractor>());
 
 	virtual ~OrganizedFeaturesFinder() = default;
 
-	virtual void find(pcl::PointCloud<BaseKeypoint> &keypoints, 
-					  Descriptors &descriptors);	
 
-	virtual void setCloud(const pcl::PointCloud<pcl::PointXYZRGBA>::Ptr &cloud_);
+	virtual void computeKeypointsAndDescriptors(pcl::PointCloud<BaseKeypoint> &keypoints, 
+				  				   				Descriptors &descriptors);	
 
-	void setKeypointDetector(const cv::Ptr<cv::FeatureDetector> &keypointDetector_);
+	virtual void computeKeypoints(pcl::PointCloud<BaseKeypoint> &keypoints);
 
-	void setDescriptorExtractor(const cv::Ptr<cv::DescriptorExtractor> &descriptorExtractor_);
+	virtual void computeDescriptors(const pcl::PointCloud<BaseKeypoint> &keypoints, 
+ 									Descriptors &descriptors, 
+ 									pcl::PointCloud<BaseKeypoint> &remaining_keypoints);
 
-	// virtual void find(std::vector<OrganizedKeypoint> &keypoints,
-	// 				  Descriptors &keypoints);
+	virtual void setCloud(const pcl::PointCloud<pcl::PointXYZRGBA>::Ptr &cloud);
 
-	// virtual void findKeypoints(std::vector<OrganizedKeypoint> &keypoints); 
+	void setKeypointDetector(const cv::Ptr<cv::FeatureDetector> &keypointDetector);
 
-	// virtual void computeDescriptors(const std::vector<OrganizedKeypoint> &keypoints, 
-	// 							    Descriptors &keypoints);
+	void setDescriptorExtractor(const cv::Ptr<cv::DescriptorExtractor> &descriptorExtractor);
+
+	void setCameraIntrinsics(double fx, double fy, double cx, double cy);
+
 
 protected:
 	virtual void convertKeypoints(const std::vector<cv::KeyPoint> &cv_keypoints,
-						  		  pcl::PointCloud<BaseKeypoint> &keypoints);
+		  						  pcl::PointCloud<BaseKeypoint> &keypoints,
+		  						  std::vector<uint> &indexes,
+		  						  bool save_indexes = true);
 
-protected:
+	virtual void convertKeypoints(const pcl::PointCloud<BaseKeypoint> &keypoints,
+		  						  std::vector<cv::KeyPoint> &cv_keypoints,
+		  						  std::vector<uint> &indexes,
+		  						  bool save_indexes = true);
+
+	virtual void computeDescriptors(std::vector<cv::KeyPoint> &cv_keypoints,
+									Descriptors &descriptors, 
+									pcl::PointCloud<BaseKeypoint> &remaining_keypoints);
+
 	pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud; 
 	cv::Mat image;
 
 	cv::Ptr<cv::FeatureDetector> keypointDetector;
 	cv::Ptr<cv::DescriptorExtractor> descriptorExtractor;
 
-	std::vector<cv::KeyPoint> cv_keypoints;
+	double fx, fy, cx, cy;
+	bool cameraIntrinsicsSeted;
 };
 
 } // namespace features

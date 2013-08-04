@@ -8,14 +8,12 @@
 namespace features 
 {
 
+// TODO: cambiar nombre BaseKeypoint
 typedef pcl::PointWithScale BaseKeypoint;
 typedef cv::Mat Descriptors;
 
-// TODO: decidir como implementarlo
-// struct VisualKeypoint {
-// 	BaseKeypoint base_keypoint;
-// 	cv::KeyPoint keypoint2D;
-// };
+// TODO: ver si definimos la clase Keypoints como un alias de
+// vector<KEYPOINT, EIGEN<ALLOCATOR>> y refactorizar 
 
 } // namespace features
 
