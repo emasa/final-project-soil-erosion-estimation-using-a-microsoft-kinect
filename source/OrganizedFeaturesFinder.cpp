@@ -2,10 +2,7 @@
 #include <vector>
 
 #include <pcl/common/common.h>
-#include <pcl/range_image/range_image_planar.h>
-
 #include <opencv2/features2d/features2d.hpp>
-#include <Eigen/StdVector>
 
 #include "../include/OrganizedFeaturesFinder.h"
 #include "../include/Utils.h"
