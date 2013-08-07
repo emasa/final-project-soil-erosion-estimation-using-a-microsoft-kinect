@@ -8,8 +8,6 @@
 namespace features 
 {
 
-// TODO: cambiar nombre BaseKeypoint
-typedef pcl::PointWithScale BaseKeypoint;
 typedef cv::Mat Descriptors;
 
 // TODO: ver si definimos la clase Keypoints como un alias de

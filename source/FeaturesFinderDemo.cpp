@@ -9,10 +9,12 @@
 #include <opencv2/features2d/features2d.hpp>
 #include <boost/thread/thread.hpp>
 
-#include "Features.h"
-#include "OrganizedFeaturesFinder.h"
 #include "Utils.h"
+#include "Features.h"
 
+#include "FeaturesFinder.h"
+#include "OpenCVFeaturesFinder.h"
+#include "PCLFeaturesFinder.h"
 
 using namespace std;
 using namespace pcl;
@@ -42,28 +44,39 @@ int main(int argc, char* argv[])
 	double cx = (cloud->width - 1.f) / 2.f, cy = (cloud->height - 1.f) / 2.f;
 
 	// ORB (default parameters)
-	OrganizedFeaturesFinder featuresFinder(fx, fy, cx, cy,
-										   FeatureDetector::create("ORB"),
-										   DescriptorExtractor::create("ORB"));
-	featuresFinder.setCloud(cloud);
+	auto opencvFinder = make_shared<OpenCVFeaturesFinder<PointXYZRGBA, PointWithScale>>(); 
+	opencvFinder->setCameraIntrinsics(fx, fy, cx, cy);
+	opencvFinder->setKeypointDetector(FeatureDetector::create("ORB"));
+	opencvFinder->setDescriptorExtractor(DescriptorExtractor::create("ORB"));
+	opencvFinder->setInputCloud(cloud);
 
-	PointCloud<BaseKeypoint>::Ptr keypoints0(new PointCloud<features::BaseKeypoint>);
-	PointCloud<BaseKeypoint>::Ptr tmp_keypoints0(new PointCloud<features::BaseKeypoint>);
-	PointCloud<BaseKeypoint>::Ptr keypoints1(new PointCloud<features::BaseKeypoint>);
+	// FeaturesFinder<PointXYZRGBA, PointWithScale>::Ptr finder = opencvFinder;
+	// FPFH 
+	float normal_radius = 0.025, fphp_radius = normal_radius;
+
+	auto pclFinder = make_shared<FPFHEstimationFeaturesFinder<PointXYZRGBA, PointWithScale>>();
+	pclFinder->setRadiusSearchNormals(normal_radius);
+	pclFinder->setRadiusSearchFPFH(fphp_radius);
+
+	FeaturesFinder<PointXYZRGBA, PointWithScale>::Ptr finder = pclFinder;
+	finder->setInputCloud(cloud);
+
+	PointCloud<PointWithScale>::Ptr keypoints1(new PointCloud<PointWithScale>);
+	PointCloud<PointWithScale>::Ptr tmp_keypoints1(new PointCloud<PointWithScale>);	
+	Descriptors descriptors1;
 	
-	Descriptors descriptors0, descriptors1;
-	
-	featuresFinder.computeKeypoints(*tmp_keypoints0);
-	featuresFinder.computeDescriptors(*tmp_keypoints0, descriptors0, *keypoints0);
-	
-	featuresFinder.computeKeypointsAndDescriptors(*keypoints1, descriptors1);
-	
+	opencvFinder->computeKeypoints(*tmp_keypoints1);
+	finder->computeDescriptors(*tmp_keypoints1, descriptors1, *keypoints1);
+
+	cout << "# tmp keypoints : " << tmp_keypoints1->size() << endl;	
+	cout << "# keypoints : " << keypoints1->size() << endl;
+	cout << "# descriptors : " << descriptors1.rows << endl;
+
 	// visualize features
 	PCLVisualizer viewer;
  	viewer.initCameraParameters();
 
-	displayKeypoints(cloud, keypoints0, viewer, PointRGB(255, 0, 0), 3, "c0", "k0-blue");
-	displayKeypoints(cloud, keypoints1, viewer, PointRGB(0, 0, 255), 3, "c1", "k1-red");
+	displayKeypoints<PointWithScale>(cloud, keypoints1, viewer, PointRGB(0, 255, 0));
 
  	// displays cloud until a key is pressed
 	while (!viewer.wasStopped())
