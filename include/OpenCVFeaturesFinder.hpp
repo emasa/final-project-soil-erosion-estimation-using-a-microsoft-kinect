@@ -189,7 +189,8 @@ OpenCVFeaturesFinder<PointInT, KeypointT>::convertKeypoints(const PointCloudKeyp
 	}
 }
 
-
 }// namespace features
+
+#define PCL_INSTANTIATE_OpenCVFeaturesFinder(T,KT) template class PCL_EXPORTS features::OpenCVFeaturesFinder<T,KT>;
 
 #endif // OPENCV_FEATURES_FINDER_HPP

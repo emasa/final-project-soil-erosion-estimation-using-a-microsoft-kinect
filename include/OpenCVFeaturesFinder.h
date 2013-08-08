@@ -14,7 +14,7 @@
 
 namespace features 
 {
-template<typename PointInT = pcl::PointXYZRGBA, typename KeypointT = pcl::PointWithScale>
+template<typename PointInT, typename KeypointT>
 class OpenCVFeaturesFinder : public FeaturesFinder<PointInT, KeypointT>
 {
 public:

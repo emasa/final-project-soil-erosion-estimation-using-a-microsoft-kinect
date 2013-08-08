@@ -54,9 +54,9 @@ public:
  					   PointCloudKeypoint &remaining_keypoints);
 
 	void 
-	computeNormals(PointCloudInPtr &keypoints_xyz,
+	computeNormals(const PointCloudInPtr &keypoints_xyz, 
 				   pcl::PointCloud<pcl::Normal> &normals, 
-				   pcl::IndicesPtr &index);
+				   std::vector<int> &indeces);
 
 	void 
 	setInputCloud(const PointCloudInPtr &cloud)
@@ -101,7 +101,7 @@ public:
 	void 
 	setNrSubdivisionsFPFH(int nr_bins_f1, int nr_bins_f2, int nr_bins_f3)
 	{
-		descriptorExtractor_->setNrSubdivisionsFPFH(nr_bins_f1, nr_bins_f2, nr_bins_f3);
+		descriptorExtractor_->setNrSubdivisions(nr_bins_f1, nr_bins_f2, nr_bins_f3);
 	}
 
 protected:

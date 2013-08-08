@@ -1,6 +1,8 @@
 #ifndef PCL_FEATURES_FINDER_HPP
 #define PCL_FEATURES_FINDER_HPP
 
+#include <iostream>
+
 #include <pcl/common/common.h>
 #include <pcl/filters/extract_indices.h>
 
@@ -41,46 +43,55 @@ FPFHEstimationFeaturesFinder<PointInT, KeypointT>::computeDescriptors(const Poin
 											  						  Descriptors &descriptors, 
 											  						  PointCloudKeypoint &remaining_keypoints)
 {	
+	PointCloudKeypoint cleaned_keypoints;
+	pcl::IndicesPtr	valid_indices (new std::vector<int>);
+	pcl::removeNaNFromPointCloud(keypoints, cleaned_keypoints,  *valid_indices);
+
 	PointCloudInPtr keypoints_xyz(new PointCloudIn);
+	// keypoints_xyz keeps xyz fields with same type that cloud_
+	// improve normals estimation using cloud_ as surface 	
+	pcl::copyPointCloud(cleaned_keypoints, *keypoints_xyz);
+
 	pcl::PointCloud<pcl::Normal>::Ptr normals(new pcl::PointCloud<pcl::Normal>);
-	pcl::IndicesPtr index(new std::vector<int>);
+	computeNormals(keypoints_xyz, *normals, *valid_indices);
 
-	// keypoints_xyz keeps xyz fields and has the surface type
-	pcl::copyPointCloud(keypoints, *keypoints_xyz);
+	PointCloudInPtr keypoints_xyz_normals(new PointCloudIn);
+	if (keypoints_xyz->size() == normals->size()) {
+		keypoints_xyz_normals = keypoints_xyz;
+	} else {
+		pcl::copyPointCloud(*keypoints_xyz, *valid_indices, *keypoints_xyz_normals);
+	}
 
-	computeNormals(keypoints_xyz, *normals, index);
-	
-	descriptorExtractor_->setInputCloud(keypoints_xyz);
-	// descriptorExtractor_->setSearchSurface(cloud_);
+	descriptorExtractor_->setInputCloud(keypoints_xyz_normals);
 	descriptorExtractor_->setInputNormals(normals);
 
 	pcl::PointCloud<pcl::FPFHSignature33> pcl_descriptors;
 	descriptorExtractor_->compute(pcl_descriptors);
 
-	convertDescriptors(pcl_descriptors, descriptors);
-
 	// TODO: filter descriptors & keypoints if neccesary
 
-	pcl::copyPointCloud(keypoints, *index, remaining_keypoints);
+	convertDescriptors(pcl_descriptors, descriptors);
+	pcl::copyPointCloud(cleaned_keypoints, *valid_indices, remaining_keypoints);
 }
 
 template<typename PointInT, typename KeypointT> void
-FPFHEstimationFeaturesFinder<PointInT, KeypointT>::computeNormals(PointCloudInPtr &keypoints_xyz, 
+FPFHEstimationFeaturesFinder<PointInT, KeypointT>::computeNormals(const PointCloudInPtr &keypoints_xyz, 
 									      						  pcl::PointCloud<pcl::Normal> &normals, 
-									      						  pcl::IndicesPtr &index)
+									      						  std::vector<int> &indices)
 {
 	normals.clear();
+	indices.clear();
 
 	normalEstimator_->setInputCloud(keypoints_xyz);
 	normalEstimator_->setSearchSurface(cloud_);
 	normalEstimator_->compute(normals);
 	
-	// filter normals and then keypoints with index
-	pcl::removeNaNNormalsFromPointCloud(normals, normals, *index);
+	pcl::removeNaNNormalsFromPointCloud(normals, normals, indices);
 
-	pcl::ExtractIndices<PointInT> filter;
-	filter.setIndices(index);
-	filter.filterDirectly(keypoints_xyz);
+	// TODO: REPORTAR BUG A PCL : NO FUNCIONA !!!!
+	// pcl::ExtractIndices<PointInT> filter;
+	// filter.setIndices(index); 
+	// filter.filterDirectly(keypoints_xyz);
 }
 
 template<typename PointInT, typename KeypointT> void
@@ -101,5 +112,7 @@ FPFHEstimationFeaturesFinder<PointInT, KeypointT>::convertDescriptors(const pcl:
 }
 
 } // namespace features
+
+#define PCL_INSTANTIATE_FPFHEstimationFeaturesFinder(T,KT) template class PCL_EXPORTS features::FPFHEstimationFeaturesFinder<T,KT>;
 
 #endif // PCL_FEATURES_FINDER_HPP

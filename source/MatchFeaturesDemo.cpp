@@ -7,9 +7,9 @@
 #include <pcl/io/pcd_io.h>
 #include <pcl/visualization/common/common.h>
 #include <pcl/visualization/pcl_visualizer.h>
+#include <boost/thread/thread.hpp>
 #include <opencv2/features2d/features2d.hpp>
 #include <opencv2/nonfree/nonfree.hpp>
-#include <boost/thread/thread.hpp>
 
 #include "Utils.h"
 #include "Features.h"
@@ -24,8 +24,6 @@ using namespace pcl::io;
 using namespace pcl::visualization;
 using namespace cv;
 using namespace features;
-
-// TODO: bug auto opencvFinder = make_shared<OpenCVFeaturesFinder<PointInT, KeypointT>>("ORB", "ORB");
 
 template<typename PointInT, typename KeypointT> 
 typename OpenCVFeaturesFinder<PointInT, KeypointT>::Ptr 
@@ -58,46 +56,71 @@ createPCLFeaturesFinder()
 	return pclFinder;
 }
 
-
 int main(int argc, char* argv[])
 {
-	if (argc != 2)
+	if (argc != 3)
 	{
-		cerr << "use: program cloud_file" << endl;
+		cerr << "use: program cloud_file0 cloud_file1" << endl;
 		return -1;
-	}
+	} 
 
-	PointCloud<PointXYZRGBA>::Ptr cloud (new PointCloud<PointXYZRGBA>);
-	if (loadPCDFile(argv[1], *cloud) == -1)
+	int N = argc - 1;
+
+	vector<PointCloud<PointXYZRGBA>::Ptr> vec_cloud;
+	
+	for (int idx = 1; idx <= N ; ++idx)
 	{
-		cerr << "coudn't read file " << argv[1] << endl;
-		return -1;
+		PointCloud<PointXYZRGBA>::Ptr cloud (new PointCloud<PointXYZRGBA>);
+		if (loadPCDFile(argv[idx], *cloud) == -1)
+		{
+			cerr << "coudn't read file " << argv[idx] << endl;
+			return -1;
+		}
+		vec_cloud.push_back(cloud);
 	}
 	cv::initModule_nonfree();
-
-	// ORB (default parameters)
-	auto opencvFinder = createOpenCVFeaturesFinder<PointXYZRGBA, PointWithScale>("SURF", "ORB"); 
-	opencvFinder->setInputCloud(cloud);
 	
+	auto opencvFinder = createOpenCVFeaturesFinder<PointXYZRGBA, PointWithScale>("SIFT", "ORB");
 	auto pclFinder = createPCLFeaturesFinder<PointXYZRGBA, PointWithScale>();
-	pclFinder->setInputCloud(cloud);
 
-	PointCloud<PointWithScale>::Ptr keypoints1(new PointCloud<PointWithScale>);
-	PointCloud<PointWithScale>::Ptr tmp_keypoints1(new PointCloud<PointWithScale>);	
-	Descriptors descriptors1;
+	vector<PointCloud<PointWithScale>::Ptr> vec_keypoints(vec_cloud.size());
+	vector<features::Descriptors> vec_descriptors(vec_cloud.size());
+
+	PointCloud<PointWithScale>::Ptr tmp_keypoints(new PointCloud<PointWithScale>);
+
+	for (int idx = 0; idx < N; ++idx) 
+	{
+		vec_keypoints[idx].reset(new PointCloud<PointWithScale>);
+
+		opencvFinder->setInputCloud(vec_cloud[idx]);
+		pclFinder->setInputCloud(vec_cloud[idx]);
+		
+		opencvFinder->computeKeypoints(*tmp_keypoints);
+		pclFinder->computeDescriptors(*tmp_keypoints, vec_descriptors[idx], *vec_keypoints[idx]);
+
+		cout << " cloud " << idx << endl;
+		cout << "# keypoints : " << vec_keypoints[idx]->size() << endl;
+		cout << "# descriptors : " << vec_descriptors[idx].rows << endl;
+	}
+
+	auto matcher = DescriptorMatcher::create("FlannBased");
 	
-	opencvFinder->computeKeypoints(*tmp_keypoints1);
-	pclFinder->computeDescriptors(*tmp_keypoints1, descriptors1, *keypoints1);
-
-	cout << "# tmp keypoints : " << tmp_keypoints1->size() << endl;	
-	cout << "# keypoints : " << keypoints1->size() << endl;
-	cout << "# descriptors : " << descriptors1.rows << endl;
+	vector<DMatch> cv_matches;
+	matcher->match(vec_descriptors[0], vec_descriptors[1], cv_matches);
+ 	
+ 	Correspondences pcl_matches;
+ 	for (const auto & cv_match : cv_matches)
+ 	{
+ 		pcl_matches.emplace_back(cv_match.queryIdx, cv_match.trainIdx, cv_match.distance);
+ 	}
 
 	// visualize features
 	PCLVisualizer viewer;
  	viewer.initCameraParameters();
 
-	displayKeypoints<PointXYZRGBA, PointWithScale>(cloud, keypoints1, viewer, PointRGB(0, 255, 0));
+	displayMatches<PointXYZRGBA, PointWithScale>(vec_cloud[0], vec_keypoints[0], 
+												   vec_cloud[1], vec_keypoints[1], 
+												   pcl_matches, viewer, 1.); // 1 m
 
  	// displays cloud until a key is pressed
 	while (!viewer.wasStopped())
