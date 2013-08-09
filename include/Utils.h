@@ -22,7 +22,6 @@ void displayKeypoints(const typename pcl::PointCloud<PointInT>::Ptr &cloud,
                       const int viewport = 0)
 {
     pcl::visualization::PointCloudColorHandlerRGBField<PointInT> cloud_handler(cloud);
-
     viewer.addPointCloud(cloud, cloud_handler, cloud_id, viewport);
 
     pcl::visualization::PointCloudColorHandlerCustom<KeypoinT> 

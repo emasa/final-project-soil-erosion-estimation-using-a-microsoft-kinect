@@ -31,14 +31,8 @@ template<typename PointInT, typename KeypointT>
 typename OpenCVFeaturesFinder<PointInT, KeypointT>::Ptr 
 createOpenCVFeaturesFinder(const char* feature_detector, const char* descriptor_extractor) 
 {
-	// TODO: utilizar mejores paramatros
-	// fx, fy son sacados de una kinect de internet, cx, cy defaults 
-	double fx = 529.215080, fy = 525.563936;
-	double cx = (480 - 1.f) / 2.f, cy = (640 - 1.f) / 2.f;
-
 	// ORB (default parameters)
 	auto opencvFinder = make_shared<OpenCVFeaturesFinder<PointInT, KeypointT>>(); 
-	opencvFinder->setCameraIntrinsics(fx, fy, cx, cy);
 	opencvFinder->setKeypointDetector(FeatureDetector::create(feature_detector));
 	opencvFinder->setDescriptorExtractor(DescriptorExtractor::create(descriptor_extractor));
 
@@ -76,7 +70,7 @@ int main(int argc, char* argv[])
 	cv::initModule_nonfree();
 
 	// ORB (default parameters)
-	auto opencvFinder = createOpenCVFeaturesFinder<PointXYZRGBA, PointWithScale>("SURF", "ORB"); 
+	auto opencvFinder = createOpenCVFeaturesFinder<PointXYZRGBA, PointWithScale>("ORB", "ORB"); 
 	opencvFinder->setInputCloud(cloud);
 	
 	auto pclFinder = createPCLFeaturesFinder<PointXYZRGBA, PointWithScale>();
@@ -87,7 +81,7 @@ int main(int argc, char* argv[])
 	Descriptors descriptors1;
 	
 	opencvFinder->computeKeypoints(*tmp_keypoints1);
-	pclFinder->computeDescriptors(*tmp_keypoints1, descriptors1, *keypoints1);
+	// pclFinder->computeDescriptors(*tmp_keypoints1, descriptors1, *keypoints1);
 
 	cout << "# tmp keypoints : " << tmp_keypoints1->size() << endl;	
 	cout << "# keypoints : " << keypoints1->size() << endl;
@@ -97,7 +91,7 @@ int main(int argc, char* argv[])
 	PCLVisualizer viewer;
  	viewer.initCameraParameters();
 
-	displayKeypoints<PointXYZRGBA, PointWithScale>(cloud, keypoints1, viewer, PointRGB(0, 255, 0));
+	displayKeypoints<PointXYZRGBA, PointWithScale>(cloud, tmp_keypoints1, viewer, PointRGB(0, 255, 0), 3);
 
  	// displays cloud until a key is pressed
 	while (!viewer.wasStopped())

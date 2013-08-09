@@ -35,19 +35,7 @@ public:
 	OpenCVFeaturesFinder(const FeatureDetectorPtr &keypointDetector = FeatureDetectorPtr(), 
 						 const DescriptorExtractorPtr &descriptorExtractor = DescriptorExtractorPtr()) :	
 		keypointDetector_(keypointDetector), 
-		descriptorExtractor_(descriptorExtractor),
-		cameraIntrinsicsSeted_(false) {}
-
-	OpenCVFeaturesFinder(double fx, double fy, double cx, double cy,
-						 const FeatureDetectorPtr &keypointDetector = FeatureDetectorPtr(), 
-						 const DescriptorExtractorPtr &descriptorExtractor = DescriptorExtractorPtr()) :
-		fx_(fx),
-		fy_(fy),
-		cx_(cx),
-		cy_(cy),
-		keypointDetector_(keypointDetector), 
-		descriptorExtractor_(descriptorExtractor),
-		cameraIntrinsicsSeted_(true) {}
+		descriptorExtractor_(descriptorExtractor){}
 
 	virtual ~OpenCVFeaturesFinder() {};
 
@@ -78,12 +66,6 @@ public:
 		descriptorExtractor_ = descriptorExtractor;
 	}
 
-	void 
-	setCameraIntrinsics(double fx, double fy, double cx, double cy)
-	{
-		fx_ = fx; fy_ = fy; cx_ = cx; cy_ = cy; cameraIntrinsicsSeted_ = true;
-	}
-
 protected:
 	virtual void 
 	convertKeypoints(const std::vector<cv::KeyPoint> &cv_keypoints,
@@ -110,7 +92,6 @@ protected:
 	DescriptorExtractorPtr descriptorExtractor_;
 
 	double fx_, fy_, cx_, cy_;
-	bool cameraIntrinsicsSeted_;
 };
 
 } // namespace features

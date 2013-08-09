@@ -20,24 +20,23 @@ set(PROJECT_IMPL_DIRS ${PROJECT_INCLUDE_DIRS}/impl)
 set(PROJECT_SOURCE_DIR source)
 include_directories(${PROJECT_INCLUDE_DIRS})
 
-add_executable( FeaturesFinderDemo.out  # ${PROJECT_SOURCE_DIR}/Utils.cpp
-										${PROJECT_SOURCE_DIR}/PCLFeaturesFinder.cpp
-			  					   		${PROJECT_SOURCE_DIR}/OpenCVFeaturesFinder.cpp
-			  					   		${PROJECT_SOURCE_DIR}/FeaturesFinderDemo.cpp 			  					   		
-			  )
+add_library(Features ${PROJECT_SOURCE_DIR}/PCLFeaturesFinder.cpp
+  			  		 ${PROJECT_SOURCE_DIR}/OpenCVFeaturesFinder.cpp
+			)
+
+add_executable( FeaturesFinderDemo.out ${PROJECT_SOURCE_DIR}/FeaturesFinderDemo.cpp)
 
 target_link_libraries( FeaturesFinderDemo.out ${OpenCV_LIBS}
 											  ${PCL_LIBRARIES} 
+					 						  Features 
 					 )
 
-add_executable( MatchFeaturesDemo.out  # ${PROJECT_SOURCE_DIR}/Utils.cpp
-										${PROJECT_SOURCE_DIR}/PCLFeaturesFinder.cpp
-			  					   		${PROJECT_SOURCE_DIR}/OpenCVFeaturesFinder.cpp
-			  					   		${PROJECT_SOURCE_DIR}/MatchFeaturesDemo.cpp 			   		
+add_executable( MatchFeaturesDemo.out ${PROJECT_SOURCE_DIR}/MatchFeaturesDemo.cpp   		
 			  )
 
 target_link_libraries( MatchFeaturesDemo.out ${OpenCV_LIBS}
 											 ${PCL_LIBRARIES} 
+					 						 Features
 					 )
 
 

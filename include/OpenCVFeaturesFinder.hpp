@@ -8,6 +8,8 @@
 #include <pcl/conversions.h>
 #include <opencv2/features2d/features2d.hpp>
 
+#include <pcl/search/organized.h>
+
 #include "Features.h"
 #include "OpenCVFeaturesFinder.h"
 #include "Utils.h"
@@ -72,6 +74,13 @@ OpenCVFeaturesFinder<PointInT, KeypointT>::setInputCloud(const PointCloudInPtr &
 				      pcl_rgb_image_.step);
 
 	cv_rgb_image_ = tmp_image;
+
+	pcl::search::OrganizedNeighbor<PointInT> search;
+	search.setInputCloud(rgb_cloud_);
+
+	Eigen::Matrix3f C; // camera matrix
+	search.computeCameraMatrix(C);
+	fx_ = C(0, 0); fy_= C(1, 1); cx_ = C(0, 2); cy_ = C(1, 2);	
 }
 
 template <typename PointInT, typename KeypointT> void
