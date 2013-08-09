@@ -31,13 +31,13 @@ target_link_libraries( FeaturesFinderDemo.out ${OpenCV_LIBS}
 					 						  Features 
 					 )
 
-add_executable( MatchFeaturesDemo.out ${PROJECT_SOURCE_DIR}/MatchFeaturesDemo.cpp   		
+add_executable( SecuencialRegistrationDemo.out ${PROJECT_SOURCE_DIR}/SecuencialRegistrationDemo.cpp   		
 			  )
 
-target_link_libraries( MatchFeaturesDemo.out ${OpenCV_LIBS}
-											 ${PCL_LIBRARIES} 
-					 						 Features
+target_link_libraries( SecuencialRegistrationDemo.out ${OpenCV_LIBS}
+											 		  ${PCL_LIBRARIES} 
+					 						 		  Features
 					 )
 
 
-set(CMAKE_CXX_FLAGS "--std=c++11 -Wno-deprecated")
+set(CMAKE_CXX_FLAGS "--std=c++11 -Wno-deprecated -g")
