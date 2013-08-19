@@ -16,15 +16,6 @@ class BinaryPointRepresentation
 		BinaryPointRepresentation() : nr_dimensions_(0), trivial_(false) {}
 		virtual ~BinaryPointRepresentation() {}
 		
-		// rule of five		
-		// BinaryPointRepresentation(const BinaryPointRepresentation&) = default;
-		
-		// BinaryPointRepresentation& operator=(const BinaryPointRepresentation&) & = default;
-		
-		// BinaryPointRepresentation(BinaryPointRepresentation&&) = default;
-		
-		// BinaryPointRepresentation& operator=(BinaryPointRepresentation&&) & = default;
-		
 		virtual void copyToBinaryArray(const PointT& p, unsigned char* out) const = 0;
 
 		inline bool 

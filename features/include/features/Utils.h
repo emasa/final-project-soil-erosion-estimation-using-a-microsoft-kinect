@@ -8,24 +8,22 @@
 #include <pcl/visualization/pcl_visualizer.h>
 #include <opencv2/core/core.hpp>
 
-namespace features
-{
-
 template<typename PointInT, typename KeypoinT>
 void displayKeypoints(const typename pcl::PointCloud<PointInT>::Ptr &cloud, 
                       const typename pcl::PointCloud<KeypoinT>::Ptr &keypoints, 
                       pcl::visualization::PCLVisualizer &viewer, 
-                      const pcl::PointRGB color = pcl::PointRGB(0, 255, 0),
+                      const pcl::PointRGB &color = pcl::PointRGB(0, 255, 0),
                       const unsigned int size = 3, 
                       const std::string &cloud_id = "cloud",
                       const std::string &keypoints_id = "keypoints", 
                       const int viewport = 0)
 {
     pcl::visualization::PointCloudColorHandlerRGBField<PointInT> cloud_handler(cloud);
+    
     viewer.addPointCloud(cloud, cloud_handler, cloud_id, viewport);
-
-    pcl::visualization::PointCloudColorHandlerCustom<KeypoinT> 
-    	keypoints_handler (keypoints, color.r, color.g, color.b);
+ 
+    pcl::visualization::PointCloudColorHandlerCustom<KeypoinT>
+      keypoints_handler (keypoints, color.r, color.g, color.b);
    
     viewer.addPointCloud(keypoints, keypoints_handler, keypoints_id, viewport);
     
@@ -81,8 +79,6 @@ void displayMatches(const typename pcl::PointCloud<PointInT>::Ptr &cloud_src,
                    size, cloud_dest_id, keypoints_dest_id, viewport);
 
   viewer.addCorrespondences<KeypointT>(keypoints_src, tmp_keypoints_dest, matches);
-}
-
 }
 
 #endif // namespace features
