@@ -24,4 +24,11 @@ target_link_libraries(SecuencialRegistrationDemo.out ${PCL_LIBRARIES}
 								 		      		 features
 					 )
 
+add_executable(SecuencialRegistrationDemoWithVisualUpdates.out ${SRC_DIR}/SecuencialRegistrationDemoWithVisualUpdates.cpp)
+
+target_link_libraries(SecuencialRegistrationDemoWithVisualUpdates.out ${PCL_LIBRARIES} 
+							   				  					      ${OpenCV_LIBRARIES} 
+								 		      		 				  features
+					 )
+
 set(CMAKE_CXX_FLAGS "--std=c++11 -Wno-deprecated -g")
