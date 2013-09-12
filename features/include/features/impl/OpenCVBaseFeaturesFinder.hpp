@@ -1,9 +1,13 @@
 
 #ifndef OPENCV_BASE_FEATURES_FINDER_HPP
 #define OPENCV_BASE_FEATURES_FINDER_HPP
+#define PCL_NO_PRECOMPILE
 
 #include <vector>
+#include <algorithm>
 #include <stdexcept>
+#include <type_traits>
+#include <cstring>
 
 #include <pcl/exceptions.h>
 #include <pcl/common/common.h>
@@ -23,6 +27,29 @@ inline int closer(double value)
 	return value - floor_value < 0.5 ? floor_value : floor_value + 1;
 }
 
+template <typename PointInT> void
+toOpencvMat(const pcl::PointCloud<PointInT> &cloud, cv::Mat &image)
+{
+	 // Ease the user's burden on specifying width/height for unorganized datasets
+    if (cloud.width == 0 && cloud.height == 0)
+      throw std::runtime_error("Needs to be a dense like cloud!!");
+    else
+    {
+      if (cloud.points.size () != cloud.width * cloud.height)
+        throw std::runtime_error("The width and height do not match the cloud size!");
+      image.create(cloud.height, cloud.width, CV_8UC3);
+    }
+
+    for (size_t y = 0; y < cloud.height; y++)
+    {
+      for (size_t x = 0; x < cloud.width; x++)
+      {
+        uint8_t * pixel = &(image.data[y * image.step + x * 3]);
+        std::memcpy (pixel, &cloud (x, y).rgb, 3 * sizeof(uint8_t));
+      }
+    }
+}
+
 template <typename PointInT, typename KeypointT, typename DescriptorT> void
 OpenCVBaseFeaturesFinder<PointInT, KeypointT, DescriptorT>::setInputCloud(const PointCloudInPtr &cloud)
 {
@@ -31,16 +58,18 @@ OpenCVBaseFeaturesFinder<PointInT, KeypointT, DescriptorT>::setInputCloud(const 
 	rgb_cloud_ = cloud;
 
 	try { // convert to pcl image
-		pcl::toPCLPointCloud2 (*rgb_cloud_, pcl_rgb_image_);
+		// pcl::toPCLPointCloud2 (*rgb_cloud_, pcl_rgb_image_);
+		toOpencvMat(*rgb_cloud_, cv_rgb_image_);
 	} catch (std::runtime_error& e) {
 		throw pcl::UnorganizedPointCloudException("Cloud needs to be organized");
 	}
-	// memory is managed by pcl_rgb_image_
-	cv::Mat tmp_image(pcl_rgb_image_.height, pcl_rgb_image_.width, CV_8UC3, 
-				      static_cast<uchar*>(pcl_rgb_image_.data.data()), 
-				      pcl_rgb_image_.step);
 
-	cv_rgb_image_ = tmp_image;
+	// memory is managed by pcl_rgb_image_
+	// cv::Mat tmp_image(pcl_rgb_image_.height, pcl_rgb_image_.width, CV_8UC3, 
+	// 			      pcl_rgb_image_.data.data(), pcl_rgb_image_.step);
+
+	// to avoid problems
+	// tmp_image.copyTo(cv_rgb_image_);
 
 	resetCameraParameters();
 }
@@ -142,15 +171,20 @@ OpenCVBaseFeaturesFinder<PointInT, KeypointT, DescriptorT>::convertDescriptors(c
 				  		 										  			   PointCloudDescriptor &descriptors) 
 {
 	auto descriptors_len = cv_descriptors.rows;
-	auto descriptor_size = cv_descriptors.cols;
-
 	descriptors.resize(descriptors_len);
 
 	for (auto idx = 0; idx < descriptors_len; ++idx)
 	{
-		auto & dest = descriptors[idx].descriptor;
-		dest.resize(descriptor_size);
-		cv_descriptors.row(idx).copyTo(dest);
+		cv::Mat cv_descriptor = cv_descriptors.row(idx);
+
+		auto& descriptor = descriptors[idx].descriptor;
+		
+		// type of descriptor components
+		using T = typename std::remove_reference<decltype(descriptor[0])>::type;
+
+		std::copy(cv_descriptor.begin<T>(), 
+				  cv_descriptor.end<T>(), 
+				  std::begin(descriptor));
 	}
 }
 

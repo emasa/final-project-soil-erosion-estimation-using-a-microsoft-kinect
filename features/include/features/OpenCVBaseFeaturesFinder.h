@@ -36,7 +36,7 @@ public:
 		keypoint_detector_(keypoint_detector), 
 		descriptor_extractor_(descriptor_extractor){}
 
-	virtual ~OpenCVBaseFeaturesFinder() {};
+	virtual ~OpenCVBaseFeaturesFinder() {}
 
 	void 
 	computeKeypointsAndDescriptors(PointCloudKeypoint &keypoints,
@@ -118,10 +118,9 @@ protected:
 	void 
 	resetCameraParameters();
 
-
 	PointCloudInPtr rgb_cloud_; 
-	cv::Mat cv_rgb_image_;
 	pcl::PCLImage pcl_rgb_image_;
+	cv::Mat cv_rgb_image_;
 
 	FeatureDetectorPtr keypoint_detector_;
 	DescriptorExtractorPtr descriptor_extractor_;

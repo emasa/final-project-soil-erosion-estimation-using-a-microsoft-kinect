@@ -20,22 +20,22 @@
 using namespace pcl;
 using namespace pcl::io;
 
-FeaturesFinder<PointXYZRGBA, PointWithScale, CustomSizeBinaryDescriptor>::Ptr 
+FeaturesFinder<PointXYZRGBA, PointWithScale, ORBSignature32>::Ptr 
 createORBFinder() 
 {
 	// ORB (default parameters)
-	auto finder = std::make_shared<OpenCVBinaryFeaturesFinder<PointXYZRGBA, PointWithScale>>(); 
+	auto finder = std::make_shared<OpenCVBinaryFeaturesFinder<PointXYZRGBA, PointWithScale, ORBSignature32>>(); 
 	finder->setKeypointDetector(cv::FeatureDetector::create("ORB"));
 	finder->setDescriptorExtractor(cv::DescriptorExtractor::create("ORB"));
 
 	return finder;
 }
 
-FeaturesFinder<PointXYZRGBA, PointWithScale, CustomSizeRealDescriptor>::Ptr 
+FeaturesFinder<PointXYZRGBA, PointWithScale, SURFSignature64>::Ptr 
 createSURFFinder()
 {
 	// SURF
-	auto finder = std::make_shared<OpenCVRealFeaturesFinder<PointXYZRGBA, PointWithScale>>();
+	auto finder = std::make_shared<OpenCVRealFeaturesFinder<PointXYZRGBA, PointWithScale, SURFSignature64>>();
 	
 	cv::initModule_nonfree();
 

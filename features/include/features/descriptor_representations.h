@@ -1,10 +1,14 @@
 #ifndef DESCRIPTOR_REPRESENTATIONS
 #define DESCRIPTOR_REPRESENTATIONS
+#define PCL_NO_PRECOMPILE
 
 #include <pcl/point_representation.h>
 #include <boost/shared_ptr.hpp>
 
-#include "descriptor_types.h"
+#include "features/descriptor_types.h"
+
+namespace pcl
+{
 
 template <typename PointT>
 class BinaryPointRepresentation
@@ -21,7 +25,8 @@ class BinaryPointRepresentation
 		inline bool 
 		isTrivial() const { return trivial_; }
 
-        virtual bool isValid (const PointT &p) const = 0;
+		bool 
+		isValid (const PointT &p) const { return true; }
 
 		template <typename OutputType> void
 		vectorize (const PointT &p, OutputType &out) const
@@ -43,32 +48,29 @@ class BinaryPointRepresentation
 		bool trivial_;
 };
 
-class CustomSizeBinaryDescriptorRepresentation : BinaryPointRepresentation<CustomSizeBinaryDescriptor>
+class ORBSignature32Representation : public BinaryPointRepresentation<ORBSignature32>
 {
-	public:
-		typedef boost::shared_ptr<CustomSizeBinaryDescriptorRepresentation> Ptr;
-		typedef boost::shared_ptr<const CustomSizeBinaryDescriptorRepresentation> ConstPtr;
+public:
+	typedef boost::shared_ptr<ORBSignature32Representation> Ptr;
+	typedef boost::shared_ptr<const ORBSignature32Representation> ConstPtr;
 
-	CustomSizeBinaryDescriptorRepresentation(int nr_dimensions) 
+	ORBSignature32Representation()
 	{
-		nr_dimensions_ = nr_dimensions;
+		nr_dimensions_ = 32;
 		trivial_ = false;
 	}
 
-	bool 
-	isValid (const CustomSizeBinaryDescriptor &p) const { return true; }
-
 	void 
-	copyToBinaryArray(const CustomSizeBinaryDescriptor& p, unsigned char* out) const
+	copyToBinaryArray(const ORBSignature32& p, unsigned char* out) const
 	{
 		for (int i = 0; i < nr_dimensions_; ++i)
-			out[i] = p.descriptor.at(i); // bounds checking
+			out[i] = p.descriptor[i];
 	}
 
 	inline Ptr
 	makeShared () const
 	{
-		return (Ptr (new CustomSizeBinaryDescriptorRepresentation(*this)));
+		return (Ptr (new ORBSignature32Representation(*this)));
 	}
 };
 
@@ -76,29 +78,27 @@ class CustomSizeBinaryDescriptorRepresentation : BinaryPointRepresentation<Custo
 
 ///////////////////////////////////////////////////////////////////////////////
 
-class CustomSizeDescriptorRepresentation : public pcl::PointRepresentation<CustomSizeRealDescriptor>
-{	
-	public:
-		typedef boost::shared_ptr<CustomSizeDescriptorRepresentation> Ptr;
-		typedef boost::shared_ptr<const CustomSizeDescriptorRepresentation> ConstPtr;
-	
-	CustomSizeDescriptorRepresentation (int nr_dimensions)
-	{
-		nr_dimensions_ = nr_dimensions;
-	}
+template <>
+class DefaultPointRepresentation<SURFSignature64> : public DefaultFeatureRepresentation<SURFSignature64>
+{};
 
-	void 
-	copyToFloatArray (const CustomSizeRealDescriptor &p, float * out) const
-	{
-		for (int i = 0; i < nr_dimensions_; ++i)
-			out[i] = p.descriptor.at(i); // bounds checking
-	}
+template <>
+class DefaultPointRepresentation<SURFSignature128> : public DefaultFeatureRepresentation<SURFSignature128>
+{
+	// DefaultPointRepresentation
+	// {
+	// 	nr_dimensions_ = 128;
+	// 	trivial_ = false;
+	// }
 
-	inline Ptr
-	makeShared () const
-	{
-		return (Ptr (new CustomSizeDescriptorRepresentation(*this)));
-	}
+	// void 
+	// copyToFloatArray(const SURFSignature128& p, float* out) const
+	// {
+	// 	for (int i = 0; i < nr_dimensions_; ++i)
+	// 		out[i] = p.descriptor[i];
+	// }
 };
+
+}
 
 #endif // DESCRIPTOR_REPRESENTATIONS

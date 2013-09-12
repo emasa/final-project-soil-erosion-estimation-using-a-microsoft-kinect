@@ -10,12 +10,12 @@ target_link_libraries(test_descriptor_representation.out gtest
 					 )
 
 
-add_executable(test_opencv_features_finder.out ${SRC_DIR}/test_opencv_features_finder.cpp)
+# add_executable(test_opencv_features_finder.out ${SRC_DIR}/test_opencv_features_finder.cpp)
 
-target_link_libraries(test_opencv_features_finder.out ${PCL_LIBRARIES} 
-							   				 		  ${OpenCV_LIBRARIES}
-							   				 		  gtest 
-													  features
-					 )
+# target_link_libraries(test_opencv_features_finder.out ${PCL_LIBRARIES} 
+# 							   				 		  ${OpenCV_LIBRARIES}
+# 							   				 		  gtest 
+# 													  features
+# 					 )
 
 set(CMAKE_CXX_FLAGS "--std=c++11 -g")

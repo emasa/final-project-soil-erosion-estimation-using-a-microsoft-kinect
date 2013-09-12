@@ -7,20 +7,20 @@
 #include "features/descriptor_types.h"
 #include "features/OpenCVBaseFeaturesFinder.h"
 
-template<typename PointInT, typename KeypointT>
+template<typename PointInT, typename KeypointT, typename RealDescriptorT>
 class OpenCVRealFeaturesFinder 
-	: public OpenCVBaseFeaturesFinder<PointInT, KeypointT, CustomSizeRealDescriptor>
+	: public OpenCVBaseFeaturesFinder<PointInT, KeypointT, RealDescriptorT>
 {
 	public:
 		typedef std::shared_ptr<OpenCVRealFeaturesFinder> Ptr;
 		typedef std::shared_ptr<const OpenCVRealFeaturesFinder> ConstPtr;
 
-		typedef typename OpenCVBaseFeaturesFinder<PointInT, KeypointT, CustomSizeRealDescriptor>::PointCloudIn PointCloudIn;
-		typedef typename OpenCVBaseFeaturesFinder<PointInT, KeypointT, CustomSizeRealDescriptor>::PointCloudInPtr PointCloudInPtr;
-		typedef typename OpenCVBaseFeaturesFinder<PointInT, KeypointT, CustomSizeRealDescriptor>::PointCloudInConstPtr PointCloudInConstPtr;
+		typedef typename OpenCVBaseFeaturesFinder<PointInT, KeypointT, RealDescriptorT>::PointCloudIn PointCloudIn;
+		typedef typename OpenCVBaseFeaturesFinder<PointInT, KeypointT, RealDescriptorT>::PointCloudInPtr PointCloudInPtr;
+		typedef typename OpenCVBaseFeaturesFinder<PointInT, KeypointT, RealDescriptorT>::PointCloudInConstPtr PointCloudInConstPtr;
 
-		typedef typename OpenCVBaseFeaturesFinder<PointInT, KeypointT, CustomSizeRealDescriptor>::PointCloudKeypoint PointCloudKeypoint;	
-		typedef typename OpenCVBaseFeaturesFinder<PointInT, KeypointT, CustomSizeRealDescriptor>::PointCloudDescriptor PointCloudDescriptor;
+		typedef typename OpenCVBaseFeaturesFinder<PointInT, KeypointT, RealDescriptorT>::PointCloudKeypoint PointCloudKeypoint;	
+		typedef typename OpenCVBaseFeaturesFinder<PointInT, KeypointT, RealDescriptorT>::PointCloudDescriptor PointCloudDescriptor;
 	
 	protected:	
 		void 

@@ -7,20 +7,20 @@
 #include "features/descriptor_types.h"
 #include "features/OpenCVBaseFeaturesFinder.h"
 
-template<typename PointInT, typename KeypointT>
+template<typename PointInT, typename KeypointT, typename BinaryDescriptorT>
 class OpenCVBinaryFeaturesFinder 
-	: public OpenCVBaseFeaturesFinder<PointInT, KeypointT, CustomSizeBinaryDescriptor>
+	: public OpenCVBaseFeaturesFinder<PointInT, KeypointT, BinaryDescriptorT>
 {
 	public:
 		typedef std::shared_ptr<OpenCVBinaryFeaturesFinder> Ptr;
 		typedef std::shared_ptr<const OpenCVBinaryFeaturesFinder> ConstPtr;
 
-		typedef typename OpenCVBaseFeaturesFinder<PointInT, KeypointT, CustomSizeBinaryDescriptor>::PointCloudIn PointCloudIn;
-		typedef typename OpenCVBaseFeaturesFinder<PointInT, KeypointT, CustomSizeBinaryDescriptor>::PointCloudInPtr PointCloudInPtr;
-		typedef typename OpenCVBaseFeaturesFinder<PointInT, KeypointT, CustomSizeBinaryDescriptor>::PointCloudInConstPtr PointCloudInConstPtr;
+		typedef typename OpenCVBaseFeaturesFinder<PointInT, KeypointT, BinaryDescriptorT>::PointCloudIn PointCloudIn;
+		typedef typename OpenCVBaseFeaturesFinder<PointInT, KeypointT, BinaryDescriptorT>::PointCloudInPtr PointCloudInPtr;
+		typedef typename OpenCVBaseFeaturesFinder<PointInT, KeypointT, BinaryDescriptorT>::PointCloudInConstPtr PointCloudInConstPtr;
 
-		typedef typename OpenCVBaseFeaturesFinder<PointInT, KeypointT, CustomSizeBinaryDescriptor>::PointCloudKeypoint PointCloudKeypoint;	
-		typedef typename OpenCVBaseFeaturesFinder<PointInT, KeypointT, CustomSizeBinaryDescriptor>::PointCloudDescriptor PointCloudDescriptor;
+		typedef typename OpenCVBaseFeaturesFinder<PointInT, KeypointT, BinaryDescriptorT>::PointCloudKeypoint PointCloudKeypoint;	
+		typedef typename OpenCVBaseFeaturesFinder<PointInT, KeypointT, BinaryDescriptorT>::PointCloudDescriptor PointCloudDescriptor;
 	
 	protected:	
 		void 
