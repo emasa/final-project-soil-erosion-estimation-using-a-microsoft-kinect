@@ -12,9 +12,13 @@ include_directories( ${PCL_INCLUDE_DIRS} )
 add_definitions( ${PCL_DEFINITIONS} )
 link_directories( ${PCL_LIBRARY_DIRS} )
 
-# PROJECT setup
-add_subdirectory(features)
-add_subdirectory(test)
-add_subdirectory(demos)
+# workaround
+# set(OPENNI_LIBRARY /usr/lib/libOpenNI.so)
+# replace on /usr/include/ni/XnPlatform.h 
+# linux by __linux__ and i386 by __i386__
 
-set(CMAKE_CXX_FLAGS "--std=c++11 -Wno-deprecated")
+# PROJECT setup
+add_subdirectory(source)
+# add_subdirectory(test)
+
+set(CMAKE_CXX_FLAGS "--std=c++11 -Wno-deprecated -g")
