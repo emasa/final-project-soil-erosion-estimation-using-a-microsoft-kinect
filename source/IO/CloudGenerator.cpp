@@ -5,8 +5,6 @@
 #include <pcl/point_types.h>
 #include <pcl/exceptions.h>
 #include <pcl/io/grabber.h>
-#include <pcl/io/openni_grabber.h>
-#include <pcl/io/pcd_grabber.h>	
 
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
@@ -15,28 +13,11 @@
 #include "Common/Status.h"
 #include "IO/CloudGenerator.h"
 
-// TODO: ckeck errors
-
 const int DEFAULT_SLEEP_TIME = 30; // 30 ms
 const int DEFAULT_TOTAL_TIME = 2000; // 2 s
 
 Status
-CloudGenerator::create(const std::string &device_id)
-{
-	// TODO : set mode ?
-	auto grabber = std::make_shared<pcl::OpenNIGrabber>(device_id);
-	return initGrabberImplementation(grabber);
-}	
-
-Status
-CloudGenerator::create(const std::vector<std::string> &filenames)
-{
-	auto grabber = std::make_shared<pcl::PCDGrabber<pcl::PointXYZRGBA>>(filenames);
-	return initGrabberImplementation(grabber);
-}
-
-Status
-CloudGenerator::initGrabberImplementation(const std::shared_ptr<pcl::Grabber> &grabber)
+CloudGenerator::setGrabberImplementation(const GrabberPtr &grabber)
 {		
 	try {
 		// Register a callback function to the grabber...

@@ -12,6 +12,10 @@ include_directories( ${PCL_INCLUDE_DIRS} )
 add_definitions( ${PCL_DEFINITIONS} )
 link_directories( ${PCL_LIBRARY_DIRS} )
 
+# BOOST (required)
+find_package( Boost 1.49 COMPONENTS program_options REQUIRED )
+include_directories( ${Boost_INCLUDE_DIR} )
+
 # workaround
 # set(OPENNI_LIBRARY /usr/lib/libOpenNI.so)
 # replace on /usr/include/ni/XnPlatform.h 

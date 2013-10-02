@@ -10,8 +10,8 @@
 class GlobalRegistrationFactory
 {
 public:
-	void
-	create(GlobalRegistration<pcl::PointXYZRGBA, pcl::PointWithScale, SURFSignature128>::Ptr &registration) const;
+	GlobalRegistration<pcl::PointXYZRGBA, pcl::PointWithScale, SURFSignature128>::Ptr
+	ORBAndSURF() const;
 };
 
 #endif // GLOBAL_REGISTRATION_FACTORY_H

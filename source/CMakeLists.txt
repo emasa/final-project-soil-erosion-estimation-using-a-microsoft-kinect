@@ -63,6 +63,7 @@ target_link_libraries(io ${PCL_LIBRARIES}
 add_library(tools
 					 # RegistrationTool
 					 ${INCLUDE_DIR}/Tools/RegistrationTool.h
+					 ${INCLUDE_DIR}/Tools/RegistrationTool.hpp
 					 ${SRC_DIR}/Tools/RegistrationTool.cpp
 		    )
 
@@ -106,6 +107,7 @@ add_executable(SecuencialRegistrationDemoWithInteraction.out
 
 target_link_libraries(SecuencialRegistrationDemoWithInteraction.out   ${PCL_LIBRARIES} 
 							   				  					      ${OpenCV_LIBRARIES} 
+								 		      		 				  ${Boost_LIBRARIES}
 								 		      		 				  tools
 					 )
 

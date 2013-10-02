@@ -21,13 +21,11 @@
 using namespace pcl;
 using namespace pcl::registration;
 
-void
-GlobalRegistrationFactory::create(GlobalRegistration<PointXYZRGBA, PointWithScale, SURFSignature128>::Ptr &registration) const
+GlobalRegistration<PointXYZRGBA, PointWithScale, SURFSignature128>::Ptr
+GlobalRegistrationFactory::ORBAndSURF() const
 {
-	if (!registration)
-	{
-		registration = std::make_shared<GlobalRegistration<PointXYZRGBA, PointWithScale, SURFSignature128>>();
-	}
+	auto registration = std::make_shared<GlobalRegistration<PointXYZRGBA, PointWithScale, SURFSignature128>>();
+
 	// feature detector setup	
 	cv::initModule_nonfree();
 	auto finder = std::make_shared<OpenCVRealFeaturesFinder<PointXYZRGBA, PointWithScale, SURFSignature128>>();
@@ -49,4 +47,6 @@ GlobalRegistrationFactory::create(GlobalRegistration<PointXYZRGBA, PointWithScal
 	// pair transformation setup
 	TransformationEstimationLM<PointWithScale, PointWithScale>::Ptr estimator(new TransformationEstimationLM<PointWithScale, PointWithScale>);
 	registration->setPairTransformationEstimation(estimator);
+
+	return registration;
 }

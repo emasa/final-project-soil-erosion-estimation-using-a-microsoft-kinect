@@ -9,7 +9,6 @@
 #include <pcl/io/grabber.h>
 
 #include "Common/Status.h"
-// TODO: ckeck errors
 
 class CloudGenerator
 {
@@ -21,6 +20,8 @@ public:
 	typedef PointCloudOut::Ptr PointCloudOutPtr;
 	typedef PointCloudOut::ConstPtr PointCloudOutConstPtr;	
 
+	typedef std::shared_ptr<pcl::Grabber> GrabberPtr;
+
 public:
 	CloudGenerator ()
 	  : grabber_ ()
@@ -29,12 +30,6 @@ public:
 	  , fresh_frame_ (false)
 	  , grabber_on_(false)	
 	{}
-
-	Status
-	create(const std::vector<std::string> &filenames);
-
-	Status
-	create(const std::string &device_id="");
 	
 	Status
 	startGenerating();
@@ -45,10 +40,9 @@ public:
 	Status
 	generate(PointCloudOutPtr &cloud);
 
-private:
 	Status 
-	initGrabberImplementation(const std::shared_ptr<pcl::Grabber> &grabber);
-
+	setGrabberImplementation(const std::shared_ptr<pcl::Grabber> &grabber);
+private:
 	void
 	onNewFrame (const PointCloudOutConstPtr &cloud);
 
