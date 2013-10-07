@@ -9,6 +9,7 @@
 #include <pcl/common/transforms.h>
 #include <pcl/common/conversions.h>
 #include <pcl/common/file_io.h>
+#include <pcl/filters/filter.h>
 #include <pcl/console/print.h>
 #include <pcl/console/time.h>
 #include <pcl/visualization/common/common.h>
@@ -34,9 +35,7 @@ transformToRealWorld(const pcl::PointCloud<pcl::PointXYZRGBA> &cloud_in,
 				float scale, float real_base, float model_base)
 {
 	pcl::copyPointCloud(cloud_in, cloud_out);
-
-	scale /= 1000.; // km
-
+	
 	for (auto &p : cloud_out.points)
 	{
 		p.x =   p.x * scale;
@@ -153,7 +152,12 @@ int main(int argc, char** argv)
 	print_highlight ("Computing ");
 	tt.tic ();
 
-	transformToRealWorld(*cloud_in, *cloud_out, scale, real_base, model_base);
+	PointCloud<PointXYZRGBA>::Ptr cloud_wituout_nans(new PointCloud<PointXYZRGBA>);
+
+	std::vector<int> indixes;
+	pcl::removeNaNFromPointCloud(*cloud_in, *cloud_wituout_nans, indixes);
+
+	transformToRealWorld(*cloud_wituout_nans, *cloud_out, scale, real_base, model_base);
 		
 	print_info ("[done, "); print_value ("%g", tt.toc ()); print_info (" ms : "); 
 	print_value ("%d", cloud_out->size()); print_info (" points]\n");
