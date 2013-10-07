@@ -4,6 +4,7 @@
 
 #include <memory>
 #include <vector>
+#include <cmath>
 
 #include <pcl/point_cloud.h>
 #include <pcl/point_representation.h>
@@ -20,9 +21,12 @@
 // default parameters
 const int DEFAULT_INLIERS_THRESHOLD = 30;
 const int DEFAULT_RANSAC_MAX_ITER   = 100;
-const float DEFAULT_LOCATION_RADIUS = 0.6; // meters
-const int DEFAULT_EXTRA_EDGES = 3;
-const int DEFAULT_WINDOW_SIZE = 4;
+const int DEFAULT_EXTRA_EDGES = 2;
+
+const float DEFAULT_RADIUS = 0.5; // meters
+const float DEFAULT_MIN_RADIUS_PROPORTION = 0.2;
+const float DEFAULT_MIN_DISTANCE = DEFAULT_RADIUS * DEFAULT_MIN_RADIUS_PROPORTION;
+const int   DEFAULT_WINDOW_SIZE = static_cast<int>( std::ceil(1. / DEFAULT_MIN_RADIUS_PROPORTION) );
 
 struct CloudLocation
 {
@@ -130,23 +134,26 @@ protected:
 	};
 
 public:
-	GlobalRegistration() :
-		featured_clouds_(),
-		features_finder_(),
-		features_matcher_(),
-		outliers_rejector_(),
-		transformation_estimation_(),
-		// icp_refinement_(false),
-		global_alignment_(),
-		inliers_threshold_(DEFAULT_INLIERS_THRESHOLD),
-		radius_(DEFAULT_LOCATION_RADIUS),
-		window_size_(DEFAULT_WINDOW_SIZE),
-		extra_edges_(DEFAULT_EXTRA_EDGES),
-		cloud_location_search_(),
-		cloud_locations_(new pcl::PointCloud<CloudLocation>)
-		{
-			cloud_location_search_.setInputCloud(cloud_locations_);
-		}
+	GlobalRegistration(bool auto_config=true) 
+	: featured_clouds_()
+	, features_finder_()
+	, features_matcher_()
+	, outliers_rejector_()
+	, transformation_estimation_()
+	, global_alignment_()
+	, inliers_threshold_(DEFAULT_INLIERS_THRESHOLD)
+	, auto_config_(auto_config)
+	, radius_(DEFAULT_RADIUS)
+	, min_radius_proportion_(DEFAULT_MIN_RADIUS_PROPORTION)
+	, min_distance_(DEFAULT_MIN_DISTANCE)
+	, extra_edges_(DEFAULT_EXTRA_EDGES)
+	, window_size_(DEFAULT_WINDOW_SIZE)
+	, cloud_location_search_()
+	, cloud_locations_(new pcl::PointCloud<CloudLocation>)
+	// , icp_refinement_(false),
+	{
+		cloud_location_search_.setInputCloud(cloud_locations_);
+	}
 
 	~GlobalRegistration() {}
 
@@ -192,6 +199,12 @@ public:
 	setLocationRadius(float radius) { radius_ = radius; }
 
 	float
+	getMinDistance() { return min_distance_; }
+
+	void
+	setMinDistance(float min_distance) { min_distance_ = min_distance; }
+
+	float
 	getLocationRadius() { return radius_; }
 
 	void
@@ -217,6 +230,9 @@ public:
 
 	int
 	getNumClouds();
+
+	void
+	autoConfiguration(const PointCloudInPtr& cloud);
 
 private:
 	/* private methods */
@@ -244,7 +260,7 @@ private:
 	CloudLocation& 
 	computeCloudLocation(int idx);
 
-	/* private atributtes */
+	/* private atributes */
 
 	FeaturesFinderTPtr features_finder_;
 
@@ -258,11 +274,17 @@ private:
 
 	int inliers_threshold_;
 
+	bool auto_config_;
+
 	float radius_;
 
-	int extra_edges_;
+	float min_distance_;
+
+	float min_radius_proportion_;
 
 	int window_size_; 
+
+	int extra_edges_;
 
 	std::vector<FeaturedCloud> featured_clouds_;
 

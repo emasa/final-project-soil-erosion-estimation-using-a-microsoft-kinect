@@ -113,4 +113,16 @@ target_link_libraries(SecuencialRegistrationDemoWithInteraction.out   ${PCL_LIBR
 
 # -----------------------------------------------------------------------------
 
+# -----------------------------------------------------------------------------
+
+add_executable(ScalerDemo.out 
+					${SRC_DIR}/Demos/ScalerDemo.cpp
+			  )
+
+target_link_libraries(ScalerDemo.out   ${PCL_LIBRARIES} 
+				  					   ${OpenCV_LIBRARIES} 
+ 		      		 				   ${Boost_LIBRARIES}
+ 		      		 				   features
+					 )
+
 set(CMAKE_CXX_FLAGS "--std=c++11 -Wno-deprecated -g")

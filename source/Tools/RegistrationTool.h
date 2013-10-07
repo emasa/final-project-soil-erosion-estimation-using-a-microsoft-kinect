@@ -6,6 +6,8 @@
 #include <vector>
 #include <memory>
 
+#include <boost/function.hpp>
+
 #include <pcl/point_types.h>
 #include <pcl/visualization/common/common.h>
 #include <pcl/visualization/pcl_visualizer.h>
@@ -25,7 +27,7 @@ public:
 	typedef typename RegistrationAlgorithm::Ptr RegistrationAlgorithmPtr;
 	typedef CloudGenerator::GrabberPtr GrabberPtr;
 
-	RegistrationTool();
+	RegistrationTool(bool downsample=false);
 
 	void 
 	setRegistrationAlgorithm(const RegistrationAlgorithmPtr &registration);
@@ -49,18 +51,27 @@ public:
 	saveAlignedClouds(const std::string &directory);
 
 	void
-	updateVisualization(int cloud_idx);
+	updateRegistrationVisualization(int cloud_idx);
+
+	void
+	updateStreamingVisualization(const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr &cloud);
 
 	void
 	keyboardManager(const pcl::visualization::KeyboardEvent &event);	
 
 private:
+
+	void
+	commonStart(const boost::function<GrabberPtr ()> &grabber_factory);
+
 	int processed_clouds_, visualized_clouds_;
 	
 	bool started_, finished_;
 
 	bool downsample_enabled_;
 	pcl::visualization::PCLVisualizer viewer_;
+	int stream_viewport_, registration_viewport_;
+	boost::mutex mutex_;
 
 	GrabberPtr grabber_;
 	CloudGenerator generator_;

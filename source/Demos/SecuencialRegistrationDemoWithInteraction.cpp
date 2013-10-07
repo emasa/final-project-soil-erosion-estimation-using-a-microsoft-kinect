@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
 		("help,h", "produce help message")
 		("output-dir,d", po::value<string>(&dir), "set output directory [required]")
 		("mode,m", po::value<string>(&mode)->default_value("kinect"), "set input mode. valid options : kinect [default], files")
-		("input-clouds,c", po::value<vector<string>>(&clouds)->multitoken(), "set cloud_1 .. cloud_n [required if mode is files]")
+		("input-clouds,c", po::value<vector<string>>(&clouds)->multitoken(), "set cloud_1 .. cloud_n [required on files mode]")
 		;
 
 	po::basic_command_line_parser<char> parser(argc, argv);

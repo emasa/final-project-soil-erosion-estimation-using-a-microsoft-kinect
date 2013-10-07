@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <algorithm>
+#include <cmath>
 #include <assert.h>
 
 #include <Eigen/StdVector>
@@ -18,6 +19,12 @@
 template<typename PointInT, typename KeypointT, typename DescriptorT> Status 
 GlobalRegistration<PointInT, KeypointT, DescriptorT>::proccessCloud(const PointCloudInPtr& cloud)
 {
+	if (auto_config_) 
+	{
+		autoConfiguration(cloud);
+		auto_config_ = false;
+	}
+
 	FeaturedCloud featured_cloud(cloud);
 	features_finder_->setInputCloud(featured_cloud.cloud);
 	features_finder_->computeKeypointsAndDescriptors(*featured_cloud.keypoints, 
@@ -238,6 +245,26 @@ GlobalRegistration<PointInT, KeypointT, DescriptorT>::findNewEdges()
 	PCL_INFO("%i new edges added\n", edges);
 
 	return edges > 0;
+}
+
+template<typename PointInT, typename KeypointT, typename DescriptorT> void
+GlobalRegistration<PointInT, KeypointT, DescriptorT>::autoConfiguration(const PointCloudInPtr& cloud)
+{
+
+	PointInT min_bounds, max_bounds;
+	pcl::getMinMax3D (*cloud, min_bounds, max_bounds);
+
+	float radius_along_x = std::abs(max_bounds.x - min_bounds.x) / 2.;
+	float radius_along_y = std::abs(max_bounds.y - min_bounds.y) / 2.;
+
+	// FIXME: por ahora define todo los parametros
+	radius_ = (radius_along_y + radius_along_x) / 2.;
+	
+	min_radius_proportion_ = DEFAULT_MIN_RADIUS_PROPORTION;
+
+	min_distance_ = radius_ * min_radius_proportion_;
+
+	window_size_  = static_cast<int>( std::ceil(1 / min_radius_proportion_) );
 }
 
 #endif // GLOBAL_REGISTRATION_HPP

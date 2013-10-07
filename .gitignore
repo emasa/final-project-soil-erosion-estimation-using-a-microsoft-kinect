@@ -15,6 +15,7 @@
 */bin
 */obj
 *Makefile
+build
 
 # Ide files
 *sublime*

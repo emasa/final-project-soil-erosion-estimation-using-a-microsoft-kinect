@@ -2,6 +2,7 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include <pcl/PCLPointCloud2.h>
 #include <pcl/common/transforms.h>
 #include <pcl/recognition/color_gradient_dot_modality.h>
 #include <pcl/visualization/common/common.h>
@@ -80,5 +81,12 @@ void displayMatches(const typename pcl::PointCloud<PointInT>::Ptr &cloud_src,
 
   viewer.addCorrespondences<KeypointT>(keypoints_src, tmp_keypoints_dest, matches);
 }
+
+bool
+loadCloud (const std::string &filename, pcl::PCLPointCloud2 &cloud);
+
+void
+saveCloud (const std::string &filename, const pcl::PCLPointCloud2 &output);
+
 
 #endif // namespace features
