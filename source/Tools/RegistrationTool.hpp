@@ -28,7 +28,7 @@
 #include "Tools/RegistrationTool.h"
 
 template<typename RegistrationAlgorithm>
-RegistrationTool<RegistrationAlgorithm>::RegistrationTool(bool downsample)
+RegistrationTool<RegistrationAlgorithm>::RegistrationTool(bool downsample, bool backup_enabled)
 	: processed_clouds_(0)
 	, visualized_clouds_(0)
 	, started_(false) 
@@ -40,6 +40,10 @@ RegistrationTool<RegistrationAlgorithm>::RegistrationTool(bool downsample)
 	, viewer_("Visual registration tool", false)
 	, stream_viewport_()
 	, registration_viewport_()
+	, root_dir_()
+	, registration_dir_()
+	, backup_enabled_(backup_enabled)
+	, backup_dir_()
 {
 	auto cb = boost::bind (&RegistrationTool::keyboardManager, this, _1);
 	viewer_.registerKeyboardCallback (cb);
@@ -81,6 +85,11 @@ RegistrationTool<RegistrationAlgorithm>::commonStart(const boost::function<Grabb
 		PCL_WARN("Registration is %s...\n", !finished_ ? "finished" : "running"); return;
 	}
 	
+	if ( root_dir_.empty() || registration_dir_.empty() || (backup_enabled_ && backup_dir_.empty()) )
+	{
+		PCL_ERROR("Output directory wasn't setup properly ... ERROR\n"); return;	
+	} 
+
 	if ( !registration_ ) 
 	{
 		PCL_ERROR("Registration algorithm wasn't seted... ERROR\n"); return;
@@ -184,6 +193,10 @@ RegistrationTool<RegistrationAlgorithm>::captureAndRegister()
 			PCL_INFO("Updating visualization...\n");
 			updateRegistrationVisualization(visualized_clouds_);
 			PCL_INFO("Successfully aligned...\n\n");
+			if (backup_enabled_) 
+			{
+				backup(registration_->getNumClouds() - 1);
+			}
 		} else {
 			PCL_ERROR("Error found. Skipping cloud... ERROR\n\n");
 		}
@@ -241,40 +254,90 @@ RegistrationTool<RegistrationAlgorithm>::updateStreamingVisualization(const pcl:
 	mutex_.unlock ();
 }
 
-template<typename RegistrationAlgorithm> void
-RegistrationTool<RegistrationAlgorithm>::saveAlignedClouds(const std::string &directory)
-{	
+template<typename RegistrationAlgorithm> bool
+RegistrationTool<RegistrationAlgorithm>::setUpOutputDirectory(const std::string &dir)
+{
 	namespace fs = boost::filesystem;
-	if (registration_->getNumClouds() == 0)
+
+	auto setUpDir = [](const fs::path & dir_path) -> bool
+					{
+						if (fs::exists(dir_path) && !fs::is_directory(dir_path))
+						{
+							PCL_ERROR("%s isn't a directory path.\n", dir_path.c_str()); 
+							return false;
+						}
+						try{
+							fs::create_directories(dir_path);
+						} catch(boost::filesystem3::filesystem_error &e) {
+							PCL_ERROR("Can't create %s directory.\n", dir_path.c_str()); 
+							return false;
+						}
+						return true;
+					};
+
+	root_dir_ = fs::path(dir);
+	registration_dir_ = root_dir_ / "registration";
+
+	bool success = setUpDir(registration_dir_);
+	
+	if (success && backup_enabled_)
 	{
-		PCL_INFO("There are not clouds to save.\n"); return;
+		backup_dir_ = root_dir_ / "backup";
+		success = setUpDir(backup_dir_);	
 	}
 
-	fs::path directory_path(directory);
+	return success;
+}
 
-	if (fs::exists(directory_path) && !fs::is_directory(directory_path))
-	{
-		PCL_ERROR("%s isn't a directory path.\n", directory.c_str()); return;
-	} else 
-	{
-		try{
-			fs::create_directories(directory_path);
-		} catch(boost::filesystem3::filesystem_error &e) {
-			PCL_ERROR("Can't create %s directory.\n", directory.c_str()); return;
-		}
-	} 
+template<typename RegistrationAlgorithm> pcl::PointCloud<pcl::PointXYZRGBA>::Ptr
+RegistrationTool<RegistrationAlgorithm>::checkpoint(bool save)
+{	
+	assert(!root_dir_.empty()); assert(!registration_dir_.empty()); 
 
-	pcl::PointCloud<pcl::PointXYZRGBA> aligned_cloud;
+	registration_->globalOptimize();
+
+	pcl::PointCloud<pcl::PointXYZRGBA>::Ptr final_cloud(new pcl::PointCloud<pcl::PointXYZRGBA>);
 	for (int cloud_idx = 0; cloud_idx < registration_->getNumClouds(); ++cloud_idx)
-	{			
+	{	
+		pcl::PointCloud<pcl::PointXYZRGBA> aligned_cloud;
+
 		pcl::transformPointCloud(*registration_->getInputCloud(cloud_idx), 
 						    	 aligned_cloud, 
 								 registration_->getTransformation(cloud_idx));
 		
-		auto file_path = directory_path / (std::to_string(cloud_idx) + ".pcd");
+		*final_cloud += aligned_cloud;
+	}
 
-		pcl::io::savePCDFileBinaryCompressed (file_path.native(), aligned_cloud);
-		PCL_INFO("Saving cloud at : %s\n", file_path.c_str());
+	if (save)
+	{
+		auto cloud_path = registration_dir_ / "cloud.pcd";
+		pcl::io::savePCDFileBinaryCompressed (cloud_path.c_str(), *final_cloud);
+		PCL_INFO("Saving checkpoint cloud at : %s\n", cloud_path.c_str());
+	}
+
+	return final_cloud;
+}
+
+template<typename RegistrationAlgorithm> void
+RegistrationTool<RegistrationAlgorithm>::backup(int idx)
+{	
+	assert( idx == -1 || 0 <= idx && idx < registration_->getNumClouds() );
+
+	assert(!root_dir_.empty()); assert(!backup_enabled_ || !backup_dir_.empty());
+
+	if (!backup_enabled_)
+	{
+		PCL_WARN("Backup is not enabled\n"); return;
+	}
+
+	int start_idx = idx != -1 ? idx   : 0;
+	int stop_idx  = idx != -1 ? idx+1 : registration_->getNumClouds();
+	for (int cloud_idx = start_idx ; cloud_idx < stop_idx ; ++cloud_idx)
+	{			
+		auto cloud_path = backup_dir_ / (std::to_string(cloud_idx) + ".pcd");
+		pcl::io::savePCDFileBinaryCompressed (cloud_path.c_str(), 
+											  *registration_->getInputCloud(cloud_idx));
+		PCL_INFO("Saving backup cloud at : %s\n", cloud_path.c_str());
 	}
 }
 
@@ -290,6 +353,9 @@ RegistrationTool<RegistrationAlgorithm>::keyboardManager(const pcl::visualizatio
 		} else if (key == "p" || key == "P")
 		{
 			finish();
+		} else if (key == "s" || key == "S")
+		{
+			checkpoint();
 		}
 	}
 }

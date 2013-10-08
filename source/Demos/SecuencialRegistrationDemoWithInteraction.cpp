@@ -26,6 +26,7 @@ int main(int argc, char* argv[])
 		("output-dir,d", po::value<string>(&dir), "set output directory [required]")
 		("mode,m", po::value<string>(&mode)->default_value("kinect"), "set input mode. valid options : kinect [default], files")
 		("input-clouds,c", po::value<vector<string>>(&clouds)->multitoken(), "set cloud_1 .. cloud_n [required on files mode]")
+		("backup,b", "enable cloud backup. default is disabled. no useful on files mode")
 		;
 
 	po::basic_command_line_parser<char> parser(argc, argv);
@@ -51,9 +52,16 @@ int main(int argc, char* argv[])
 		PCL_ERROR("Output directory was not set.\n"); return -1;
 	}
 
+	bool backup = vm.count("backup");
+
 	auto algorithm = GlobalRegistrationFactory().ORBAndSURF();
-	RegistrationTool<std::decltype(algorithm)::element_type> tool;
+	RegistrationTool<std::decltype(algorithm)::element_type> tool(false, backup);
 	tool.setRegistrationAlgorithm(algorithm);
+	
+	if (!tool.setUpOutputDirectory(dir))
+	{
+		return -1;
+	};
 
 	if (mode == "kinect")
 	{
@@ -73,7 +81,7 @@ int main(int argc, char* argv[])
 	}
 
 	tool.run();
-	tool.saveAlignedClouds(dir);
+	tool.checkpoint();
 
 	return 0;
 }
