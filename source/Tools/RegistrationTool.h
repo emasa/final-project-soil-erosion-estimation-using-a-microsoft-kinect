@@ -27,7 +27,7 @@ public:
 	typedef typename RegistrationAlgorithm::Ptr RegistrationAlgorithmPtr;
 	typedef CloudGenerator::GrabberPtr GrabberPtr;
 
-	RegistrationTool(bool downsample=false);
+	RegistrationTool(bool downsample=false, bool backup_enabled=true);
 
 	void 
 	setRegistrationAlgorithm(const RegistrationAlgorithmPtr &registration);
@@ -47,8 +47,14 @@ public:
 	void
 	captureAndRegister();
 
-	void 
-	saveAlignedClouds(const std::string &directory);
+	bool
+	setUpOutputDirectory(const std::string &dir);
+
+	pcl::PointCloud<pcl::PointXYZRGBA>::Ptr
+	checkpoint(bool save=true);
+
+	void
+	backup(int idx = -1);
 
 	void
 	updateRegistrationVisualization(int cloud_idx);
@@ -77,6 +83,9 @@ private:
 	CloudGenerator generator_;
 
 	RegistrationAlgorithmPtr registration_;
+
+	bool backup_enabled_;
+	boost::filesystem::path root_dir_, registration_dir_, backup_dir_;
 };
 
 #include "Tools/RegistrationTool.hpp"
