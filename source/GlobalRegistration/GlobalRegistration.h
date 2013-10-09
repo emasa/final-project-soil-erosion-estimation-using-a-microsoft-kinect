@@ -150,7 +150,7 @@ public:
 	, window_size_(DEFAULT_WINDOW_SIZE)
 	, cloud_location_search_()
 	, cloud_locations_(new pcl::PointCloud<CloudLocation>)
-	// , icp_refinement_(false),
+	, icp_refinement_(true)
 	{
 		cloud_location_search_.setInputCloud(cloud_locations_);
 	}
@@ -292,7 +292,7 @@ private:
 
 	pcl::PointCloud<CloudLocation>::Ptr cloud_locations_;
 
-	//	bool icp_refinement_;
+	bool icp_refinement_;
 };
 
 #include "GlobalRegistration/GlobalRegistration.hpp"

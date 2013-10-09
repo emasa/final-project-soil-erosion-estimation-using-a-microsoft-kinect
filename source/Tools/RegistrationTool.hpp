@@ -10,6 +10,8 @@
 #include <boost/bind.hpp>
 #include <boost/filesystem.hpp> 
 
+#include <pcl/PCLPointCloud2.h>
+#include <pcl/conversions.h>
 #include <pcl/common/common.h>
 #include <pcl/common/file_io.h>
 #include <pcl/io/pcd_io.h>
@@ -20,7 +22,6 @@
 #include <pcl/visualization/common/common.h>
 #include <pcl/visualization/point_cloud_color_handlers.h>
 #include <pcl/visualization/pcl_visualizer.h>
-#include <pcl/filters/voxel_grid.h>
 
 #include "Common/Status.h"
 #include "Utils/Utils.h"
@@ -28,7 +29,7 @@
 #include "Tools/RegistrationTool.h"
 
 template<typename RegistrationAlgorithm>
-RegistrationTool<RegistrationAlgorithm>::RegistrationTool(bool downsample, bool backup_enabled)
+RegistrationTool<RegistrationAlgorithm>::RegistrationTool(bool backup_enabled)
 	: processed_clouds_(0)
 	, visualized_clouds_(0)
 	, started_(false) 
@@ -36,7 +37,6 @@ RegistrationTool<RegistrationAlgorithm>::RegistrationTool(bool downsample, bool 
 	, grabber_()
 	, generator_()
 	, registration_()
-	, downsample_enabled_(downsample)
 	, viewer_("Visual registration tool", false)
 	, stream_viewport_()
 	, registration_viewport_()
@@ -210,30 +210,34 @@ RegistrationTool<RegistrationAlgorithm>::captureAndRegister()
 template<typename RegistrationAlgorithm> void
 RegistrationTool<RegistrationAlgorithm>::updateRegistrationVisualization(int cloud_idx)
 {
+	namespace vis = pcl::visualization;
 	assert( 0 <= cloud_idx ); assert(cloud_idx <= visualized_clouds_ );
 
+	std::string cloud_idx_str = std::to_string(cloud_idx);
 	if (cloud_idx == visualized_clouds_)
 	{
 		++visualized_clouds_;
 
 		auto cloud = registration_->getInputCloud(cloud_idx);
-		pcl::PointCloud<pcl::PointXYZRGBA>::Ptr visual_cloud(new pcl::PointCloud<pcl::PointXYZRGBA>);
-		if (downsample_enabled_)
-		{
-			float leaf_size = 0.005;
-			pcl::VoxelGrid<pcl::PointXYZRGBA> downsampler;
-			downsampler.setLeafSize (leaf_size, leaf_size, leaf_size);
-			downsampler.setInputCloud (cloud);    			
-			downsampler.filter (*visual_cloud);
-		} else {
-			visual_cloud = cloud;
-		}
+		// required to use multiple colors handlers
+		pcl::PCLPointCloud2::Ptr blob_cloud(new pcl::PCLPointCloud2);
+		pcl::toPCLPointCloud2(*cloud, *blob_cloud);
 
 		mutex_.lock ();
-		pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGBA> rgba_handler (visual_cloud);
-		viewer_.addPointCloud<pcl::PointXYZRGBA>(visual_cloud, rgba_handler, std::to_string(cloud_idx), registration_viewport_);
-		// pcl::visualization::PointCloudColorHandlerGenericField<pcl::PointXYZRGBA> z_handler(visual_cloud, "z");				
-		// viewer_.addPointCloud<pcl::PointXYZRGBA>(visual_cloud, z_handler, std::to_string(cloud_idx), registration_viewport_);
+		// color_handler needs to be a Ptr to be used wit PCLPointCLoud2
+		vis::PointCloudColorHandler<pcl::PCLPointCloud2>::Ptr color_handler;
+
+	    Eigen::Vector4f origin;
+	    Eigen::Quaternionf orientation;		
+
+		color_handler.reset(new vis::PointCloudColorHandlerRGBField<pcl::PCLPointCloud2>(blob_cloud));
+		viewer_.addPointCloud(blob_cloud, color_handler, origin, orientation, cloud_idx_str, registration_viewport_);
+		
+		color_handler.reset(new vis::PointCloudColorHandlerGenericField<pcl::PCLPointCloud2>(blob_cloud, "z"));				
+		viewer_.addPointCloud(blob_cloud, color_handler, origin, orientation, cloud_idx_str, registration_viewport_);
+	
+      	viewer_.setPointCloudRenderingProperties (vis::PCL_VISUALIZER_IMMEDIATE_RENDERING, 1.0, cloud_idx_str);
+
 		mutex_.unlock ();
 	} 
 	// TODO: usar origin, orientation
@@ -241,7 +245,7 @@ RegistrationTool<RegistrationAlgorithm>::updateRegistrationVisualization(int clo
 	auto PITCH_ROTATION = pcl::getTransformation(0, 0, 0, 0, M_PI, 0);
 	auto visual_pose = PITCH_ROTATION * registration_->getTransformation(cloud_idx);
 	mutex_.lock ();
-	viewer_.updatePointCloudPose(std::to_string(cloud_idx), visual_pose);
+	viewer_.updatePointCloudPose(cloud_idx_str, visual_pose);
 	mutex_.unlock ();		
 }
 

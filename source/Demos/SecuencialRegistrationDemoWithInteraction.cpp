@@ -55,7 +55,7 @@ int main(int argc, char* argv[])
 	bool backup = vm.count("backup");
 
 	auto algorithm = GlobalRegistrationFactory().ORBAndSURF();
-	RegistrationTool<std::decltype(algorithm)::element_type> tool(false, backup);
+	RegistrationTool<std::decltype(algorithm)::element_type> tool(backup);
 	tool.setRegistrationAlgorithm(algorithm);
 	
 	if (!tool.setUpOutputDirectory(dir))

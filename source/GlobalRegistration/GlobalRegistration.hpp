@@ -12,6 +12,7 @@
 #include <pcl/common/centroid.h>
 #include <pcl/correspondence.h>
 #include <pcl/console/print.h>
+#include <pcl/registration/icp.h>
 
 #include "Common/Status.h"
 #include "GlobalRegistration/GlobalRegistration.h"
@@ -132,7 +133,23 @@ GlobalRegistration<PointInT, KeypointT, DescriptorT>::estimateTransformation(con
 										  		   		     *matches_info.matches, 
 										  		   		     matches_info.transformation);
 	
-	// if (icp_refinement_) { }
+	if (icp_refinement_) 
+	{
+		typename pcl::IterativeClosestPoint<KeypointT, KeypointT>::Ptr icp_ 
+			(new pcl::IterativeClosestPoint<KeypointT, KeypointT>);
+
+		icp_->setInputSource(src.keypoints);
+		icp_->setInputTarget(tgt.keypoints);
+		icp_->setUseReciprocalCorrespondences(true);
+		icp_->setMaximumIterations(50);
+
+		KeypointCloud tmp; // aligned source. Not used.
+		icp_->align(tmp, matches_info.transformation);
+		if (icp_->hasConverged())
+		{
+			matches_info.transformation = icp_->getFinalTransformation();
+		}
+	}
 }
 
 

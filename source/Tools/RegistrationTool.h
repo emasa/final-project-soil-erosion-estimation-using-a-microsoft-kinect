@@ -27,7 +27,7 @@ public:
 	typedef typename RegistrationAlgorithm::Ptr RegistrationAlgorithmPtr;
 	typedef CloudGenerator::GrabberPtr GrabberPtr;
 
-	RegistrationTool(bool downsample=false, bool backup_enabled=true);
+	RegistrationTool(bool backup_enabled=true);
 
 	void 
 	setRegistrationAlgorithm(const RegistrationAlgorithmPtr &registration);
@@ -74,7 +74,6 @@ private:
 	
 	bool started_, finished_;
 
-	bool downsample_enabled_;
 	pcl::visualization::PCLVisualizer viewer_;
 	int stream_viewport_, registration_viewport_;
 	boost::mutex mutex_;
