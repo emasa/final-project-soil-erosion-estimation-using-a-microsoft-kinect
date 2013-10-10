@@ -280,8 +280,8 @@ RegistrationTool<RegistrationAlgorithm>::setUpOutputDirectory(const std::string 
 					};
 
 	root_dir_ = fs::path(dir);
-	registration_dir_ = root_dir_ / "registration";
 
+	registration_dir_ = root_dir_ / "registration";
 	bool success = setUpDir(registration_dir_);
 	
 	if (success && backup_enabled_)
@@ -293,14 +293,11 @@ RegistrationTool<RegistrationAlgorithm>::setUpOutputDirectory(const std::string 
 	return success;
 }
 
-template<typename RegistrationAlgorithm> pcl::PointCloud<pcl::PointXYZRGBA>::Ptr
-RegistrationTool<RegistrationAlgorithm>::checkpoint(bool save)
+template<typename RegistrationAlgorithm> void
+RegistrationTool<RegistrationAlgorithm>::checkpoint()
 {	
 	assert(!root_dir_.empty()); assert(!registration_dir_.empty()); 
 
-	registration_->globalOptimize();
-
-	pcl::PointCloud<pcl::PointXYZRGBA>::Ptr final_cloud(new pcl::PointCloud<pcl::PointXYZRGBA>);
 	for (int cloud_idx = 0; cloud_idx < registration_->getNumClouds(); ++cloud_idx)
 	{	
 		pcl::PointCloud<pcl::PointXYZRGBA> aligned_cloud;
@@ -309,17 +306,10 @@ RegistrationTool<RegistrationAlgorithm>::checkpoint(bool save)
 						    	 aligned_cloud, 
 								 registration_->getTransformation(cloud_idx));
 		
-		*final_cloud += aligned_cloud;
+		auto cloud_path = registration_dir_ / (std::to_string(cloud_idx) + ".pcd");
+		pcl::io::savePCDFileBinaryCompressed (cloud_path.c_str(), aligned_cloud);
+		PCL_INFO("Saving aligned cloud at : %s\n", cloud_path.c_str());
 	}
-
-	if (save)
-	{
-		auto cloud_path = registration_dir_ / "cloud.pcd";
-		pcl::io::savePCDFileBinaryCompressed (cloud_path.c_str(), *final_cloud);
-		PCL_INFO("Saving checkpoint cloud at : %s\n", cloud_path.c_str());
-	}
-
-	return final_cloud;
 }
 
 template<typename RegistrationAlgorithm> void

@@ -50,8 +50,8 @@ public:
 	bool
 	setUpOutputDirectory(const std::string &dir);
 
-	pcl::PointCloud<pcl::PointXYZRGBA>::Ptr
-	checkpoint(bool save=true);
+	void
+	checkpoint();
 
 	void
 	backup(int idx = -1);
