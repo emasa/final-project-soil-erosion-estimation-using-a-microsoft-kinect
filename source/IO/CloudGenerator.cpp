@@ -60,6 +60,12 @@ CloudGenerator::stopGenerating()
 	return SUCCESS;
 }
 
+bool
+CloudGenerator::isRunning()
+{
+	return grabber_on_;
+}
+
 void
 CloudGenerator::onNewFrame (const PointCloudOutConstPtr &cloud)
 {
@@ -77,12 +83,18 @@ Status
 CloudGenerator::generate(PointCloudOutPtr &cloud)
 {
 	// TODO : proteger con otro lock ?
+	if ( !grabber_on_ )
+	{
+		return DEVICE_NOT_STARTED;
+	}
+
 	trigger_ = true;
 	
 	if (grabber_->getFramesPerSecond() == 0) grabber_->start(); // trigger based
 
 	int sleep_time = 0;
-	while (!fresh_frame_ && sleep_time < DEFAULT_TOTAL_TIME) {
+	while (!fresh_frame_ && sleep_time < DEFAULT_TOTAL_TIME) 
+	{
 		boost::this_thread::sleep (boost::posix_time::milliseconds (DEFAULT_SLEEP_TIME));
 		sleep_time += DEFAULT_SLEEP_TIME;
 	}

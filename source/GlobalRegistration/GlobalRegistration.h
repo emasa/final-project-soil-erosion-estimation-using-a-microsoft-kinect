@@ -19,7 +19,7 @@
 #include "FeaturesMatcher/FeaturesMatcher.h"
 
 // default parameters
-const int DEFAULT_INLIERS_THRESHOLD = 30;
+const int DEFAULT_INLIERS_THRESHOLD = 60;
 const int DEFAULT_RANSAC_MAX_ITER   = 100;
 const int DEFAULT_EXTRA_EDGES = 2;
 
