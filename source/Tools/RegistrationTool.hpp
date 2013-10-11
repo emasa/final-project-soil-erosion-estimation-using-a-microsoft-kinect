@@ -4,11 +4,15 @@
 
 #include <vector>
 #include <string>
+#include <iostream>
+#include <sstream>
+#include <cmath>
 
 #include <boost/thread/thread.hpp>
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
 #include <boost/filesystem.hpp> 
+#include <boost/format.hpp>
 
 #include <pcl/PCLPointCloud2.h>
 #include <pcl/conversions.h>
@@ -29,7 +33,7 @@
 #include "Tools/RegistrationTool.h"
 
 template<typename RegistrationAlgorithm>
-RegistrationTool<RegistrationAlgorithm>::RegistrationTool(bool backup_enabled)
+RegistrationTool<RegistrationAlgorithm>::RegistrationTool(bool backup_enabled, int digits)
 	: processed_clouds_(0)
 	, visualized_clouds_(0)
 	, started_(false) 
@@ -44,7 +48,10 @@ RegistrationTool<RegistrationAlgorithm>::RegistrationTool(bool backup_enabled)
 	, registration_dir_()
 	, backup_enabled_(backup_enabled)
 	, backup_dir_()
+	, digits_(digits)
 {
+	assert(0 < digits_); assert(digits_ < 10);
+
 	auto cb = boost::bind (&RegistrationTool::keyboardManager, this, _1);
 	viewer_.registerKeyboardCallback (cb);
 
@@ -306,7 +313,7 @@ RegistrationTool<RegistrationAlgorithm>::checkpoint()
 						    	 aligned_cloud, 
 								 registration_->getTransformation(cloud_idx));
 		
-		auto cloud_path = registration_dir_ / (std::to_string(cloud_idx) + ".pcd");
+		auto cloud_path = cloudPathFormat(registration_dir_, cloud_idx);
 		pcl::io::savePCDFileBinaryCompressed (cloud_path.c_str(), aligned_cloud);
 		PCL_INFO("Saving aligned cloud at : %s\n", cloud_path.c_str());
 	}
@@ -315,7 +322,7 @@ RegistrationTool<RegistrationAlgorithm>::checkpoint()
 template<typename RegistrationAlgorithm> void
 RegistrationTool<RegistrationAlgorithm>::backup(int idx)
 {	
-	assert( idx == -1 || 0 <= idx && idx < registration_->getNumClouds() );
+	assert( idx == -1 || (0 <= idx && idx < registration_->getNumClouds()) );
 
 	assert(!root_dir_.empty()); assert(!backup_enabled_ || !backup_dir_.empty());
 
@@ -328,11 +335,22 @@ RegistrationTool<RegistrationAlgorithm>::backup(int idx)
 	int stop_idx  = idx != -1 ? idx+1 : registration_->getNumClouds();
 	for (int cloud_idx = start_idx ; cloud_idx < stop_idx ; ++cloud_idx)
 	{			
-		auto cloud_path = backup_dir_ / (std::to_string(cloud_idx) + ".pcd");
+		auto cloud_path = cloudPathFormat(backup_dir_, cloud_idx);
 		pcl::io::savePCDFileBinaryCompressed (cloud_path.c_str(), 
 											  *registration_->getInputCloud(cloud_idx));
 		PCL_INFO("Saving backup cloud at : %s\n", cloud_path.c_str());
 	}
+}
+
+template<typename RegistrationAlgorithm> boost::filesystem::path
+RegistrationTool<RegistrationAlgorithm>::cloudPathFormat(const boost::filesystem::path &dir, int idx)
+{
+	assert(0 <= idx); assert(idx < static_cast<int>(std::pow(10, digits_)));
+
+	std::ostringstream ss;
+	ss << std::setw( digits_ ) << std::setfill( '0' ) << idx;
+
+	return dir / (ss.str() + ".pcd");
 }
 
 template<typename RegistrationAlgorithm> void

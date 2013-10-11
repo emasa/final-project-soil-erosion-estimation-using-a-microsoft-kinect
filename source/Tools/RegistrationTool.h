@@ -7,6 +7,7 @@
 #include <memory>
 
 #include <boost/function.hpp>
+#include <boost/filesystem.hpp> 
 
 #include <pcl/point_types.h>
 #include <pcl/visualization/common/common.h>
@@ -27,7 +28,7 @@ public:
 	typedef typename RegistrationAlgorithm::Ptr RegistrationAlgorithmPtr;
 	typedef CloudGenerator::GrabberPtr GrabberPtr;
 
-	RegistrationTool(bool backup_enabled=true);
+	RegistrationTool(bool backup_enabled=true, int digits = 5);
 
 	void 
 	setRegistrationAlgorithm(const RegistrationAlgorithmPtr &registration);
@@ -70,6 +71,9 @@ private:
 	void
 	commonStart(const boost::function<GrabberPtr ()> &grabber_factory);
 
+	boost::filesystem::path
+	cloudPathFormat(const boost::filesystem::path &dir, int idx);
+
 	int processed_clouds_, visualized_clouds_;
 	
 	bool started_, finished_;
@@ -83,6 +87,7 @@ private:
 
 	RegistrationAlgorithmPtr registration_;
 
+	int digits_;
 	bool backup_enabled_;
 	boost::filesystem::path root_dir_, registration_dir_, backup_dir_;
 };
