@@ -1,6 +1,7 @@
 
 #include <vector>
 #include <string>
+#include <cstdlib>
 
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/positional_options.hpp>

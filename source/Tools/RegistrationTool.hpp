@@ -40,6 +40,7 @@ RegistrationTool<RegistrationAlgorithm>::RegistrationTool(bool backup_enabled, i
 	, finished_(false)
 	, grabber_()
 	, generator_()
+	, is_device_generating_(false)
 	, registration_()
 	, viewer_("Visual registration tool", false)
 	, stream_viewport_()
@@ -67,26 +68,22 @@ RegistrationTool<RegistrationAlgorithm>::RegistrationTool(bool backup_enabled, i
 template<typename RegistrationAlgorithm> void
 RegistrationTool<RegistrationAlgorithm>::start(const std::string& device_id)
 {
-	boost::function<GrabberPtr ()> grabber_factory = 
- 		[&device_id]() -> GrabberPtr { return std::make_shared<pcl::OpenNIGrabber>(device_id); };
-	
-	commonStart(grabber_factory);
+	mode_ = CAMERA;
+	device_id_ = device_id;
+	commonStart();
 }
 
 template<typename RegistrationAlgorithm> void
 RegistrationTool<RegistrationAlgorithm>::start(const std::vector<std::string>& clouds)
 {
-	boost::function<GrabberPtr ()> grabber_factory = 
-		[&clouds]() -> GrabberPtr { return std::make_shared<pcl::PCDGrabber<pcl::PointXYZRGBA>>(clouds); };
-	
-	commonStart(grabber_factory);
+	mode_ = FILES;
+	clouds_ = clouds;
+	commonStart();
 }
 
 template<typename RegistrationAlgorithm> void
-RegistrationTool<RegistrationAlgorithm>::commonStart(const boost::function<GrabberPtr ()> &grabber_factory)
+RegistrationTool<RegistrationAlgorithm>::commonStart()
 {
-	assert ( grabber_factory );
-
 	if (started_) 
 	{
 		PCL_WARN("Registration is %s...\n", !finished_ ? "finished" : "running"); return;
@@ -102,47 +99,9 @@ RegistrationTool<RegistrationAlgorithm>::commonStart(const boost::function<Grabb
 		PCL_ERROR("Registration algorithm wasn't seted... ERROR\n"); return;
 	}
 
-	Status device_status = SUCCESS;
-	try {
-		grabber_ = grabber_factory();		
-	} catch (pcl::IOException &e) {
-		device_status = DEVICE_NOT_WORKING;
-	}
-	PCL_INFO("Creating grabber...%s\n", 
-			 device_status == SUCCESS ? "OK" : "ERROR");
-
-	if (device_status == SUCCESS) 
+	if ( initDevice() != SUCCESS ) 
 	{
-		try {
-			boost::function<void (const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr&)> cb = 
-				boost::bind(&RegistrationTool::updateStreamingVisualization, this, _1);
-			// grabber_->registerCallback(cb);
-		} catch (pcl::IOException &e) {
-			device_status = DEVICE_NOT_WORKING;
-		}
-		PCL_INFO("Setting streaming callback...%s\n", 
-				 device_status == SUCCESS ? "OK" : "ERROR");
-	}
-
-	if (device_status == SUCCESS) 
-	{
-		device_status = generator_.setGrabberImplementation(grabber_);
-		PCL_INFO("Initializing generator...%s\n", 
-				 device_status == SUCCESS ? "OK" : "ERROR");
-	}
-
-	if (device_status == SUCCESS) 
-	{
-		device_status = generator_.startGenerating();
-		PCL_INFO("Starting to generate...%s\n",
-				 device_status == SUCCESS ? "OK" : "ERROR");
-	}
-
-	if ( device_status == SUCCESS )
-	{
-		PCL_INFO("Opening device...%s\n", "OK");
-	} else {
-		PCL_ERROR("Opening device...%s\n", "ERROR"); return;
+		return;
 	}
 
 	PCL_INFO("Starting registration... OK\n");
@@ -153,6 +112,63 @@ template<typename RegistrationAlgorithm> void
 RegistrationTool<RegistrationAlgorithm>::setRegistrationAlgorithm(const RegistrationAlgorithmPtr &registration)
 {
 	registration_ = registration;
+}
+
+template<typename RegistrationAlgorithm> Status
+RegistrationTool<RegistrationAlgorithm>::initDevice()
+{
+	Status st = SUCCESS;
+	try 
+	{	
+		if (mode_ == CAMERA) 
+		{
+			grabber_ = std::make_shared<pcl::OpenNIGrabber>(device_id_);
+		} else if (mode_ == FILES) 
+		{
+			grabber_ = std::make_shared<pcl::PCDGrabber<pcl::PointXYZRGBA>>(clouds_);
+		}		
+	} catch (pcl::IOException &e) {
+		st = DEVICE_NOT_WORKING;
+	}
+
+	PCL_INFO("Creating grabber...%s\n", st == SUCCESS ? "OK" : "ERROR");
+
+	if (st == SUCCESS) 
+	{
+		try {
+			boost::function<void (const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr&)> cb = 
+				boost::bind(&RegistrationTool::updateStreamingVisualization, this, _1);
+			// grabber_->registerCallback(cb);
+		} catch (pcl::IOException &e) 
+		{
+			st = DEVICE_NOT_WORKING;
+		}
+		PCL_INFO("Setting streaming callback...%s\n", st == SUCCESS ? "OK" : "ERROR");
+	}
+
+	if (st == SUCCESS) 
+	{
+		if (generator_.isRunning()) generator_.stopGenerating();
+
+		st = generator_.setGrabberImplementation(grabber_);
+		PCL_INFO("Initializing generator...%s\n", st == SUCCESS ? "OK" : "ERROR");
+	}
+
+	if (st == SUCCESS) 
+	{
+		st = generator_.startGenerating();
+		PCL_INFO("Starting to generate...%s\n", st == SUCCESS ? "OK" : "ERROR");
+	}
+
+	if (st == SUCCESS)
+	{
+		is_device_generating_ = true;
+		PCL_INFO("Opening device...%s\n", "OK");
+	} else {
+		PCL_ERROR("Opening device...%s\n", "ERROR");
+	}
+
+	return st;
 }
 
 template<typename RegistrationAlgorithm> void
@@ -189,6 +205,7 @@ RegistrationTool<RegistrationAlgorithm>::captureAndRegister()
 	pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZRGBA>);				
 	if (generator_.generate(cloud) != SUCCESS)
 	{
+		is_device_generating_ = false;
 		PCL_ERROR("Generating cloud... ERROR\n\n"); return;
 	}
 
@@ -368,7 +385,13 @@ RegistrationTool<RegistrationAlgorithm>::keyboardManager(const pcl::visualizatio
 		} else if (key == "s" || key == "S")
 		{
 			checkpoint();
-		}
+		} else if (key == "w" || key == "W")
+		{
+			if (mode_ == CAMERA && !is_device_generating_) 
+			{
+				initDevice();
+			}
+		}		
 	}
 }
 
@@ -380,10 +403,28 @@ RegistrationTool<RegistrationAlgorithm>::run()
 		PCL_INFO("Running visualization... OK\n");
 		viewer_.createInteractor();
 	}
+
+	// in milliseconds
+	int on_generating_sleep = 100, on_stopped_sleep = 1000, sleep = on_stopped_sleep;
 	while (started_ && !finished_)
 	{
-		viewer_.spinOnce (100);
-		boost::this_thread::sleep (boost::posix_time::milliseconds (100));
+		if (is_device_generating_)
+		{
+			sleep = on_generating_sleep;
+		} else {
+			sleep = on_stopped_sleep;
+
+			if (mode_ == CAMERA)
+			{
+				PCL_INFO("Plug-in the camera device properly and press w, W to ");
+				PCL_INFO("reset the device; or press p, P to finish registration.\n\n");				
+			} else if (mode_ == FILES){
+				PCL_INFO("All clouds have been proccessed. Press p, P to finish registration.\n\n");
+			}
+		}
+
+		viewer_.spinOnce (sleep);
+		boost::this_thread::sleep (boost::posix_time::milliseconds (sleep));
 	}
 }
 

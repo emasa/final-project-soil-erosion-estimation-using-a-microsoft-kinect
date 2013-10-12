@@ -20,7 +20,8 @@
 #include "FeaturesMatcher/FeaturesMatcher.h"
 
 // default parameters
-const int DEFAULT_INLIERS_THRESHOLD = 30;
+
+const int DEFAULT_INLIERS_THRESHOLD = 60;
 const int DEFAULT_EXTRA_EDGES = 2;
 
 const float DEFAULT_RADIUS = 0.5; // meters

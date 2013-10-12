@@ -21,6 +21,9 @@
 template<typename RegistrationAlgorithm>
 class RegistrationTool
 {
+private:
+	enum DeviceMode { CAMERA, FILES };
+
 public:
 	typedef std::shared_ptr<RegistrationTool> Ptr;
 	typedef std::shared_ptr<const RegistrationTool> ConstPtr;
@@ -57,6 +60,8 @@ public:
 	void
 	backup(int idx = -1);
 
+private:
+
 	void
 	updateRegistrationVisualization(int cloud_idx);
 
@@ -64,12 +69,13 @@ public:
 	updateStreamingVisualization(const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr &cloud);
 
 	void
-	keyboardManager(const pcl::visualization::KeyboardEvent &event);	
+	commonStart();
 
-private:
+	Status
+	initDevice();
 
 	void
-	commonStart(const boost::function<GrabberPtr ()> &grabber_factory);
+	keyboardManager(const pcl::visualization::KeyboardEvent &event);	
 
 	boost::filesystem::path
 	cloudPathFormat(const boost::filesystem::path &dir, int idx);
@@ -84,6 +90,11 @@ private:
 
 	GrabberPtr grabber_;
 	CloudGenerator generator_;
+	bool is_device_generating_;
+
+	DeviceMode mode_;
+	std::string device_id_;
+	std::vector<std::string> clouds_;
 
 	RegistrationAlgorithmPtr registration_;
 

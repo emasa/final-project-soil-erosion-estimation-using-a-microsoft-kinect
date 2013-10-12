@@ -10,6 +10,8 @@ enum Status { SUCCESS
 			
 			, DEVICE_NOT_WORKING
 			, CAPTURER_ERROR
+			, DEVICE_NOT_STARTED
+
 			};
 
 #endif // STATUS_H
