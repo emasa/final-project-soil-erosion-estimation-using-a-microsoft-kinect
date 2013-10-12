@@ -12,7 +12,6 @@
 #include <pcl/common/centroid.h>
 #include <pcl/correspondence.h>
 #include <pcl/console/print.h>
-#include <pcl/registration/icp.h>
 
 #include "Common/Status.h"
 #include "GlobalRegistration/GlobalRegistration.h"
@@ -56,7 +55,10 @@ GlobalRegistration<PointInT, KeypointT, DescriptorT>::proccessCloud(const PointC
 			return NOT_ENOUGH_INLIERS;
 		}
 
-		estimateTransformation(featured_cloud, last_featured_cloud, matches_info);
+		if ( !estimateTransformation(featured_cloud, last_featured_cloud, matches_info) )
+		{
+			return BAD_TRANSFORMATION;
+		}
 
 		updateGlobalAlignment(featured_cloud, matches_info);
 	} 
@@ -123,11 +125,14 @@ GlobalRegistration<PointInT, KeypointT, DescriptorT>::computeMatches(const Featu
 	return true;
 }
 
-template<typename PointInT, typename KeypointT, typename DescriptorT> void 
+template<typename PointInT, typename KeypointT, typename DescriptorT> bool 
 GlobalRegistration<PointInT, KeypointT, DescriptorT>::estimateTransformation(const FeaturedCloud& src, 
 																			 const FeaturedCloud& tgt, 
 																			 MatchesInfo &matches_info)
 {
+	assert ( transformation_estimation_ );
+
+	bool success = true;
 	transformation_estimation_->estimateRigidTransformation (*src.keypoints, 
 												   		     *tgt.keypoints, 
 										  		   		     *matches_info.matches, 
@@ -135,21 +140,22 @@ GlobalRegistration<PointInT, KeypointT, DescriptorT>::estimateTransformation(con
 	
 	if (icp_refinement_) 
 	{
-		typename pcl::IterativeClosestPoint<KeypointT, KeypointT>::Ptr icp_ 
-			(new pcl::IterativeClosestPoint<KeypointT, KeypointT>);
+		assert ( icp_ );
 
 		icp_->setInputSource(src.keypoints);
 		icp_->setInputTarget(tgt.keypoints);
-		icp_->setUseReciprocalCorrespondences(true);
-		icp_->setMaximumIterations(50);
-
 		KeypointCloud tmp; // aligned source. Not used.
 		icp_->align(tmp, matches_info.transformation);
+		
 		if (icp_->hasConverged())
 		{
 			matches_info.transformation = icp_->getFinalTransformation();
+		} else {
+			success = false;
 		}
 	}
+
+	return success;
 }
 
 

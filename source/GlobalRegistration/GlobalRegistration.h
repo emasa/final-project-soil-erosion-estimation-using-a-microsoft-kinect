@@ -13,6 +13,7 @@
 #include <pcl/registration/transformation_estimation.h>
 #include <pcl/registration/lum.h>
 #include <pcl/search/brute_force.h>
+#include <pcl/registration/icp.h>
 
 #include "Common/Status.h"
 #include "FeaturesFinder/FeaturesFinder.h"
@@ -20,7 +21,6 @@
 
 // default parameters
 const int DEFAULT_INLIERS_THRESHOLD = 30;
-const int DEFAULT_RANSAC_MAX_ITER   = 100;
 const int DEFAULT_EXTRA_EDGES = 2;
 
 const float DEFAULT_RADIUS = 0.5; // meters
@@ -117,6 +117,8 @@ public:
 
 	typedef typename pcl::registration::LUM<KeypointT> GlobalAlignment;
 
+	typedef typename pcl::IterativeClosestPoint<KeypointT, KeypointT>::Ptr ICPPtr;
+
 protected:
 	struct FeaturedCloud
 	{
@@ -134,7 +136,7 @@ protected:
 	};
 
 public:
-	GlobalRegistration(bool auto_config=true) 
+	GlobalRegistration(bool auto_config=true, bool icp_refinement=false) 
 	: featured_clouds_()
 	, features_finder_()
 	, features_matcher_()
@@ -150,7 +152,8 @@ public:
 	, window_size_(DEFAULT_WINDOW_SIZE)
 	, cloud_location_search_()
 	, cloud_locations_(new pcl::PointCloud<CloudLocation>)
-	, icp_refinement_(true)
+	, icp_refinement_(icp_refinement)
+	, icp_()
 	{
 		cloud_location_search_.setInputCloud(cloud_locations_);
 	}
@@ -232,17 +235,21 @@ public:
 	getNumClouds();
 
 	void
-	autoConfiguration(const PointCloudInPtr& cloud);
+	setICP(const ICPPtr& icp) { icp_ = icp ; }
 
-private:
-	/* private methods */
+	ICPPtr
+	getICP() { return icp_; }
+
+private: /* private methods */
+	void
+	autoConfiguration(const PointCloudInPtr& cloud);
 	
 	bool
 	computeMatches(const FeaturedCloud& src, 
 				   const FeaturedCloud& tgt,
 				   MatchesInfo &matches_info);
 
-	void 
+	bool 
 	estimateTransformation(const FeaturedCloud& src, 
 						   const FeaturedCloud& tgt, 
 						   MatchesInfo &matches_info);
@@ -291,6 +298,8 @@ private:
 	pcl::search::BruteForce<CloudLocation> cloud_location_search_;
 
 	pcl::PointCloud<CloudLocation>::Ptr cloud_locations_;
+
+	ICPPtr icp_;
 
 	bool icp_refinement_;
 };
