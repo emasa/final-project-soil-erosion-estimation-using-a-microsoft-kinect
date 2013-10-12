@@ -178,22 +178,27 @@ public:
 	getFeaturesMatcher() { return features_matcher_; }
 
 	void 
-	setPairTransformationEstimation(const PairTransformationEstimationPtr &transformation_estimation)
-	{ transformation_estimation_ = transformation_estimation; }
-
-	PairTransformationEstimationPtr
-	getPairTransformationEstimation() { return transformation_estimation_; }
-
-	void 
 	setOutliersRejector(const OutliersRejectorPtr& outliers_rejector)
 	{ outliers_rejector_ = outliers_rejector; }
 
 	OutliersRejectorPtr
 	getOutliersRejector() { return outliers_rejector_; }
 
+	void 
+	setPairTransformationEstimation(const PairTransformationEstimationPtr &transformation_estimation)
+	{ transformation_estimation_ = transformation_estimation; }
+
+	PairTransformationEstimationPtr
+	getPairTransformationEstimation() { return transformation_estimation_; }
+
 	void
-	setInliersThreshold(int inliers_threshold) 
-	{ inliers_threshold_ = inliers_threshold; }
+	setICP(const ICPPtr& icp) { icp_ = icp ; }
+
+	ICPPtr
+	getICP() { return icp_; }
+
+	void
+	setInliersThreshold(int inliers_threshold) { inliers_threshold_ = inliers_threshold; }
 
 	int
 	getInliersThreshold() { return inliers_threshold_; }
@@ -222,27 +227,26 @@ public:
 	int
 	getExtraEdges() { return extra_edges_; }
 
-	void
+	virtual void
 	globalOptimize();
 
-	Eigen::Affine3f
+	virtual Eigen::Affine3f
 	getTransformation(int idx);
 
-	PointCloudInPtr
+	virtual PointCloudInPtr
 	getInputCloud(int idx);
 
-	int
+	virtual int
 	getNumClouds();
 
-	void
-	setICP(const ICPPtr& icp) { icp_ = icp ; }
-
-	ICPPtr
-	getICP() { return icp_; }
-
-private: /* private methods */
+private: 
+	/* private methods */
+	
 	void
 	autoConfiguration(const PointCloudInPtr& cloud);
+
+	bool
+	computeFeatures(FeaturedCloud& featured_cloud);
 	
 	bool
 	computeMatches(const FeaturedCloud& src, 
@@ -299,9 +303,9 @@ private: /* private methods */
 
 	pcl::PointCloud<CloudLocation>::Ptr cloud_locations_;
 
-	ICPPtr icp_;
-
 	bool icp_refinement_;
+
+	ICPPtr icp_;
 };
 
 #include "GlobalRegistration/GlobalRegistration.hpp"
