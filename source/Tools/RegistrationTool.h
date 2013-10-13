@@ -29,38 +29,43 @@ public:
 	typedef std::shared_ptr<const RegistrationTool> ConstPtr;
 
 	typedef typename RegistrationAlgorithm::Ptr RegistrationAlgorithmPtr;
-	typedef CloudGenerator::GrabberPtr GrabberPtr;
 
 	RegistrationTool(bool backup_enabled=true, int digits = 5);
+
+	bool
+	setUpOutputDirectory(const std::string &dir);
 
 	void 
 	setRegistrationAlgorithm(const RegistrationAlgorithmPtr &registration);
 
 	void
-	start(const std::string &device_id="");
+	registerFromFiles(const std::vector<std::string>& clouds);
 
 	void
-	start(const std::vector<std::string> &clouds);
-
-	void 
-	finish();
-
-	void 
-	run();
+	registerFromCamera(const std::string& device_id="");
 
 	void
+	registerFromFilesAndThenFromCamera(const std::vector<std::string>& clouds, 
+									   const std::string& device_id="");
+
+private:
+	bool
 	captureAndRegister();
 
-	bool
-	setUpOutputDirectory(const std::string &dir);
-
 	void
-	checkpoint();
+	checkpoint(int idx = -1);
 
 	void
 	backup(int idx = -1);
 
-private:
+	void 
+	finish();
+
+	void
+	initVisualization();
+
+	void
+	runVisualizationLoop();
 
 	void
 	updateRegistrationVisualization(int cloud_idx);
@@ -68,10 +73,10 @@ private:
 	void
 	updateStreamingVisualization(const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr &cloud);
 
-	void
-	commonStart();
+	bool
+	start();
 
-	Status
+	bool
 	initDevice();
 
 	void
@@ -87,8 +92,8 @@ private:
 	pcl::visualization::PCLVisualizer viewer_;
 	int stream_viewport_, registration_viewport_;
 	boost::mutex mutex_;
+	bool visualization_enabled_;
 
-	GrabberPtr grabber_;
 	CloudGenerator generator_;
 	bool is_device_generating_;
 

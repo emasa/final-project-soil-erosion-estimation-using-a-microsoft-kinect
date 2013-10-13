@@ -18,7 +18,9 @@ const int DEFAULT_TOTAL_TIME = 2000; // 2 s
 
 Status
 CloudGenerator::setGrabberImplementation(const GrabberPtr &grabber)
-{		
+{
+	assert( grabber );
+
 	try {
 		// Register a callback function to the grabber...
 		boost::function<void (const PointCloudOutConstPtr&)> frame_cb = 

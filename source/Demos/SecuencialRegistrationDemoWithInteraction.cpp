@@ -24,10 +24,16 @@ int main(int argc, char* argv[])
 	po::options_description opts("Allowed options");
 	opts.add_options() 
 		("help,h", "produce help message")
+
 		("output-dir,d", po::value<string>(&dir), "set output directory [required]")
-		("mode,m", po::value<string>(&mode)->default_value("kinect"), "set input mode. valid options : kinect [default], files")
-		("input-clouds,c", po::value<vector<string>>(&clouds)->multitoken(), "set cloud_1 .. cloud_n [required on files mode]")
-		("backup,b", "enable cloud backup. default is disabled. no useful on files mode")
+
+		("mode,m", po::value<string>(&mode)->default_value("camera"), 
+		 "set input mode. valid options : camera [default], files, camera_recovery")
+		
+		("input,i", po::value<vector<string>>(&clouds)->multitoken(), 
+		 "set cloud_1 .. cloud_n [required on files and camera_recovery modes]")
+		
+		("backup,b", "enable original cloud backup [default : disabled]")
 		;
 
 	po::basic_command_line_parser<char> parser(argc, argv);
@@ -41,9 +47,9 @@ int main(int argc, char* argv[])
 	if (vm.count("help")) 
 	{
     	std::cout << opts
-    			  << "\n  on kinect mode press : \n" 
+    			  << "\n  on camera or camera-recovery modes press : \n" 
     	          << "    space : for capture and register a new cloud\n"
-    	          << "    p, P  : for finish registration and save clouds\n" 
+    	          << "    p, P  : for finish registration and save clouds\n"
     	          << std::endl;
     	return 0;
 	}
@@ -64,25 +70,29 @@ int main(int argc, char* argv[])
 		return -1;
 	};
 
-	if (mode == "kinect")
+	if (mode == "camera")
 	{
-		tool.start();
+		tool.registerFromCamera();
 	} else if (mode == "files") 
 	{
-		if (!vm.count("input-clouds") || clouds.size() < 2 )
+		if (!vm.count("input") || clouds.size() < 2 )
 		{
-			PCL_ERROR("At least 2 input clouds are required in files mode\n"); return -1;
+			PCL_ERROR("At least 2 input clouds are required\n"); return -1;
 		} 
 		
-		tool.start(clouds);
-	}
-	else
+		tool.registerFromFiles(clouds);
+	} else if (mode == "camera_recovery")
 	{
-		PCL_ERROR("Invalid mode. Valid options are : kinect files\n"); return -1;
-	}
+		if (!vm.count("input") || clouds.size() == 0 )
+		{
+			PCL_ERROR("At least 1 input clouds is required\n"); return -1;
+		}
 
-	tool.run();
-	tool.checkpoint();
+		tool.registerFromFilesAndThenFromCamera(clouds);
+	} else
+	{
+		PCL_ERROR("Invalid mode. Valid options are : camera files camera_recovery\n"); return -1;
+	}
 
 	return 0;
 }
