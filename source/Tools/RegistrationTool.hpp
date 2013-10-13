@@ -56,12 +56,9 @@ RegistrationTool<RegistrationAlgorithm>::RegistrationTool(bool backup_enabled, i
 	auto cb = boost::bind (&RegistrationTool::keyboardManager, this, _1);
 	viewer_.registerKeyboardCallback (cb);
 
-	// viewer_.createViewPort(0, 0, 0.5, 1, stream_viewport_);
-	// viewer_.createViewPortCamera (stream_viewport_);
-	
-	// viewer_.createViewPort(0.5, 0, 1, 1, registration_viewport_);
-
-	viewer_.createViewPort(0, 0, 1, 1, registration_viewport_);
+	viewer_.createViewPort(0, 0, 0.4, 1, stream_viewport_);
+	viewer_.createViewPortCamera (stream_viewport_);
+	viewer_.createViewPort(0.4, 0, 1, 1, registration_viewport_);
 	viewer_.createViewPortCamera (registration_viewport_);
 }
 
@@ -130,21 +127,7 @@ RegistrationTool<RegistrationAlgorithm>::initDevice()
 	} catch (pcl::IOException &e) {
 		st = DEVICE_NOT_WORKING;
 	}
-
 	PCL_INFO("Creating grabber...%s\n", st == SUCCESS ? "OK" : "ERROR");
-
-	if (st == SUCCESS) 
-	{
-		try {
-			boost::function<void (const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr&)> cb = 
-				boost::bind(&RegistrationTool::updateStreamingVisualization, this, _1);
-			// grabber_->registerCallback(cb);
-		} catch (pcl::IOException &e) 
-		{
-			st = DEVICE_NOT_WORKING;
-		}
-		PCL_INFO("Setting streaming callback...%s\n", st == SUCCESS ? "OK" : "ERROR");
-	}
 
 	if (st == SUCCESS) 
 	{
@@ -241,29 +224,16 @@ RegistrationTool<RegistrationAlgorithm>::updateRegistrationVisualization(int clo
 	if (cloud_idx == visualized_clouds_)
 	{
 		++visualized_clouds_;
-
 		auto cloud = registration_->getInputCloud(cloud_idx);
-		// required to use multiple colors handlers
-		pcl::PCLPointCloud2::Ptr blob_cloud(new pcl::PCLPointCloud2);
-		pcl::toPCLPointCloud2(*cloud, *blob_cloud);
 
 		mutex_.lock ();
-		// color_handler needs to be a Ptr to be used wit PCLPointCLoud2
-		vis::PointCloudColorHandler<pcl::PCLPointCloud2>::Ptr color_handler;
-
-	    Eigen::Vector4f origin;
-	    Eigen::Quaternionf orientation;		
-
-		color_handler.reset(new vis::PointCloudColorHandlerRGBField<pcl::PCLPointCloud2>(blob_cloud));
-		viewer_.addPointCloud(blob_cloud, color_handler, origin, orientation, cloud_idx_str, registration_viewport_);
-		
-		color_handler.reset(new vis::PointCloudColorHandlerGenericField<pcl::PCLPointCloud2>(blob_cloud, "z"));				
-		viewer_.addPointCloud(blob_cloud, color_handler, origin, orientation, cloud_idx_str, registration_viewport_);
-	
-      	viewer_.setPointCloudRenderingProperties (vis::PCL_VISUALIZER_IMMEDIATE_RENDERING, 1.0, cloud_idx_str);
-
+		vis::PointCloudColorHandlerRGBField<pcl::PointXYZRGBA> color_handler(cloud);
+		viewer_.addPointCloud<pcl::PointXYZRGBA>(cloud, color_handler, cloud_idx_str, registration_viewport_);	
+      	// viewer_.setPointCloudRenderingProperties (vis::PCL_VISUALIZER_IMMEDIATE_RENDERING, 1.0, cloud_idx_str);		
 		mutex_.unlock ();
-	} 
+	
+		updateStreamingVisualization(cloud);
+	}
 	// TODO: usar origin, orientation
 	// TODO: aplicar solo cuando cloud_idx < visualized_clouds
 	auto PITCH_ROTATION = pcl::getTransformation(0, 0, 0, 0, M_PI, 0);
@@ -277,8 +247,15 @@ template<typename RegistrationAlgorithm> void
 RegistrationTool<RegistrationAlgorithm>::updateStreamingVisualization(const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr &cloud)
 {
 	mutex_.lock ();
+
 	viewer_.removePointCloud("stream", stream_viewport_);
-	viewer_.addPointCloud(cloud, "stream", stream_viewport_);	
+
+	pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGBA> color_handler(cloud);
+
+	viewer_.addPointCloud(cloud, color_handler, "stream", stream_viewport_);	
+
+	viewer_.updatePointCloudPose("stream", viewer_.getViewerPose(stream_viewport_));
+
 	mutex_.unlock ();
 }
 
@@ -405,7 +382,8 @@ RegistrationTool<RegistrationAlgorithm>::run()
 	}
 
 	// in milliseconds
-	int on_generating_sleep = 100, on_stopped_sleep = 1000, sleep = on_stopped_sleep;
+	int on_generating_sleep = 200, on_stopped_sleep = 1000, sleep = on_stopped_sleep;
+	int visualization_time = 50;
 	while (started_ && !finished_)
 	{
 		if (is_device_generating_)
@@ -423,7 +401,7 @@ RegistrationTool<RegistrationAlgorithm>::run()
 			}
 		}
 
-		viewer_.spinOnce (sleep);
+		viewer_.spinOnce (visualization_time);
 		boost::this_thread::sleep (boost::posix_time::milliseconds (sleep));
 	}
 }

@@ -28,10 +28,10 @@ const int ICP_MAX_ITER = 50;
 GlobalRegistration<PointXYZRGBA, PointWithScale, SURFSignature128>::Ptr
 GlobalRegistrationFactory::ORBAndSURF() const
 {
-	// auto registration = std::make_shared<GlobalRegistration<PointXYZRGBA, PointWithScale, SURFSignature128>>(true, true);
-	auto registration = std::make_shared<GlobalRegistration<PointXYZRGBA, PointWithScale, SURFSignature128>>(false, true);
-	registration->setWindowSize(1);
-	registration->setExtraEdges(3);
+	auto registration = std::make_shared<GlobalRegistration<PointXYZRGBA, PointWithScale, SURFSignature128>>(true, true);
+	// auto registration = std::make_shared<GlobalRegistration<PointXYZRGBA, PointWithScale, SURFSignature128>>(false, true);
+	// registration->setWindowSize(1);
+	// registration->setExtraEdges(3);
 
 	// feature detector setup	
 	cv::initModule_nonfree();

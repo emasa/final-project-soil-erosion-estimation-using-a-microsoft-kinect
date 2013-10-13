@@ -101,9 +101,10 @@ CloudGenerator::generate(PointCloudOutPtr &cloud)
 	
 	if (fresh_frame_)
 	{
-		cloud = most_recent_frame_->makeShared();
-		most_recent_frame_.reset();
 		fresh_frame_ = false;
+		cloud = most_recent_frame_;
+		most_recent_frame_.reset();
+		
 		return SUCCESS;
 	} else {
 		return CAPTURER_ERROR;
