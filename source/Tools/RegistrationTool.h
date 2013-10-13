@@ -30,7 +30,7 @@ public:
 
 	typedef typename RegistrationAlgorithm::Ptr RegistrationAlgorithmPtr;
 
-	RegistrationTool(bool backup_enabled=true, int digits = 5);
+	RegistrationTool(bool backup_enabled=true, int digits=5);
 
 	bool
 	setUpOutputDirectory(const std::string &dir);
@@ -68,10 +68,10 @@ private:
 	runVisualizationLoop();
 
 	void
-	updateRegistrationVisualization(int cloud_idx);
+	updateVisualization();
 
 	void
-	updateStreamingVisualization(const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr &cloud);
+	updateStreamingVisualization();
 
 	bool
 	start();

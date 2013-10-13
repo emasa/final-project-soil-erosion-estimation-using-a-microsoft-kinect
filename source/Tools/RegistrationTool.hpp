@@ -53,6 +53,61 @@ RegistrationTool<RegistrationAlgorithm>::RegistrationTool(bool backup_enabled, i
 	assert(0 < digits_); assert(digits_ < 10);
 }
 
+template<typename RegistrationAlgorithm> void
+RegistrationTool<RegistrationAlgorithm>::registerFromFiles(const std::vector<std::string>& clouds)
+{
+	mode_ = FILES;
+	clouds_ = clouds;
+	if ( !start() ) return;
+
+	for (int count = 0; count < clouds.size(); ++count)
+	{
+		captureAndRegister();
+	}
+
+	finish();
+	checkpoint();
+}
+
+template<typename RegistrationAlgorithm> void
+RegistrationTool<RegistrationAlgorithm>::registerFromCamera(const std::string& device_id)
+{
+	mode_ = CAMERA;
+	device_id_ = device_id;
+	if ( !start() ) return;
+
+	initVisualization();
+	runVisualizationLoop();
+}
+
+template<typename RegistrationAlgorithm> void
+RegistrationTool<RegistrationAlgorithm>::registerFromFilesAndThenFromCamera
+	(const std::vector<std::string>& clouds, const std::string& device_id)
+{
+	mode_ = FILES;
+	clouds_ = clouds;
+	if ( !start() ) return;	
+
+	int to_visualize = 0;
+	for (int count = 0 ; count < clouds.size() ; ++count)
+	{
+		if ( captureAndRegister() ) ++to_visualize;
+	}
+
+	mode_ = CAMERA;
+	device_id_ = device_id;
+
+	if ( !initDevice() ) return;
+
+	visualization_enabled_ = true;
+
+	initVisualization();
+
+	updateVisualization();
+
+	runVisualizationLoop();
+}
+
 template<typename RegistrationAlgorithm> bool
 RegistrationTool<RegistrationAlgorithm>::start()
 {
@@ -83,12 +138,6 @@ RegistrationTool<RegistrationAlgorithm>::start()
 	started_ = true;
 
 	return true;
-}
-
-template<typename RegistrationAlgorithm> void
-RegistrationTool<RegistrationAlgorithm>::setRegistrationAlgorithm(const RegistrationAlgorithmPtr &registration)
-{
-	registration_ = registration;
 }
 
 template<typename RegistrationAlgorithm> bool
@@ -192,50 +241,76 @@ RegistrationTool<RegistrationAlgorithm>::captureAndRegister()
 }
 
 template<typename RegistrationAlgorithm> void
-RegistrationTool<RegistrationAlgorithm>::updateRegistrationVisualization(int cloud_idx)
+RegistrationTool<RegistrationAlgorithm>::updateVisualization()
 {
 	namespace vis = pcl::visualization;
-	assert( 0 <= cloud_idx ); assert(cloud_idx <= visualized_clouds_ );
 
 	PCL_INFO("Updating visualization...\n");
 
-	std::string cloud_idx_str = std::to_string(cloud_idx);
-	if (cloud_idx == visualized_clouds_)
+	for (int cloud_idx = 0 ; cloud_idx < registration_->getNumClouds() ; ++cloud_idx)
 	{
-		++visualized_clouds_;
 		auto cloud = registration_->getInputCloud(cloud_idx);
+		auto cloud_str = std::to_string(cloud_idx);
 
-		mutex_.lock ();
-		vis::PointCloudColorHandlerRGBField<pcl::PointXYZRGBA> color_handler(cloud);
-		viewer_.addPointCloud<pcl::PointXYZRGBA>(cloud, color_handler, cloud_idx_str, registration_viewport_);	
-      	// viewer_.setPointCloudRenderingProperties (vis::PCL_VISUALIZER_IMMEDIATE_RENDERING, 1.0, cloud_idx_str);		
-		mutex_.unlock ();
-	
-		updateStreamingVisualization(cloud);
+		if (cloud_idx == visualized_clouds_)
+		{
+			++visualized_clouds_;
+			vis::PointCloudColorHandlerRGBField<pcl::PointXYZRGBA> color_handler(cloud);
+			viewer_.addPointCloud<pcl::PointXYZRGBA>(cloud, color_handler, cloud_str, registration_viewport_);	
+	      	// viewer_.setPointCloudRenderingProperties (vis::PCL_VISUALIZER_IMMEDIATE_RENDERING, 1.0, cloud_str);		
+		}
+
+		auto PITCH_ROTATION = pcl::getTransformation(0, 0, 0, 0, M_PI, 0);
+		auto visual_pose = PITCH_ROTATION * registration_->getTransformation(cloud_idx);
+		viewer_.updatePointCloudPose(cloud_str, visual_pose);
 	}
-	// TODO: usar origin, orientation
-	// TODO: aplicar solo cuando cloud_idx < visualized_clouds
-	auto PITCH_ROTATION = pcl::getTransformation(0, 0, 0, 0, M_PI, 0);
-	auto visual_pose = PITCH_ROTATION * registration_->getTransformation(cloud_idx);
-	mutex_.lock ();
-	viewer_.updatePointCloudPose(cloud_idx_str, visual_pose);
-	mutex_.unlock ();		
+
+	updateStreamingVisualization();
 }
 
 template<typename RegistrationAlgorithm> void
-RegistrationTool<RegistrationAlgorithm>::updateStreamingVisualization(const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr &cloud)
+RegistrationTool<RegistrationAlgorithm>::updateStreamingVisualization()
 {
-	mutex_.lock ();
+	if (registration_->getNumClouds() == 0) return;
 
-	viewer_.removePointCloud("stream", stream_viewport_);
+	auto last_cloud = registration_->getInputCloud(registration_->getNumClouds() - 1);
+	viewer_.removePointCloud("last_cloud", stream_viewport_);
+	pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGBA> color_handler(last_cloud);
+	viewer_.addPointCloud(last_cloud, color_handler, "last_cloud", stream_viewport_);	
+	viewer_.updatePointCloudPose("last_cloud", viewer_.getViewerPose(stream_viewport_));
+}
 
-	pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGBA> color_handler(cloud);
+template<typename RegistrationAlgorithm> void
+RegistrationTool<RegistrationAlgorithm>::initVisualization()
+{
+	auto cb = boost::bind (&RegistrationTool::keyboardManager, this, _1);
+	viewer_.registerKeyboardCallback (cb);
 
-	viewer_.addPointCloud(cloud, color_handler, "stream", stream_viewport_);	
+	viewer_.createViewPort(0, 0, 0.4, 1, stream_viewport_);
+	viewer_.createViewPortCamera (stream_viewport_);
+	viewer_.createViewPort(0.4, 0, 1, 1, registration_viewport_);
+	viewer_.createViewPortCamera (registration_viewport_);
 
-	viewer_.updatePointCloudPose("stream", viewer_.getViewerPose(stream_viewport_));
+	viewer_.createInteractor();
+}
 
-	mutex_.unlock ();
+template<typename RegistrationAlgorithm> void
+RegistrationTool<RegistrationAlgorithm>::runVisualizationLoop()
+{
+	PCL_INFO("Running visualization... OK\n");
+
+	int sleep_time = 100, visualization_time = 100; // in milliseconds
+	while (started_ && !finished_)
+	{
+		viewer_.spinOnce (visualization_time);
+		boost::this_thread::sleep (boost::posix_time::milliseconds (sleep_time));
+	}
+}
+
+template<typename RegistrationAlgorithm> void
+RegistrationTool<RegistrationAlgorithm>::setRegistrationAlgorithm(const RegistrationAlgorithmPtr &registration)
+{
+	registration_ = registration;
 }
 
 template<typename RegistrationAlgorithm> bool
@@ -339,7 +414,7 @@ RegistrationTool<RegistrationAlgorithm>::keyboardManager(const pcl::visualizatio
 		{
 			if ( captureAndRegister() )
 			{
-				updateRegistrationVisualization(visualized_clouds_);
+				updateVisualization();
 			}
 		} else if (key == "p" || key == "P")
 		{
@@ -350,91 +425,6 @@ RegistrationTool<RegistrationAlgorithm>::keyboardManager(const pcl::visualizatio
 			checkpoint();
 		}		
 	}
-}
-
-template<typename RegistrationAlgorithm> void
-RegistrationTool<RegistrationAlgorithm>::initVisualization()
-{
-	auto cb = boost::bind (&RegistrationTool::keyboardManager, this, _1);
-	viewer_.registerKeyboardCallback (cb);
-
-	viewer_.createViewPort(0, 0, 0.4, 1, stream_viewport_);
-	viewer_.createViewPortCamera (stream_viewport_);
-	viewer_.createViewPort(0.4, 0, 1, 1, registration_viewport_);
-	viewer_.createViewPortCamera (registration_viewport_);
-
-	viewer_.createInteractor();
-}
-
-template<typename RegistrationAlgorithm> void
-RegistrationTool<RegistrationAlgorithm>::runVisualizationLoop()
-{
-	PCL_INFO("Running visualization... OK\n");
-
-	int sleep_time = 100, visualization_time = 100; // in milliseconds
-	while (started_ && !finished_)
-	{
-		viewer_.spinOnce (visualization_time);
-		boost::this_thread::sleep (boost::posix_time::milliseconds (sleep_time));
-	}
-}
-
-template<typename RegistrationAlgorithm> void
-RegistrationTool<RegistrationAlgorithm>::registerFromFiles(const std::vector<std::string>& clouds)
-{
-	mode_ = FILES;
-	clouds_ = clouds;
-	if ( !start() ) return;
-
-	for (int count = 0; count < clouds.size(); ++count)
-	{
-		captureAndRegister();
-	}
-
-	finish();
-	checkpoint();
-}
-
-template<typename RegistrationAlgorithm> void
-RegistrationTool<RegistrationAlgorithm>::registerFromCamera(const std::string& device_id)
-{
-	mode_ = CAMERA;
-	device_id_ = device_id;
-	if ( !start() ) return;
-
-	initVisualization();
-	runVisualizationLoop();
-}
-
-template<typename RegistrationAlgorithm> void
-RegistrationTool<RegistrationAlgorithm>::registerFromFilesAndThenFromCamera
-	(const std::vector<std::string>& clouds, const std::string& device_id)
-{
-	mode_ = FILES;
-	clouds_ = clouds;
-	if ( !start() ) return;	
-
-	int to_visualize = 0;
-	for (int count = 0 ; count < clouds.size() ; ++count)
-	{
-		if ( captureAndRegister() ) ++to_visualize;
-	}
-
-	mode_ = CAMERA;
-	device_id_ = device_id;
-
-	if ( !initDevice() ) return;
-
-	visualization_enabled_ = true;
-
-	initVisualization();
-
-	for (int count = 0 ; count < to_visualize ; ++count)
-	{
-		updateRegistrationVisualization(count);
-	}
-
-	runVisualizationLoop();
 }
 
 #endif // REGISTRATION_TOOL_HPP
