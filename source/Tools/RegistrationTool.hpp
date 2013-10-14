@@ -28,7 +28,6 @@
 
 #include "Common/Status.h"
 #include "Utils/Utils.h"
-#include "IO/CloudGenerator.h"
 #include "Tools/RegistrationTool.h"
 
 template<typename RegistrationAlgorithm>
@@ -149,16 +148,13 @@ RegistrationTool<RegistrationAlgorithm>::initDevice()
 	Status st = SUCCESS;
 	try 
 	{	
-		CloudGenerator::GrabberPtr grabber;
 		if (mode_ == CAMERA) 
 		{
-			grabber = std::make_shared<pcl::OpenNIGrabber>(device_id_);
+			generator_.setGrabber(std::make_shared<pcl::OpenNIGrabber>(device_id_));
 		} else if (mode_ == FILES) 
 		{
-			grabber = std::make_shared<pcl::PCDGrabber<pcl::PointXYZRGBA>>(clouds_);
-		}
-		
-		st = generator_.setGrabberImplementation(grabber);	
+			generator_.setGrabber(std::make_shared<pcl::PCDGrabber<pcl::PointXYZRGBA>>(clouds_));
+		}		
 	} catch (pcl::IOException &e) {
 		st = DEVICE_NOT_WORKING;
 	}

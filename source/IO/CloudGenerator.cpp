@@ -17,33 +17,16 @@ const int DEFAULT_SLEEP_TIME = 30; // 30 ms
 const int DEFAULT_TOTAL_TIME = 2000; // 2 s
 
 Status
-CloudGenerator::setGrabberImplementation(const GrabberPtr &grabber)
-{
-	assert( grabber );
-
-	try {
-		// Register a callback function to the grabber...
-		boost::function<void (const PointCloudOutConstPtr&)> frame_cb = 
-			boost::bind (&CloudGenerator::onNewFrame, this, _1);		
-		
-		grabber->registerCallback (frame_cb);
-		grabber_ = grabber;
-	} catch (pcl::IOException &e) {
-		return DEVICE_NOT_WORKING;
-	}
-
-	return SUCCESS;	
-}
-
-Status
 CloudGenerator::startGenerating()
 {
+	assert(grabber_);
+
 	try {
 		if (grabber_->getFramesPerSecond() > 0) // streaming based
 	  	{
 	  		grabber_->start ();
 		}
-		grabber_on_ = true;
+		is_running_ = true;
 	} catch(pcl::IOException &e) {
 		return DEVICE_NOT_WORKING;
 	}
@@ -53,7 +36,7 @@ CloudGenerator::startGenerating()
 Status
 CloudGenerator::stopGenerating()
 {
-	grabber_on_ = false;
+	is_running_ = false;
 	try {
 		grabber_->stop ();
 	} catch(pcl::IOException &e) {
@@ -62,21 +45,14 @@ CloudGenerator::stopGenerating()
 	return SUCCESS;
 }
 
-bool
-CloudGenerator::isRunning()
-{
-	return grabber_on_;
-}
-
 void
 CloudGenerator::onNewFrame (const PointCloudOutConstPtr &cloud)
 {
 	mutex_.lock ();
-	if (trigger_)
+	if (!new_frame_captured_)
 	{
-		trigger_ = false;
 		most_recent_frame_ = cloud->makeShared(); // Make a copy of the frame
-		fresh_frame_ = true;
+		new_frame_captured_ = true;
 	}
 	mutex_.unlock ();
 }
@@ -84,31 +60,43 @@ CloudGenerator::onNewFrame (const PointCloudOutConstPtr &cloud)
 Status
 CloudGenerator::generate(PointCloudOutPtr &cloud)
 {
-	// TODO : proteger con otro lock ?
-	if ( !grabber_on_ )
+	assert(grabber_);
+	
+	if ( !is_running_ )
 	{
 		return DEVICE_NOT_STARTED;
 	}
 
-	trigger_ = true;
+	new_frame_captured_ = false;
+
+	// Register a callback function to the grabber...
+	boost::function<void (const PointCloudOutConstPtr&)> frame_cb = 
+		boost::bind (&CloudGenerator::onNewFrame, this, _1);		
 	
+	auto connection = grabber_->registerCallback (frame_cb);
+	if ( !connection.connected() ) 
+	{
+		return CAPTURER_ERROR;
+	}
+
 	if (grabber_->getFramesPerSecond() == 0) grabber_->start(); // trigger based
 
 	int sleep_time = 0;
-	while (!fresh_frame_ && sleep_time < DEFAULT_TOTAL_TIME) 
+	while (!new_frame_captured_ && sleep_time < DEFAULT_TOTAL_TIME) 
 	{
 		boost::this_thread::sleep (boost::posix_time::milliseconds (DEFAULT_SLEEP_TIME));
 		sleep_time += DEFAULT_SLEEP_TIME;
 	}
+
+	connection.disconnect();
 	
-	if (fresh_frame_)
+	if (!new_frame_captured_ || !most_recent_frame_)
 	{
-		fresh_frame_ = false;
-		cloud = most_recent_frame_;
-		most_recent_frame_.reset();
-		
-		return SUCCESS;
-	} else {
 		return CAPTURER_ERROR;
 	} 
+
+	cloud = most_recent_frame_;
+	most_recent_frame_.reset();	
+	
+	return SUCCESS;
 }

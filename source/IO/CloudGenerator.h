@@ -26,10 +26,9 @@ public:
 	CloudGenerator ()
 	  : grabber_ ()
 	  , most_recent_frame_ ()
-	  , trigger_ (false)
-	  , fresh_frame_ (false)
-	  , grabber_on_(false)	
-	{}
+	  , new_frame_captured_(false)
+	  , is_running_(false)
+	  {}
 	
 	Status
 	startGenerating();
@@ -37,25 +36,29 @@ public:
 	Status
 	stopGenerating();
 
-	bool
-	isRunning();
-
 	Status
 	generate(PointCloudOutPtr &cloud);
 
-	Status 
-	setGrabberImplementation(const std::shared_ptr<pcl::Grabber> &grabber);
+	bool
+	isRunning() { return is_running_; }
+
+	void 
+	setGrabber(const GrabberPtr &grabber) { grabber_ = grabber; }
+
+	GrabberPtr
+	getGrabber() { return grabber_; }
+
 private:
 	void
 	onNewFrame (const PointCloudOutConstPtr &cloud);
 
 	std::shared_ptr<pcl::Grabber> grabber_;
 
-	boost::mutex mutex_;
-	
 	PointCloudOutPtr most_recent_frame_;	
+	
+	bool new_frame_captured_, is_running_;
 
-	bool trigger_, fresh_frame_, grabber_on_;
+	boost::mutex mutex_;
 };
 
 #endif // CLOUD_GENERATOR_H
