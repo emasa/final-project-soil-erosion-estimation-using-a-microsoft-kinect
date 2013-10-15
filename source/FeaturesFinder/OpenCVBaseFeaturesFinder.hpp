@@ -53,46 +53,59 @@ toOpencvMat(const pcl::PointCloud<PointInT> &cloud, cv::Mat &image)
 template <typename PointInT, typename KeypointT, typename DescriptorT> void
 OpenCVBaseFeaturesFinder<PointInT, KeypointT, DescriptorT>::setInputCloud(const PointCloudInPtr &cloud)
 {
-	if (!cloud) throw std::invalid_argument("cloud is null");
-
+	assert ( cloud );
 	rgb_cloud_ = cloud;
 
-	try { // convert to pcl image
-		// pcl::toPCLPointCloud2 (*rgb_cloud_, pcl_rgb_image_);
-		toOpencvMat(*rgb_cloud_, cv_rgb_image_);
-	} catch (std::runtime_error& e) {
-		throw pcl::UnorganizedPointCloudException("Cloud needs to be organized");
+	bool organized = true;
+	try 
+	{
+		// memory is managed by pcl_rgb_image_ to avoid problems
+		pcl::toPCLPointCloud2 (*rgb_cloud_, pcl_rgb_image_);		
+		cv::Mat tmp_image(pcl_rgb_image_.height, pcl_rgb_image_.width, CV_8UC3, 
+					      pcl_rgb_image_.data.data(), pcl_rgb_image_.step);
+		tmp_image.copyTo(cv_rgb_image_);
+		
+		// toOpencvMat(*rgb_cloud_, cv_rgb_image_);
+	} catch (std::runtime_error& e) 
+	{
+		organized = false;
 	}
 
-	// memory is managed by pcl_rgb_image_
-	// cv::Mat tmp_image(pcl_rgb_image_.height, pcl_rgb_image_.width, CV_8UC3, 
-	// 			      pcl_rgb_image_.data.data(), pcl_rgb_image_.step);
+	if (organized && estimate_camera_parameters_)
+	{
+		organized = computeCameraParameters(cloud);
+		if (organized) 
+			estimate_camera_parameters_ = false;
+	}
 
-	// to avoid problems
-	// tmp_image.copyTo(cv_rgb_image_);
-
-	resetCameraParameters();
+	if (!organized)
+	{
+		throw pcl::UnorganizedPointCloudException("Cloud needs to be organized");
+	}
 }
 
-template <typename PointInT, typename KeypointT, typename DescriptorT> void
-OpenCVBaseFeaturesFinder<PointInT, KeypointT, DescriptorT>::resetCameraParameters()
+template <typename PointInT, typename KeypointT, typename DescriptorT> bool
+OpenCVBaseFeaturesFinder<PointInT, KeypointT, DescriptorT>::computeCameraParameters(const PointCloudInPtr &cloud)
 {
-	if (!rgb_cloud_) throw std::invalid_argument("Cloud is a null ptr");
+	assert ( cloud );
 
-	// compute camera matrix
 	pcl::search::OrganizedNeighbor<PointInT> search;
 	search.setInputCloud(rgb_cloud_);
 
-	Eigen::Matrix3f C; // camera matrix
-	search.computeCameraMatrix(C);
-	fx_ = C(0, 0); fy_= C(1, 1); cx_ = C(0, 2); cy_ = C(1, 2);
+	if ( search.isValid() )
+	{
+		Eigen::Matrix3f C; // camera matrix
+		search.computeCameraMatrix(C);
+		fx_ = C(0, 0); fy_= C(1, 1); cx_ = C(0, 2); cy_ = C(1, 2);
+	}
+
+	return search.isValid();
 }
 
 template <typename PointInT, typename KeypointT, typename DescriptorT> void
 OpenCVBaseFeaturesFinder<PointInT, KeypointT, DescriptorT>::computeKeypointsAndDescriptors(PointCloudKeypoint &keypoints, 
 				  				   					      				  			   	   PointCloudDescriptor &descriptors)
 {
-	// TODO: improve
 	PointCloudKeypoint tmp_keypoints;
 	computeKeypoints(tmp_keypoints);
 	computeDescriptors(tmp_keypoints, descriptors, keypoints);
@@ -109,7 +122,7 @@ template <typename PointInT, typename KeypointT, typename DescriptorT> void
 OpenCVBaseFeaturesFinder<PointInT, KeypointT, DescriptorT>::computeDescriptors(const PointCloudKeypoint &keypoints, 
  											  				  			   	   PointCloudDescriptor &descriptors, 
  											 				  			   	   PointCloudKeypoint &remaining_keypoints)
-{	
+{		
 	getKeypoints2D(keypoints, cv_keypoints_);
 
 	// Keypoints for which a descriptor cannot be computed are removed

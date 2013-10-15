@@ -31,10 +31,20 @@ public:
 	typedef cv::DescriptorExtractor DescriptorExtractor;
 	typedef cv::Ptr<DescriptorExtractor> DescriptorExtractorPtr;
 
-	OpenCVBaseFeaturesFinder(const FeatureDetectorPtr &keypoint_detector = FeatureDetectorPtr(), 
-						 	 const DescriptorExtractorPtr &descriptor_extractor = DescriptorExtractorPtr()) :	
-		keypoint_detector_(keypoint_detector), 
-		descriptor_extractor_(descriptor_extractor){}
+	OpenCVBaseFeaturesFinder(bool estimate_camera_parameters=false)
+	: rgb_cloud_()
+	, pcl_rgb_image_()
+	, cv_rgb_image_()
+	, keypoint_detector_() 
+	, descriptor_extractor_()
+	, fx_()
+	, fy_()
+	, cx_()
+	, cy_()
+	, estimate_camera_parameters_(estimate_camera_parameters)
+	, cv_keypoints_()
+	, cv_descriptors_()
+	{}
 
 	virtual ~OpenCVBaseFeaturesFinder() {}
 
@@ -53,30 +63,47 @@ public:
 	void 
 	setInputCloud(const PointCloudInPtr &cloud);
 
-	inline void 
+	void 
 	setKeypointDetector(const FeatureDetectorPtr &keypoint_detector)
 	{
 		keypoint_detector_ = keypoint_detector;	
 	}
 
-	inline FeatureDetectorPtr 
+	FeatureDetectorPtr 
 	getKeypointDetector()
 	{
 		return keypoint_detector_;	
 	}
 
-	inline void 
+	void 
 	setDescriptorExtractor(const DescriptorExtractorPtr &descriptor_extractor)
 	{
 		descriptor_extractor_ = descriptor_extractor;
 	}
 
-	inline void 
+	void 
 	getDescriptorExtractor()
 	{
 		return descriptor_extractor_;
 	}
 
+	void
+	setCameraParameters(float fx, float fy, float cx, float cy)
+	{
+		fx_ = fx; fy_ = fy; cx_ = cx; cy_ = cy;
+	};
+
+	void
+	getCameraParameters(float &fx, float &fy, float &cx, float &cy)
+	{
+		fx = fx_; fy = fy_; cx = cx_; cy = cy_;
+	};
+
+	void 
+	estimateCameraParameters()
+	{
+		estimate_camera_parameters_ = true;
+	}
 protected:
 
 	virtual void 
@@ -115,8 +142,8 @@ protected:
 		keypoint3D.octave   = keypoint2D.octave;
 	}
 
-	void 
-	resetCameraParameters();
+	bool
+	computeCameraParameters(const PointCloudInPtr &cloud);
 
 	PointCloudInPtr rgb_cloud_; 
 	pcl::PCLImage pcl_rgb_image_;
@@ -126,6 +153,7 @@ protected:
 	DescriptorExtractorPtr descriptor_extractor_;
 
 	float fx_, fy_, cx_, cy_; // camera parameters
+	bool estimate_camera_parameters_;
 
 	std::vector<cv::KeyPoint> cv_keypoints_;
 	cv::Mat cv_descriptors_;

@@ -26,7 +26,7 @@ const int RANSAC_MAX_ITER = 100;
 const int ICP_MAX_ITER = 50;
 
 GlobalRegistration<PointXYZRGBA, PointWithScale, SURFSignature128>::Ptr
-GlobalRegistrationFactory::ORBAndSURF() const
+GlobalRegistrationFactory::ORBAndSURF(float fx, float fy, float cx, float cy) const
 {
 	auto registration = std::make_shared<GlobalRegistration<PointXYZRGBA, PointWithScale, SURFSignature128>>(true, true);
 	// auto registration = std::make_shared<GlobalRegistration<PointXYZRGBA, PointWithScale, SURFSignature128>>(false, true);
@@ -38,6 +38,7 @@ GlobalRegistrationFactory::ORBAndSURF() const
 	auto finder = std::make_shared<OpenCVRealFeaturesFinder<PointXYZRGBA, PointWithScale, SURFSignature128>>();
 	finder->setKeypointDetector(cv::FeatureDetector::create("ORB"));	
 	finder->setDescriptorExtractor(cv::DescriptorExtractor::create("SURF"));
+	finder->setCameraParameters(fx, fy, cx, cy);
 	registration->setFeaturesFinder(finder);
 	
 	// matcher setup	
