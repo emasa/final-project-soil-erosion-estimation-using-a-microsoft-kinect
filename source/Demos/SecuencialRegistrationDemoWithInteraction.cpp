@@ -36,15 +36,15 @@ getCameraParametersFromDevice(double &fx, double &fy, double &cx, double &cy,
 		auto device = pcl::OpenNIGrabber(device_id).getDevice();
 		// OpenNIGrabber::setupDevice from line 386
 		float depth_width  = device->getDepthOutputMode().nXRes;
-		float depth_height = device->getDepthOutputMode().nXRes;
-		 	float image_width  = device->getImageOutputMode().nXRes;
+		float depth_height = device->getDepthOutputMode().nYRes;
+		float image_width  = device->getImageOutputMode().nXRes;
 		float image_height = device->getImageOutputMode().nYRes;
 
 		// OpenNIGrabber::convertToXYZRGBPointCloud from line 637 
 		float cloud_width  = std::max (image_width, depth_width);
 		float cloud_height = std::max (image_height, depth_height);
-		fx = 1.0f / device->getImageFocalLength (depth_width);
-		fy = 1.0f / device->getImageFocalLength (depth_width);
+		fx = device->getImageFocalLength (depth_width);
+		fy = device->getImageFocalLength (depth_width);
 		cx = ((float)cloud_width - 1.f) / 2.f;
 		cy = ((float)cloud_height - 1.f) / 2.f;
 
@@ -129,8 +129,13 @@ int main(int argc, const char* argv[])
 		}
 
 		input_dir_path = fs::path(input_dir);
-		pcl::getAllPcdFilesInDirectory ((input_dir_path / CLOUDS_DIR).c_str(), clouds);
-		
+		fs::path clouds_dir_path = (input_dir_path / CLOUDS_DIR);
+		pcl::getAllPcdFilesInDirectory (clouds_dir_path.c_str(), clouds);
+		for (auto &cloud : clouds) 
+		{
+			cloud = (clouds_dir_path / cloud).c_str();
+		}
+
 		int min_clouds = mode == "files" ? 2 : 1;
 		if ( clouds.size() < min_clouds )
 		{

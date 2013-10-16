@@ -206,7 +206,7 @@ GlobalRegistration<PointInT, KeypointT, DescriptorT>::updateGlobalAlignment (con
 	global_alignment_.addPointCloud(new_featured_cloud.keypoints, new_pose_vec);
 	global_alignment_.setCorrespondences(new_vertex, last_vertex, matches_info.matches);
 
-	if (findNewEdges()) globalOptimize();
+	if ( findNewEdges() ) globalOptimize();
 }
 
 template<typename PointInT, typename KeypointT, typename DescriptorT> CloudLocation& 
@@ -275,11 +275,9 @@ GlobalRegistration<PointInT, KeypointT, DescriptorT>::findNewEdges()
 		}
 
 		MatchesInfo matches_info;
-		computeMatches(featured_clouds_[loc.idx], featured_clouds_[ngb_loc.idx], matches_info);
-
-		int num_inliers = matches_info.matches->size();
-		if ( num_inliers < inliers_threshold_ ) 
+		if ( computeMatches(featured_clouds_[loc.idx], featured_clouds_[ngb_loc.idx], matches_info) ) 
 		{
+			int num_inliers = matches_info.matches->size();
 			PCL_INFO("clouds %i, %i are close but %i matches are not enough. min required : %i\n", 
 					  ngb_loc.idx, loc.idx, num_inliers, inliers_threshold_);
 		} else {

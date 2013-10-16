@@ -6,6 +6,7 @@
 #include <pcl/point_representation.h>
 #include <pcl/registration/correspondence_rejection_sample_consensus.h>
 #include <pcl/registration/transformation_estimation_lm.h>
+#include <pcl/registration/transformation_estimation_svd.h>
 #include <pcl/registration/icp.h>
 #include <opencv2/features2d/features2d.hpp>
 #include <opencv2/nonfree/nonfree.hpp>
@@ -55,8 +56,10 @@ GlobalRegistrationFactory::ORBAndSURF(float fx, float fy, float cx, float cy) co
 	registration->setOutliersRejector(rejector);
 
 	// pair transformation setup
-	TransformationEstimationLM<PointWithScale, PointWithScale>::Ptr 
-		estimator(new TransformationEstimationLM<PointWithScale, PointWithScale>);
+	// TransformationEstimationLM<PointWithScale, PointWithScale>::Ptr 
+	// 	estimator(new TransformationEstimationLM<PointWithScale, PointWithScale>);
+	TransformationEstimationSVD<PointWithScale, PointWithScale>::Ptr 
+		estimator(new TransformationEstimationSVD<PointWithScale, PointWithScale>);
 	registration->setPairTransformationEstimation(estimator);
 
 	// icp setup
