@@ -8,16 +8,16 @@ find_package( OpenCV 2.4.6 REQUIRED )
 
 # PCL (required)
 find_package( PCL 1.7 REQUIRED )
-include_directories( ${PCL_INCLUDE_DIRS} )
-add_definitions( ${PCL_DEFINITIONS} )
-link_directories( ${PCL_LIBRARY_DIRS} )
+
+include_directories(${PCL_INCLUDE_DIRS} ${EIGEN3_INCLUDE_DIRS})
+link_directories(${PCL_LIBRARY_DIRS} ${EIGEN3_LIBRARY_DIRS})
+add_definitions(${PCL_DEFINITIONS} ${EIGEN3_DEFINITIONS}) 
 
 # BOOST (required)
 find_package( Boost 1.49 COMPONENTS program_options REQUIRED )
 include_directories( ${Boost_INCLUDE_DIR} )
 
 # workaround
-# set(OPENNI_LIBRARY /usr/lib/libOpenNI.so)
 # replace on /usr/include/ni/XnPlatform.h 
 # linux by __linux__ and i386 by __i386__
 

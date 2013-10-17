@@ -11,7 +11,7 @@
 #include <pcl/PCLPointCloud2.h>
 #include <pcl/common/common.h>
 #include <pcl/common/transforms.h>
-#include <pcl/common/conversions.h>
+#include <pcl/conversions.h>
 #include <pcl/common/file_io.h>
 #include <pcl/console/print.h>
 #include <pcl/console/time.h>

@@ -1,6 +1,5 @@
 #ifndef GLOBAL_REGISTRATION_H
 #define GLOBAL_REGISTRATION_H
-#define PCL_NO_PRECOMPILE
 
 #include <memory>
 #include <vector>
@@ -21,13 +20,13 @@
 
 // default parameters
 
-const int DEFAULT_INLIERS_THRESHOLD = 60;
+const int DEFAULT_MIN_NUM_INLIERS = 60;
 const int DEFAULT_EXTRA_EDGES = 2;
+const int DEFAULT_WINDOW_SIZE = 1;
 
 const float DEFAULT_RADIUS = 0.5; // meters
 const float DEFAULT_MIN_RADIUS_PROPORTION = 0.2;
 const float DEFAULT_MIN_DISTANCE = DEFAULT_RADIUS * DEFAULT_MIN_RADIUS_PROPORTION;
-const int   DEFAULT_WINDOW_SIZE = static_cast<int>( std::ceil(1. / DEFAULT_MIN_RADIUS_PROPORTION) );
 
 struct CloudLocation
 {
@@ -144,7 +143,7 @@ public:
 	, outliers_rejector_()
 	, transformation_estimation_()
 	, global_alignment_()
-	, inliers_threshold_(DEFAULT_INLIERS_THRESHOLD)
+	, min_num_inliers_(DEFAULT_MIN_NUM_INLIERS)
 	, auto_config_(auto_config)
 	, radius_(DEFAULT_RADIUS)
 	, min_radius_proportion_(DEFAULT_MIN_RADIUS_PROPORTION)
@@ -199,10 +198,10 @@ public:
 	getICP() { return icp_; }
 
 	void
-	setInliersThreshold(int inliers_threshold) { inliers_threshold_ = inliers_threshold; }
+	setMinNumInliers(int min_num_inliers) { min_num_inliers_ = min_num_inliers; }
 
 	int
-	getInliersThreshold() { return inliers_threshold_; }
+	getMinNumInliers() { return min_num_inliers_; }
 
 	void
 	setLocationRadius(float radius) { radius_ = radius; }
@@ -252,7 +251,8 @@ private:
 	bool
 	computeMatches(const FeaturedCloud& src, 
 				   const FeaturedCloud& tgt,
-				   MatchesInfo &matches_info);
+				   MatchesInfo &matches_info, 
+				   int min_num_inliers);
 
 	bool 
 	estimateTransformation(const FeaturedCloud& src, 
@@ -284,7 +284,7 @@ private:
 
 	GlobalAlignment global_alignment_;
 
-	int inliers_threshold_;
+	int min_num_inliers_;
 
 	bool auto_config_;
 

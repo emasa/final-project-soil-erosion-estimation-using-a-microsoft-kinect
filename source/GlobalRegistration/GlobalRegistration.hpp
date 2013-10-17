@@ -24,7 +24,7 @@ GlobalRegistration<PointInT, KeypointT, DescriptorT>::proccessCloud(const PointC
 	FeaturedCloud featured_cloud(cloud);
 	if ( !computeFeatures(featured_cloud) ) 
 	{
-		PCL_WARN("# features are not enough. min required : %i\n", inliers_threshold_);
+		PCL_WARN("# features are not enough. min required : %i\n", min_num_inliers_);
 		return NOT_ENOUGH_FEATURES;
 	}
 
@@ -41,9 +41,9 @@ GlobalRegistration<PointInT, KeypointT, DescriptorT>::proccessCloud(const PointC
 	{	
 		const auto &last_featured_cloud = featured_clouds_.back();	
 		MatchesInfo matches_info;
-		if ( !computeMatches(featured_cloud, last_featured_cloud, matches_info) ) 
+		if ( !computeMatches(featured_cloud, last_featured_cloud, matches_info, min_num_inliers_) ) 
 		{
-			PCL_WARN("inliers are not enough. min required : %i\n", inliers_threshold_);
+			PCL_WARN("inliers are not enough. min required : %i\n", min_num_inliers_);
 			return NOT_ENOUGH_INLIERS;
 		}
 		if ( !estimateTransformation(featured_cloud, last_featured_cloud, matches_info) )
@@ -103,7 +103,7 @@ GlobalRegistration<PointInT, KeypointT, DescriptorT>::computeFeatures(FeaturedCl
 													 *featured_cloud.descriptors);		
 
 	int num_features = featured_cloud.keypoints->size();
-	if ( featured_cloud.keypoints->size() < inliers_threshold_ ) 
+	if ( featured_cloud.keypoints->size() < min_num_inliers_ ) 
 	{
 		success = false;
 	}	
@@ -116,7 +116,8 @@ GlobalRegistration<PointInT, KeypointT, DescriptorT>::computeFeatures(FeaturedCl
 template<typename PointInT, typename KeypointT, typename DescriptorT> bool 
 GlobalRegistration<PointInT, KeypointT, DescriptorT>::computeMatches(const FeaturedCloud& src, 
 																	 const FeaturedCloud& tgt,
-																	 MatchesInfo &matches_info)
+																	 MatchesInfo &matches_info, 
+																	 int min_num_inliers)
 {
 	assert( features_matcher_ ); assert ( outliers_rejector_ );
 	bool success = true, ransac = false;
@@ -124,7 +125,7 @@ GlobalRegistration<PointInT, KeypointT, DescriptorT>::computeMatches(const Featu
 	pcl::CorrespondencesPtr tmp_matches(new pcl::Correspondences);
 	features_matcher_->match(src.descriptors, tgt.descriptors, *tmp_matches); 
 
-	if (tmp_matches->size() < inliers_threshold_)
+	if (tmp_matches->size() < min_num_inliers)
 	{
 		matches_info.matches = tmp_matches;
 	} else
@@ -136,7 +137,7 @@ GlobalRegistration<PointInT, KeypointT, DescriptorT>::computeMatches(const Featu
 		ransac = true;
 	}
 
-	if (matches_info.matches->size() < inliers_threshold_) 
+	if (matches_info.matches->size() < min_num_inliers) 
 	{
 		success = false;
 	}
@@ -275,11 +276,11 @@ GlobalRegistration<PointInT, KeypointT, DescriptorT>::findNewEdges()
 		}
 
 		MatchesInfo matches_info;
-		if ( computeMatches(featured_clouds_[loc.idx], featured_clouds_[ngb_loc.idx], matches_info) ) 
+		if ( computeMatches(featured_clouds_[loc.idx], featured_clouds_[ngb_loc.idx], matches_info, min_num_inliers_) ) 
 		{
 			int num_inliers = matches_info.matches->size();
 			PCL_INFO("clouds %i, %i are close but %i matches are not enough. min required : %i\n", 
-					  ngb_loc.idx, loc.idx, num_inliers, inliers_threshold_);
+					  ngb_loc.idx, loc.idx, num_inliers, min_num_inliers_);
 		} else {
 			PCL_INFO("adding edge %i->%i to the graph.\n", loc.idx, ngb_loc.idx);
 			global_alignment_.setCorrespondences(loc.idx, ngb_loc.idx, matches_info.matches);
@@ -309,10 +310,11 @@ GlobalRegistration<PointInT, KeypointT, DescriptorT>::autoConfiguration(const Po
 
 	min_distance_ = radius_ * min_radius_proportion_;
 
-	window_size_  = static_cast<int>( std::ceil(1 / min_radius_proportion_) );
+	PCL_INFO("auto configured parameters radius : %f, min_distance %f\n", 
+			  radius_, min_distance_);
 
-	PCL_INFO("radius : %f, min_distance %f, window_size %i\n", 
-			  radius_, min_distance_, window_size_);
+	PCL_INFO("manual configured parameters window_size : %i, extra_edges : %i, min_num_inliers : %i\n", 
+		  	 window_size_, extra_edges_, min_num_inliers_);
 }
 
 #endif // GLOBAL_REGISTRATION_HPP

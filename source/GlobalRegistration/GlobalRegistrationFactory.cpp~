@@ -1,4 +1,4 @@
-#define PCL_NO_PRECOMPILE
+// #define PCL_NO_PRECOMPILE
 
 #include <memory>
 
@@ -30,6 +30,9 @@ GlobalRegistration<PointXYZRGBA, PointWithScale, SURFSignature128>::Ptr
 GlobalRegistrationFactory::ORBAndSURF(float fx, float fy, float cx, float cy) const
 {
 	auto registration = std::make_shared<GlobalRegistration<PointXYZRGBA, PointWithScale, SURFSignature128>>(true, true);
+	// auto registration = std::make_shared<GlobalRegistration<PointXYZRGBA, PointWithScale, SURFSignature128>>(false, true);
+	// registration->setWindowSize(1);
+	// registration->setExtraEdges(3);
 
 	// feature detector setup	
 	cv::initModule_nonfree();
@@ -53,10 +56,10 @@ GlobalRegistrationFactory::ORBAndSURF(float fx, float fy, float cx, float cy) co
 	registration->setOutliersRejector(rejector);
 
 	// pair transformation setup
-	TransformationEstimationLM<PointWithScale, PointWithScale>::Ptr 
-		estimator(new TransformationEstimationLM<PointWithScale, PointWithScale>);
-	// TransformationEstimationSVD<PointWithScale, PointWithScale>::Ptr 
-	// 	estimator(new TransformationEstimationSVD<PointWithScale, PointWithScale>);
+	// TransformationEstimationLM<PointWithScale, PointWithScale>::Ptr 
+	// 	estimator(new TransformationEstimationLM<PointWithScale, PointWithScale>);
+	TransformationEstimationSVD<PointWithScale, PointWithScale>::Ptr 
+		estimator(new TransformationEstimationSVD<PointWithScale, PointWithScale>);
 	registration->setPairTransformationEstimation(estimator);
 
 	// icp setup
