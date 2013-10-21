@@ -33,15 +33,22 @@ add_library(features
 					 ${SRC_DIR}/GlobalRegistration/GlobalRegistration.cpp
 					 ${INCLUDE_DIR}/GlobalRegistration/GlobalRegistrationFactory.h
 					 ${SRC_DIR}/GlobalRegistration/GlobalRegistrationFactory.cpp
-
-					 # Utils
-					 ${INCLUDE_DIR}/Utils/Utils.h
-					 ${SRC_DIR}/Utils/Utils.cpp 
 		)
 
 target_link_libraries(features ${PCL_LIBRARIES} 
 							   ${OpenCV_LIBRARIES} 
 							   ${Boost_LIBRARIES}
+					 )
+
+# -----------------------------------------------------------------------------
+
+add_library(utils
+					 # Utils
+					 ${INCLUDE_DIR}/Utils/Utils.h
+					 ${SRC_DIR}/Utils/Utils.cpp 
+		)
+
+target_link_libraries(utils    ${PCL_LIBRARIES} 
 					 )
 
 # -----------------------------------------------------------------------------
@@ -72,34 +79,8 @@ target_link_libraries(tools ${PCL_LIBRARIES}
 						    ${Boost_LIBRARIES}
 					 		io
 					 		features
+					 		utils
 					 )
-
-
-# -----------------------------------------------------------------------------
-
-# add_executable(SecuencialRegistrationDemo.out 
-# 					${SRC_DIR}/Demos/SecuencialRegistrationDemo.cpp
-# 			  )
-
-# target_link_libraries(SecuencialRegistrationDemo.out ${PCL_LIBRARIES} 
-# 													 ${OpenCV_LIBRARIES} 
-# 								 		      		 features
-# 					 								 io
-# 					 )
-
-# -----------------------------------------------------------------------------
-
-# add_executable(SecuencialRegistrationDemoWithVisualUpdates.out 
-# 					${SRC_DIR}/Demos/SecuencialRegistrationDemoWithVisualUpdates.cpp
-# 			  )
-
-# target_link_libraries(SecuencialRegistrationDemoWithVisualUpdates.out ${PCL_LIBRARIES} 
-# 							   				  					      ${OpenCV_LIBRARIES} 
-# 								 		      		 				  features
-# 																	  io
-# 					 )
-
-# -----------------------------------------------------------------------------
 
 add_executable(SecuencialRegistrationDemoWithInteraction.out 
 					${SRC_DIR}/Demos/SecuencialRegistrationDemoWithInteraction.cpp
@@ -108,6 +89,8 @@ add_executable(SecuencialRegistrationDemoWithInteraction.out
 target_link_libraries(SecuencialRegistrationDemoWithInteraction.out   ${PCL_LIBRARIES} 
 							   				  					      ${OpenCV_LIBRARIES} 
 								 		      		 				  ${Boost_LIBRARIES}
+ 		      		 				   								  features
+ 		      		 				   								  utils
 								 		      		 				  tools
 					 )
 
@@ -118,9 +101,9 @@ add_executable(ScalerDemo.out
 			  )
 
 target_link_libraries(ScalerDemo.out   ${PCL_LIBRARIES} 
-				  					   ${OpenCV_LIBRARIES} 
  		      		 				   ${Boost_LIBRARIES}
  		      		 				   features
+ 		      		 				   utils
 					 )
 
 # -----------------------------------------------------------------------------
@@ -130,9 +113,9 @@ add_executable(FindExtremaDemo.out
 			  )
 
 target_link_libraries(FindExtremaDemo.out   ${PCL_LIBRARIES} 
-				  					   		${OpenCV_LIBRARIES} 
 	 		      		 				    ${Boost_LIBRARIES}
 	 		      		 				    features
+	 		      		 				    utils
 					 )
 
 # -----------------------------------------------------------------------------

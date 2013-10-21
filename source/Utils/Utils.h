@@ -7,7 +7,6 @@
 #include <pcl/recognition/color_gradient_dot_modality.h>
 #include <pcl/visualization/common/common.h>
 #include <pcl/visualization/pcl_visualizer.h>
-#include <opencv2/core/core.hpp>
 
 template<typename PointInT, typename KeypoinT>
 void displayKeypoints(const typename pcl::PointCloud<PointInT>::Ptr &cloud, 

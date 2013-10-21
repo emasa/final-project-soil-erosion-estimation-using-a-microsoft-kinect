@@ -276,7 +276,7 @@ GlobalRegistration<PointInT, KeypointT, DescriptorT>::findNewEdges()
 		}
 
 		MatchesInfo matches_info;
-		if ( computeMatches(featured_clouds_[loc.idx], featured_clouds_[ngb_loc.idx], matches_info, min_num_inliers_) ) 
+		if ( !computeMatches(featured_clouds_[loc.idx], featured_clouds_[ngb_loc.idx], matches_info, min_num_inliers_) ) 
 		{
 			int num_inliers = matches_info.matches->size();
 			PCL_INFO("clouds %i, %i are close but %i matches are not enough. min required : %i\n", 
