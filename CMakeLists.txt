@@ -18,7 +18,7 @@ find_package( Boost 1.49 COMPONENTS program_options REQUIRED )
 include_directories( ${Boost_INCLUDE_DIR} )
 
 # workaround
-# replace on /usr/include/ni/XnPlatform.h 
+# replace on /usr/include/ni/XnPlatform.h or /usr/include/openni/XnPlatform.h 
 # linux by __linux__ and i386 by __i386__
 
 # PROJECT setup
