@@ -20,7 +20,8 @@
 
 // default parameters
 
-const int DEFAULT_MIN_NUM_INLIERS = 60;
+const int DEFAULT_MIN_NUM_INLIERS   = 45;
+const int DEFAULT_MIN_NUM_EXTRA_INLIERS = 30;
 const int DEFAULT_EXTRA_EDGES = 2;
 const int DEFAULT_WINDOW_SIZE = 1;
 
@@ -148,6 +149,7 @@ public:
 	, radius_(DEFAULT_RADIUS)
 	, min_radius_proportion_(DEFAULT_MIN_RADIUS_PROPORTION)
 	, min_distance_(DEFAULT_MIN_DISTANCE)
+	, min_num_extra_inliers_(DEFAULT_MIN_NUM_EXTRA_INLIERS)
 	, extra_edges_(DEFAULT_EXTRA_EDGES)
 	, window_size_(DEFAULT_WINDOW_SIZE)
 	, cloud_location_search_()
@@ -202,6 +204,13 @@ public:
 
 	int
 	getMinNumInliers() { return min_num_inliers_; }
+
+	void
+	setMinNumExtraInliers(int min_num_extra_inliers) 
+	{ min_num_extra_inliers_ = min_num_extra_inliers; }
+
+	int
+	getMinNumExtraInliers() { return min_num_extra_inliers_; }
 
 	void
 	setLocationRadius(float radius) { radius_ = radius; }
@@ -284,7 +293,7 @@ private:
 
 	GlobalAlignment global_alignment_;
 
-	int min_num_inliers_;
+	int min_num_inliers_, min_num_extra_inliers_;
 
 	bool auto_config_;
 

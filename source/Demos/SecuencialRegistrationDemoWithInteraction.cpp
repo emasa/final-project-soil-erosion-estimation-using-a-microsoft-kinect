@@ -177,7 +177,9 @@ int main(int argc, const char* argv[])
 	auto algorithm = GlobalRegistrationFactory().ORBAndSURF(fx, fy, cx, cy);	
 	RegistrationTool<std::decltype(algorithm)::element_type> tool(backup);
 	tool.setRegistrationAlgorithm(algorithm);
-	
+	algorithm->setWindowSize(1);
+	algorithm->setExtraEdges(3); 
+
 	if ( !tool.setUpOutputDirectory(output_dir_path.c_str()) ) 
 	{
 		return -1;

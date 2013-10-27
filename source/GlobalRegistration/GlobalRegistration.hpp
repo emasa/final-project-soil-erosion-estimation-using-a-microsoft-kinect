@@ -276,11 +276,11 @@ GlobalRegistration<PointInT, KeypointT, DescriptorT>::findNewEdges()
 		}
 
 		MatchesInfo matches_info;
-		if ( !computeMatches(featured_clouds_[loc.idx], featured_clouds_[ngb_loc.idx], matches_info, min_num_inliers_) ) 
+		if ( !computeMatches(featured_clouds_[loc.idx], featured_clouds_[ngb_loc.idx], matches_info, min_num_extra_inliers_) ) 
 		{
 			int num_inliers = matches_info.matches->size();
 			PCL_INFO("clouds %i, %i are close but %i matches are not enough. min required : %i\n", 
-					  ngb_loc.idx, loc.idx, num_inliers, min_num_inliers_);
+					  ngb_loc.idx, loc.idx, num_inliers, min_num_extra_inliers_);
 		} else {
 			PCL_INFO("adding edge %i->%i to the graph.\n", loc.idx, ngb_loc.idx);
 			global_alignment_.setCorrespondences(loc.idx, ngb_loc.idx, matches_info.matches);
@@ -304,17 +304,18 @@ GlobalRegistration<PointInT, KeypointT, DescriptorT>::autoConfiguration(const Po
 	float radius_along_x = std::abs(max_bounds.x - min_bounds.x) / 2.;
 	float radius_along_y = std::abs(max_bounds.y - min_bounds.y) / 2.;
 
-	radius_ = (radius_along_y + radius_along_x) / 2.;
+	radius_ = std::min(radius_along_y, radius_along_x);
 	
 	min_radius_proportion_ = DEFAULT_MIN_RADIUS_PROPORTION;
 
 	min_distance_ = radius_ * min_radius_proportion_;
 
-	PCL_INFO("auto configured parameters radius : %f, min_distance %f\n", 
+	PCL_INFO("auto configured parameters : radius : %f, min_distance %f\n", 
 			  radius_, min_distance_);
 
-	PCL_INFO("manual configured parameters window_size : %i, extra_edges : %i, min_num_inliers : %i\n", 
-		  	 window_size_, extra_edges_, min_num_inliers_);
+	PCL_INFO("manual configured parameters :\n");
+	PCL_INFO("window_size : %i, extra_edges : %i, min_num_inliers : %i\n, min_num_extra_inliers : %i\n", 
+		  	 window_size_, extra_edges_, min_num_inliers_, min_num_extra_inliers_);
 }
 
 #endif // GLOBAL_REGISTRATION_HPP
