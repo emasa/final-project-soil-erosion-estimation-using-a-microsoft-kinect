@@ -33,7 +33,6 @@
 template<typename RegistrationAlgorithm>
 RegistrationTool<RegistrationAlgorithm>::RegistrationTool(bool backup_enabled, int digits)
 	: processed_clouds_(0)
-	, visualized_clouds_(0)
 	, started_(false) 
 	, finished_(false)
 	, generator_()
@@ -102,7 +101,8 @@ RegistrationTool<RegistrationAlgorithm>::registerFromFilesAndThenFromCamera
 
 	initVisualization();
 
-	updateVisualization();
+	updateRegistrationVisualization();
+	updateStreamingVisualization();
 
 	runVisualizationLoop();
 }
@@ -237,36 +237,38 @@ RegistrationTool<RegistrationAlgorithm>::captureAndRegister()
 }
 
 template<typename RegistrationAlgorithm> void
-RegistrationTool<RegistrationAlgorithm>::updateVisualization()
+RegistrationTool<RegistrationAlgorithm>::updateRegistrationVisualization(int idx)
 {
-	namespace vis = pcl::visualization;
+	assert( idx == -1 || (0 <= idx && idx < registration_->getNumClouds()) );
 
-	PCL_INFO("Updating visualization...\n");
+	PCL_INFO("Updating registration visualization...\n");
 
-	for (int cloud_idx = 0 ; cloud_idx < registration_->getNumClouds() ; ++cloud_idx)
+	int start_idx = idx != -1 ? idx   : 0;
+	int stop_idx  = idx != -1 ? idx+1 : registration_->getNumClouds();
+	for (int cloud_idx = start_idx ; cloud_idx < stop_idx ; ++cloud_idx)
 	{
 		auto cloud = registration_->getInputCloud(cloud_idx);
 		auto cloud_str = std::to_string(cloud_idx);
 
-		if (cloud_idx == visualized_clouds_)
-		{
-			++visualized_clouds_;
-			vis::PointCloudColorHandlerRGBField<pcl::PointXYZRGBA> color_handler(cloud);
-			viewer_.addPointCloud<pcl::PointXYZRGBA>(cloud, color_handler, cloud_str, registration_viewport_);	
-	      	// viewer_.setPointCloudRenderingProperties (vis::PCL_VISUALIZER_IMMEDIATE_RENDERING, 1.0, cloud_str);		
-		}
-
 		auto PITCH_ROTATION = pcl::getTransformation(0, 0, 0, 0, M_PI, 0);
 		auto visual_pose = PITCH_ROTATION * registration_->getTransformation(cloud_idx);
-		viewer_.updatePointCloudPose(cloud_str, visual_pose);
-	}
 
-	updateStreamingVisualization();
+      	// viewer_.setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_IMMEDIATE_RENDERING, 1.0, cloud_str);
+		bool cloud_visualized = viewer_.updatePointCloudPose(cloud_str, visual_pose);
+		if ( !cloud_visualized )
+		{
+			pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGBA> color_handler(cloud);
+			viewer_.addPointCloud<pcl::PointXYZRGBA>(cloud, color_handler, cloud_str, registration_viewport_);			
+			viewer_.updatePointCloudPose(cloud_str, visual_pose);
+		}
+	}
 }
 
 template<typename RegistrationAlgorithm> void
 RegistrationTool<RegistrationAlgorithm>::updateStreamingVisualization()
 {
+	PCL_INFO("Updating last cloud visualization...\n");
+
 	if (registration_->getNumClouds() == 0) return;
 
 	auto last_cloud = registration_->getInputCloud(registration_->getNumClouds() - 1);
@@ -410,7 +412,8 @@ RegistrationTool<RegistrationAlgorithm>::keyboardManager(const pcl::visualizatio
 		{
 			if ( captureAndRegister() )
 			{
-				updateVisualization();
+				updateRegistrationVisualization();
+				updateStreamingVisualization();
 			}
 		} else if (key == "p" || key == "P")
 		{

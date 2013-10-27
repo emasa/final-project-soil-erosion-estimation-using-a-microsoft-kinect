@@ -68,7 +68,7 @@ private:
 	runVisualizationLoop();
 
 	void
-	updateVisualization();
+	updateRegistrationVisualization(int idx = -1);
 
 	void
 	updateStreamingVisualization();
@@ -85,7 +85,7 @@ private:
 	boost::filesystem::path
 	cloudPathFormat(const boost::filesystem::path &dir, int idx);
 
-	int processed_clouds_, visualized_clouds_;
+	int processed_clouds_;
 	
 	bool started_, finished_;
 
