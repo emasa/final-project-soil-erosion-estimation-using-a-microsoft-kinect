@@ -187,7 +187,8 @@ int main(int argc, const char* argv[])
 
 	fs::path output_dir_path(output_dir);
 
-	auto algorithm = GlobalRegistrationFactory().ORBAndSURF(fx, fy, cx, cy);	
+	auto algorithm = GlobalRegistrationFactory().ORBAndSURF(fx, fy, cx, cy);
+	// auto algorithm = GlobalRegistrationFactory().SURF(fx, fy, cx, cy, 150); 	
 	algorithm->setWindowSize(window_size);
 	algorithm->setExtraEdges(extra_edges);
 	algorithm->setMinNumInliers(min_num_inliers);

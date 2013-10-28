@@ -81,7 +81,7 @@ public:
 		descriptor_extractor_ = descriptor_extractor;
 	}
 
-	void 
+	DescriptorExtractorPtr 
 	getDescriptorExtractor()
 	{
 		return descriptor_extractor_;
