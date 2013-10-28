@@ -23,7 +23,7 @@
 const int DEFAULT_MIN_NUM_INLIERS   = 45;
 const int DEFAULT_MIN_NUM_EXTRA_INLIERS = 30;
 const int DEFAULT_EXTRA_EDGES = 2;
-const int DEFAULT_WINDOW_SIZE = 1;
+const int DEFAULT_WINDOW_SIZE = 5;
 
 const float DEFAULT_RADIUS = 0.5; // meters
 const float DEFAULT_MIN_RADIUS_PROPORTION = 0.2;

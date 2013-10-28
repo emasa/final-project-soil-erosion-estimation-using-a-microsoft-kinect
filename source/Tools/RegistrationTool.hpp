@@ -86,10 +86,9 @@ RegistrationTool<RegistrationAlgorithm>::registerFromFilesAndThenFromCamera
 	clouds_ = clouds;
 	if ( !start() ) return;	
 
-	int to_visualize = 0;
 	for (int count = 0 ; count < clouds.size() ; ++count)
 	{
-		if ( captureAndRegister() ) ++to_visualize;
+		captureAndRegister();
 	}
 
 	mode_ = CAMERA;
@@ -412,8 +411,16 @@ RegistrationTool<RegistrationAlgorithm>::keyboardManager(const pcl::visualizatio
 		{
 			if ( captureAndRegister() )
 			{
-				updateRegistrationVisualization();
+				int last_cloud_idx = registration_->getNumClouds() - 1;
+				updateRegistrationVisualization(last_cloud_idx);
 				updateStreamingVisualization();
+				
+				// update global visualization every CLOUDS_WINDOW clouds
+				int CLOUDS_WINDOW = 7;
+				if (last_cloud_idx % CLOUDS_WINDOW == 0)
+				{
+					updateRegistrationVisualization();
+				}
 			}
 		} else if (key == "p" || key == "P")
 		{

@@ -74,11 +74,10 @@ getCameraParametersFromFile(double &fx, double &fy, double &cx, double &cy,
 
 int main(int argc, const char* argv[])
 {
-	string mode;
-	string input_dir, output_dir;
+	string mode, input_dir, output_dir;
 
-	po::options_description opts("Allowed options");
-	opts.add_options() 
+	po::options_description tool_opts("Tool options");
+	tool_opts.add_options() 
 		("help,h", "produce help message")
 
 		("output-dir,o", po::value<string>(&output_dir), "set output directory [required]")
@@ -92,8 +91,21 @@ int main(int argc, const char* argv[])
 		("backup,b", "enable original cloud backup [default : disabled]")		
 		;
 
+	int window_size, extra_edges, min_num_inliers, min_num_extra_inliers;
+	
+	po::options_description registration_opts("Registration algorithm options");
+	registration_opts.add_options() 
+		("window-size", po::value<int>(&window_size)->default_value(5), "set window size")
+		("extra-edges", po::value<int>(&extra_edges)->default_value(2), "set extra edges")
+		("min-num-inliers", po::value<int>(&min_num_inliers)->default_value(45), "set min inliers")
+		("min-num-extra-inliers", po::value<int>(&min_num_extra_inliers)->default_value(25), "set min extra inliers")		
+		;
+
+	po::options_description all_opts("Options");
+	all_opts.add(tool_opts).add(registration_opts);
+
 	po::basic_command_line_parser<char> parser(argc, argv);
-	parser.options(opts);
+	parser.options(all_opts);
 	parser.allow_unregistered();
 
 	po::variables_map vm;
@@ -102,11 +114,12 @@ int main(int argc, const char* argv[])
 
 	if (vm.count("help")) 
 	{
-    	std::cout << opts
+    	std::cout << tool_opts
     			  << "\n  on camera or camera-recovery modes press : \n" 
     	          << "    space : for capture and register a new cloud\n"
     	          << "    p, P  : for finish registration and save clouds\n"
     	          << "    s, S  : for a registration checkpoint (save aligned clouds)\n"
+    	          << registration_opts
     	          << std::endl;
     	return 0;
 	}
@@ -175,10 +188,12 @@ int main(int argc, const char* argv[])
 	fs::path output_dir_path(output_dir);
 
 	auto algorithm = GlobalRegistrationFactory().ORBAndSURF(fx, fy, cx, cy);	
+	algorithm->setWindowSize(window_size);
+	algorithm->setExtraEdges(extra_edges);
+	algorithm->setMinNumInliers(min_num_inliers);
+	algorithm->setMinNumExtraInliers(min_num_extra_inliers);	 
 	RegistrationTool<std::decltype(algorithm)::element_type> tool(backup);
 	tool.setRegistrationAlgorithm(algorithm);
-	algorithm->setWindowSize(1);
-	algorithm->setExtraEdges(3); 
 
 	if ( !tool.setUpOutputDirectory(output_dir_path.c_str()) ) 
 	{
