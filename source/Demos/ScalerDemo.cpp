@@ -37,10 +37,10 @@ struct Helper
 	void 
 	callback(const PointPickingEvent &event, void* cookie)
 	{
-		int idx = event.getPointIndex();
-		if (idx == -1)
+		if (event.getPointIndex() == -1)
 		{
-			PCL_INFO("Bad point. Select another one.\n"); return;
+			PCL_INFO("Bad point. Select another one.\n"); 
+			return;
 		}
 		event.getPoint(x, y, z);
 
@@ -63,29 +63,30 @@ struct Helper
 	bool finished;
 };
 
-/*
-	if (!vm.count("model_base"))
+float 
+getModelBaseUsingVisualization(const pcl::PointCloud<pcl::PointXYZRGBA>::Ptr &cloud)
+{
+	PCL_INFO("Creating visualizer... Select a point with shift + left click.\n");
+
+	pcl::visualization::PCLVisualizer viewer;
+	PointCloudColorHandlerRGBField<PointXYZRGBA> handler (cloud);	
+	viewer.addPointCloud(cloud, handler, "cloud");
+    viewer.setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_IMMEDIATE_RENDERING, 1.0, "cloud");
+
+	viewer.updatePointCloudPose("cloud", pcl::getTransformation(0, 0, 0, M_PI, 0, 0));
+
+	Helper helper;
+	viewer.registerPointPickingCallback<Helper>(&Helper::callback, helper);
+
+	while (!helper.finished)
 	{
-		PCL_INFO("Creating visualizer... Select a point with shift + left click.\n");
-
-		pcl::visualization::PCLVisualizer viewer;
-		PointCloudColorHandlerRGBField<PointXYZRGBA> handler (cloud_in);
-		viewer.addPointCloud(cloud_in, handler, "cloud");
-		viewer.updatePointCloudPose("cloud", pcl::getTransformation(0, 0, 0, M_PI, 0, 0));
-
-		Helper helper;
-		viewer.registerPointPickingCallback<Helper>(&Helper::callback, helper);
-
-		while (!helper.finished)
-		{
-			viewer.spinOnce (100);
-			boost::this_thread::sleep (boost::posix_time::milliseconds (100));
-		}
-		viewer.close();
-
-		model_base = helper.z;
+		viewer.spinOnce (100);
+		boost::this_thread::sleep (boost::posix_time::milliseconds (100));
 	}
-*/
+	viewer.close();
+
+	return helper.z;
+}
  
 int main(int argc, char** argv)
 {
@@ -102,8 +103,9 @@ int main(int argc, char** argv)
 		("output,o", po::value<string>(&output_path), "set output cloud [required]")
 		("scale,s", po::value<float>(&scale), "set scale [required]")
 		("real_base,r", po::value<float>(&real_base), "set real base [required]")
-		("model_base,m", po::value<float>(&model_base), "set model base . Use model scale. [required]")
-		 // "set model base . Use model scale. [if not seted, use visualizer to pick a point]")
+		("model_base,m", po::value<float>(&model_base), 
+		 "set model base. [if not seted, use visualizer to pick a point]")
+		 // "set model base. [required]")
 		("drop_border,p", po::value<float>(&border_percent)->default_value(2.5), "border percent to be eliminated")
 		("min_z,n", po::value<float>(&min_z), "set min z bound")
 		("max_z,x", po::value<float>(&max_z), "set max z bound")
@@ -125,7 +127,6 @@ int main(int argc, char** argv)
 	   || !vm.count("output") 
 	   || !vm.count("scale") 
 	   || !vm.count("real_base")
-	   || !vm.count("model_base")
 	   || !vm.count("min_z")
 	   || !vm.count("max_z")
 	   ) 
@@ -133,21 +134,34 @@ int main(int argc, char** argv)
 		PCL_ERROR("Set all required parameters.\n");
 		std::cout << opts << std::endl; return -1;
 	}
-
-	pcl::PCLPointCloud2 blob;	
+	
 	std::vector<PointCloud<PointXYZRGBA>::Ptr> input_clouds;
-
+	pcl::PCLPointCloud2 blob;
+	
 	for (const auto& path : input_paths)
 	{
 		if (loadCloud(path, blob))
 		{
-			PointCloud<PointXYZRGBA>::Ptr cloud_in(new PointCloud<PointXYZRGBA>);
-			pcl::fromPCLPointCloud2<pcl::PointXYZRGBA>(blob, *cloud_in);
+			// TODO : chequar por campos XYZRGBA
+			PointCloud<pcl::PointXYZRGBA>::Ptr cloud_in(new PointCloud<pcl::PointXYZRGBA>);			
+			fromPCLPointCloud2<pcl::PointXYZRGBA>(blob, *cloud_in);
 			input_clouds.push_back(cloud_in);
-		} else {
+		} else 
+		{		
 			PCL_ERROR("IO error found with %s. skipping cloud.\n", path.c_str());
 		}
 	}	
+	
+	bool use_visualization = !vm.count("model_base");
+	if (use_visualization)
+	{
+		PointCloud<pcl::PointXYZRGBA>::Ptr concateneted_cloud_in(new PointCloud<pcl::PointXYZRGBA>);
+		for (const auto& cloud_in : input_clouds)
+		{
+			*concateneted_cloud_in += *cloud_in;
+		}
+		model_base = getModelBaseUsingVisualization(concateneted_cloud_in);	
+	}
 	
 	TicToc tt;
 	print_highlight ("Computing ");
@@ -162,7 +176,9 @@ int main(int argc, char** argv)
 
 	// TODO: ver como manejamos los nan's en x,y,z
 
-	PointCloud<PointXYZRGBA> cloud_out, partial_cloud_out;	
+	PointCloud<PointXYZRGBA>::Ptr cloud_in(new PointCloud<PointXYZRGBA>);
+	PointCloud<PointXYZRGBA> cloud_out, partial_cloud_out;
+
 	for (const auto& cloud_in : input_clouds)
 	{
 		tool.setInputCloud(cloud_in);
