@@ -1,0 +1,39 @@
+\chapter{Introducci\'{o}n}
+
+\section{Motivaciones}
+\label{S:motivaciones}
+
+%%% redactar mejor el primer parrafo haciendo enfasis en porque los modelos son a escala reducida  
+Los modelos f\'{i}sicos son una de las principales herramientas que cuenta la ingenier\'{i}a para la medici\'{o}n y estudio de la erosi\'{o}n, as\'{i} como la acumulaci\'{o}n y transporte de sedimentos.
+Tradicionalmente, la medici\'{o}n de variables sedimentarias en laboratorio ha consistido en el relevamiento manual de puntos, generalmente distribuidos sobre una grilla equidistante, por medio de un nivel \'{o}ptico y una mira telesc\'{o}pica.
+%%% Ver si redactamos mejor lo de los errores
+Esta metodolog\'{i}a, de car\'{a}cter intrusiva, tiene errores intr\'{i}nsecos generados por la intervenci\'{o}n humana y restricciones relativas a los instrumentos de medici\'{o}n; algunas fuentes de error son la incorrecta verticalidad de la mira, el inexacto apoyo del palpador sobre el modelo, errores en las lecturas, problemas en la verticalidad del nivel debido a las condiciones del terreno, entre otros.
+%%% Cambiar la expresion trade-off por una castellano, revisar lo de los perfiles transversales 
+Ademas, la precisi\'{o}n de posteriores productos (como pueden ser las curvas de nivel, modelos en 3D, perfiles transversales) y los an\'{a}lisis que puedan ser realizados utilizando dichos derivados, se veran afectados por la densidad de puntos relevados y la elecci\'{o}n de los mismos. Esta limitaci\'{o}n produce un trade-off entre la densidad de puntos, el area relevada y el tiempo dedicado a cada ensayo, que el ingeniero debe afrontar a la hora de realizar un ensayo. \\
+
+En el campo de la robotica, la construccion de mapas 3D del entorno ha sido considerado por a\~{n}os una tarea fundamental para su aplicacion en la navegacion autonoma y la manipulacion de objetos por parte de un robot. Diferentes sensores han sido utilizados para lograr este proposito, entre ellos se puede mencionar el uso de sonares[ref], escaneres laser[ref], camaras estereoscopicas[ref], camaras RGB-D[ref], etc. 
+
+%%% Breve introduccion en la tecnica de SLAM
+
+En los ultimos a\~{n}os, sensores RGB-D como el dispositivo Microsoft Kinect han aparecido en la industria del entretenimiento. Sus prestaciones tecnicas y costo asequible lo han convertido en una solucion idonea para ser utilizada en diferentes aplicaciones de Computer Vision, como es el caso de la generacion de mapas en 3D. \\
+%%% agregar un poco mas de informacion sobre los dispositivos RGB-D
+
+%%% en lugar de mapa en 3D habria que decir DEM (modelo digital de elevacion)
+En este trabajo se propone una nueva tecnica para la medicion de erosion en modelos a escala reducida mediante la generacion automatica de un mapa en 3D utilizando camaras RGB-D de bajo costo y tecnicas de Computer Vision.
+%%% agregar las ventajas de la t\'{e}cnica digital (enfocado en las ventajas : densidad de datos, velocidad de medici\'{o}n, automatizaci\'{o}n, mayor cobertura, no intrusiva)
+ 
+
+\section{Objetivos}
+\label{S:objetivos}
+
+%%% en lugar de mapa en 3D habria que decir DEM (modelo digital de elevacion)
+El principal objetivo de este trabajo es la implementacion de una sistema que permita generar un mapa en 3D del modelo fisico por medio de un sensor RGB-D, para ser utilizado en los ensayos de medicion de erosion en laboratorio. \\
+%%% Agregar que debe permitir la visualizacion para poder realizar las capturas
+El sistema debera capturar las nubes de puntos, generar el modelo 3D del area de trabajo, filtrar posibles inconsistencias y escalar los datos de modelo a prototipo. \\
+Se validara la nueva t\'{e}cnica con respecto a la tecnica tradicional para realizar una evaluacion de su precision. \\
+Se busca desarrollar una librer\'{i}a que permita crear futuras aplicaciones y sirva como base para crear mejores soluciones al problema de la medicion de erosion.
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "template"
+%%% End: 

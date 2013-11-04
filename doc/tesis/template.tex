@@ -1,0 +1,95 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\documentclass[12pt,papel,twoside]{tesis}
+\documentclass[12pt,screen,twoside,pagebackref]{tesis}
+%\documentclass[12pt,papel,singlespace,oneside]{tesis}
+%\documentclass[12pt,papel,preprint,singlespace,oneside]{tesis}
+
+
+%%%%%%%%%%%%%%%%%%%%% Paquetes extra %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Por conveniencia: aqu\'{\i} puede cargar todos los paquetes y definir los comandos 
+% que necesite
+\usepackage{extra}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%% Informacion sobre la tesis %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{Software para medici\'{o}n de erosi\'{o}n y sedimentaci\'{o}n en modelos f\'{i}sicos por medio de relevamiento digital de superficies}
+\author{Emanuel Sanchez Aimar}
+\director{Mgs. Ing. Mariana Pagot}
+\codirector{Dr. Oscar Bustos}
+\carrera{Licenciatura en Ciencias de la Computaci\'{o}n}
+\laboratorio{}
+\grado{}
+\palabrasclave{A definir}
+\keywords{to define}
+% Si queremos poner la fecha manualmente:
+% \date{Diciembre de 2099}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\titlepagefalse % Si no quiere compilar la portada descomente esta linea
+%\includeonly{apendices} % Compilar s\'{o}lo estos archivos 
+\graphicspath{{figs/}} % Lugar donde encontrar las figuras generales (se puede poner uno en cada cap{\'{\i}}tulo)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{document}
+
+% Dentro del environment 'preliminary' va:
+% la dedicatoria, resumen, abstract, indices
+
+\begin{preliminary}
+
+% Escriba su dedicatoria
+\dedicatoria{
+A mi familia\\
+A mis amigos\\
+A todos los que me conocen\\
+A toda esa otra gente que no
+}
+
+%%% \'{I}ndices %%%%
+
+\begin{abreviaturas}
+                                %Abreviaturas
+\end{abreviaturas}
+
+\tableofcontents                %\'{I}ndice
+
+\listoffigures                  %Figuras
+
+\listoftables                   %Tablas
+
+\include{resumen}
+
+\end{preliminary}
+
+
+% Podemos usar cualquiera de los dos comandos: \input o \include para incluir el texto
+\include{cap1}
+\include{cap2}
+\include{cap3}
+\include{cap4}
+
+%\appendix
+% \include{apend1}
+
+\begin{biblio}
+\bibliography{mibib}
+\end{biblio}
+
+\begin{postliminary}
+
+\begin{seccion}{Publicaciones asociadas}
+  \begin{enumerate}
+  \item Simposio \textbf{ABC}, 2013
+  \item Congreso \textbf{ABC}, 2013
+  \item Revista  \textbf{ABC}, 2014 
+  \end{enumerate}
+\end{seccion}
+
+%\begin{seccion}{Agradecimientos}
+%A todos los que se lo merecen, por merecerlo
+%\end{seccion}
+
+\end{postliminary}
+
+\end{document}
+
