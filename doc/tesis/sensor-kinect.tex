@@ -1,44 +1,117 @@
 
 \chapter{El sensor Microsoft Kinect}
-% redactar mejor
-El sensor Microsoft Kinect, inicialmente dise\~{n}ado para la consola de juegos Microsoft Xbox 360 \cite{microsoft-kinect} fue lanzado en Noviembre de 2010.
-Esta compuesto por una camara RGB, un sensor de profundidad, un array de microfonos y un mecanismo de inclinacion motorizado. \\
 
-% UTILIZAR IMAGEN CON DESCRIPCION
+El sensor Microsoft Kinect, inicialmente diseñado para la consola de juegos Microsoft Xbox 360 \cite{microsoft-kinect} fue lanzado en Noviembre de 2010.
+Esta compuesto por una cámara RGB (rojo, verde, azul), un sensor de profundidad, un conjunto de micrófonos    y un mecanismo de inclinación motorizado. \\
+
+AGREGAR DESCRIPCIÓN A LA IMAGEN
+
 \begin{figure}[ht]
 \centering\includegraphics[width=\imsize]
 {kinect}
-\caption{Microsoft Kinect.}
+\caption[Microsoft Kinect]
+{Microsoft Kinect. Imagen cortesía de Wikipedia bajo licencia Creative Commons.}
 \label{fig:kinect}
 \end{figure}
 
-\section{Descripcion}
+\section{Descripción}
 \label{sec:descripcion-kinect}
-La camara RGB produce un stream de datos de 24 bits por pixel, 8 bits por cada color. Su resolucion estandar es 640x480 pixels con una tasa de muestreo maxima de 30 FPS. \\
-El sensor de profundidad esta compuesto por un emisor laser infrarrojo y un sensor CMOS monocromo. Produce un stream de datos de 11 bits. Posee una resolucion estandar de 640x480 pixels a una tasa de muestreo maxima de 30 FPS. \\
-El campo de vision es de 57° horizontal y 43° vertical. \\
-El resto de los sensores asi como el mecanismo de inclinacion no se exponen este trabajo debido a que no son relevantes para el funcionamiento de la aplicacion.
+La cámara RGB produce un stream de datos de 24 bits por pixel, 8 bits por cada color. Su resolución estándar es 640x480 pixeles con una tasa de muestreo máxima de 30 FPS. \\
+El sensor de profundidad está compuesto por un emisor láser infrarrojo (IR) y un sensor CMOS monocromo. Produce un stream de datos de 11 bits. Posee una resolución estándar de 640x480 pixels a una tasa de muestreo máxima de 30 FPS. \\
+El campo de visión es de 57° horizontal y 43° vertical. \\
+Los cámara presenta otros sensores y un mecanismo de inclinación que no fueron utilizados en este trabajo. \\
+
+Cabe señalar que para un objeto observado en la escena, el valor de profundidad obtenido, no es la distancia real desde la Kinect al objeto, sino la distancia desde el plano del sensor (Figura \ref{fig:esquema-plano-profundidad-kinect}).
+
+\begin{figure}[ht]
+\centering\includegraphics[width=\imsize]
+{esquema-plano-profundidad-kinect}
+\caption[Esquema de estimación de profundidad Kinect]
+{Esquema de estimación de profundidad Kinect. Imagen original \cite{andersen12}.}
+\label{fig:esquema-plano-profundidad-kinect}
+\end{figure}
+
 
 \section{Funcionamiento interno}
 \label{sec:funcionamiento-kinect}
 
-El funcionamiento de la camara Kinect esta basado en tecnologia propiedad de la empresa israeli PrimeSense \cite{primesense}. \\
-Para obtener una imagen de profundidad el emisor laser emite un patron de puntos que es capturado por la camara infrarroja (sensor CMOS monocromo). AGREGAR FIGURA. \\
+El funcionamiento de la cámara Kinect esta basado en tecnología propiedad de la empresa israelí PrimeSense \cite{primesense}. \\
+Para obtener una imagen de profundidad el emisor láser emite un patrón de puntos que es capturado por la cámara infrarroja (sensor CMOS monocromo). Figura \ref{fig:kinect-patron-ir}. \\
+
+\begin{figure}[ht]
+\centering\includegraphics[width=\imsizeS]
+{kinect-patron-ir}
+\caption[Patrón de puntos emitido por el sensor IR]
+{Patrón de puntos emitido por el sensor IR. Cortesia de ROS bajo licencia Creative Commons.}
+\label{fig:kinect-patron-ir}
+\end{figure}
+
 El proceso que se describe en la patente CITAR[PrimeSensePatent] esta formado por las siguientes etapas :
 \begin{enumerate}
-\item Capturar el patron de puntos para un conjunto de imagenes de referencia a diferentes distancias del plano del sensor.
-\item Capturar el patron de puntos sobre una imagen de test de la region de interes.
-\item Encontrar la imagen de referencia que mayor similitud tiene con la imagen de test utilizando un metodo de Correlacion Cruzada \cite[wiki:cross-correlation].
-\item Estimar el mapa 3D de la escena por medio de un proceso de triangulacion utilizando los desplazamientos entre la imagen de test y la imagen de referencia elegida. 
+\item Captura el patrón de puntos para un conjunto de imágenes de referencia a diferentes distancias del plano del sensor.
+\item Captura el patrón de puntos sobre una imagen de test de la region de interes.
+\item Encuentra la imagen de referencia que mayor similitud tiene con la imagen de test utilizando un metodo de Correlacion Cruzada \cite[wiki-cross-correlation].
+\item Estima el mapa 3D de la escena por medio de un proceso de triangulación utilizando los desplazamientos entre la imagen de test y la imagen de referencia elegida.
 \end{enumerate}
 
-En el caso del Microsoft Kinect, las imagenes de referencia han sido capturadas contra una superficie plana a distancias predifinidas y estan almacenadas en el dispositivo. El sensor devuelve la imagen de profundidad en forma de valores de disparidad que luego son traducidos a distancias en metros [VER: o milimitros], en un procedimento externo, mediante la conversion : AGREGAR FORMULA.
+En el caso del Microsoft Kinect, las imágenes de referencia han sido capturadas contra una superficie plana a distancias predefinidas y están almacenadas en el dispositivo. El sensor devuelve la imagen de profundidad en forma de valores de disparidad que luego son traducidos a distancias en metros, en un procedimiento externo, mediante la conversión :
 
-AGREGAR QUE LA IMAGEN DE PROFUNDIDAD ESTA SINCRONIZADA CON LA IMAGEN DE RGB QUE FUE PROCESADA CON UN FILTRO DE BAYER.
+\begin{equation}
+distancia=0.1236 \cdot \tan(\frac{disparidad}{2842.5} + 1.1863)
+\end{equation}
 
+Si bien el sensor Kinect captura las imágenes RGB y de profundidad de forma independiente, en este trabajo se utiliza una librería que brinda la posibilidad de sincronizar automáticamente ambos tipos de imágenes, dando como resultado una imagen RGB-D o frame RGB-D.
 
 \section{Consideraciones}
 \label{sec:consideraciones-kinect}
 
-Su rango util es de 0.4 a 4 metros.
-Algunas consideraciones especiales a tener en cuenta. LUZ, SUPERFICIE REFLECTANTES, RELACION DISTANCIA - ERROR.
+En este apartado se describen algunas restricciones del dispositivo Kinect que son relevantes para este trabajo.
+
+De acuerdo a las especificaciones, el rango de operación del sensor de profundidad está entre 0.4 a 4 m. En \cite{khoshelham2011accuracy} analizan la precision del sensor, midiendo la profundidad de una superficie plana a diferentes distancias y concluyen que el error aleatorio de los datos de profundidad crece cuadráticamente con el aumento de la distancia entre el dispositivo y la escena observada. Figura \ref{fig:error-kinect}.
+
+\begin{figure}[h]
+\centering\includegraphics[width=\imsize]
+{error-kinect}
+\caption[Error camara Kinect]
+{Desviación estándar del error en la estimación de profundidad, posicionando el sensor a diferentes distancias del plano de referencia. En rojo se muestra la curva que mejor ajusta al error. Fuente : \cite{khoshelham2011accuracy}.}
+\label{fig:error-kinect}
+\end{figure}
+
+En \cite{andersen12} se realiza otro análisis del sensor de profundidad del Microsoft Kinect concluyendo lo siguiente :
+\begin{itemize}
+
+\item Materiales con características reflectantes influyen sobre el sensor de profundidad imposibilitando la medición de distancias.
+
+\item La luz infrarroja, en particular la luz solar, interfiere con el sensor IR limitando su utilización en entornos exteriores.
+
+\item Debido a la distancia interna entre el emisor y el detector IR en el
+dispositivo Kinect, los objetos iluminados pueden provocar sombras en la imagen de
+fondo (Figura \ref{fig:sombra-kinect}). La sombra en el patrón imposibilita que el sensor pueda calcular la profundidad y los píxeles en el área sombreada se ponen a profundidad cero. En la figura \ref{fig:silla-sombra-kinect}, se puede observar la imagen RGB (derecha) y de profundidad (izquierda) de una silla. La cámara no pudo capturar la profundidad del borde izquierdo de silla (área en azul) debido a la posición relativa de los sensores IR con respecto a la escena.
+
+\end{itemize}
+
+\begin{figure}[ht]
+\centering\includegraphics[width=\imsizeS]
+{sombra-kinect}
+\caption[Esquema de sombras en la imagen de profundidad generada por la cámara Kinect]
+{Esquema de sombras en la imagen de profundidad generada por la cámara Kinect. Imagen original : \cite{andersen12}.}
+\label{fig:sombra-kinect}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\begin{minipage}[h]{.45\textwidth}
+\begin{center}
+\includegraphics[width=\imsizeS]{silla-rgb-kinect}
+\end{center}
+\end{minipage}
+\hfill
+\begin{minipage}[h]{.45\textwidth}
+\begin{center}
+\includegraphics[width=0.91\textwidth]{silla-depth-kinect}
+\end{center}
+\end{minipage}
+\hfill
+\caption[Silla con zonas sin medición de profundidad]{Imágenes RGB (derecha) y de profundidad (izquierda) de una silla con zonas sin mediciones de profundidad (en azul). Imagen original : \cite{andersen12}.}
+\label{fig:silla-sombra-kinect}
+\end{figure}

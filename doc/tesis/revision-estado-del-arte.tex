@@ -1,10 +1,13 @@
 \chapter{Revision del estado del arte}
 
-ensayo fondo movil -> nivel optico
+En los campo de Robotica y Computer Vision, la construccion de mapas 3D del entorno 
+, ha sido por años, tema de investigacion. Diferentes sensores han sido utilizados con este objetivo, entre ellos, sensores laseres \cite{chou2013robotic}\cite{Montemerlo02fastslam}, camaras monoculares \cite{tomono2009robust}\cite{clemente_etal_rss2007}, camaras estereo \cite{Mei11}\cite{Konolige08}, entre otros.
 
+Desde la aparicion de la camara RGB-D Microsoft Kinect (y posteriormente el Asus Xtion), ha crecido el interes en desarrollar tecnicas que aprovechan en conjunto las caracteristicas visuales y la informacion de profundidad que este dispositivo provee. 
 
-\section{Aplicaciones en Computer Vision}
+Varios trabajos estan basados en un enfoque comun : alineacion espacial de frames consecutivos, deteccion de zonas que ya hayan sido visitadas y una alineacion global de todas los frames capturados. En particular, varios trabajos que utilizan informacion visual y de profundidad, se basan en la extraccion de caracteristicas visuales. Estas caracteristicas son emparejadas entre frames continuos para realizar su alineacion.
+Tambien se  
 
-En el campo de Computer Vision se han desarrollado varias tecnicas que permiten la construccion de mapas 3D utilizando difenrentes tipos de sensores, entre ellos, sensores laseres \cite{chou2013robotic}, camaras monoculares \cite{tomono2009robust}, camaras estereo, camaras RGB-D.
+etapas emparejamiento de caracteristicas comunes para realizar una alineacion espacial de frames consecutivos, deteccion de zonas que ya hayan sido visitadas y una alineacion global de todas los frames capturados. Para 
 
-Desde la aparicion del dispositivo Microsoft Kinect varios investigadores han desarrolado tecnicas para la construccion de mapas 3D aprovechando las caracteristicas.
+\cite{engelhardreal}
