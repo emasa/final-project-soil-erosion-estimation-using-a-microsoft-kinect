@@ -1,12 +1,14 @@
 
-\chapter{Aplicacion en un modelo fisico de laboratorio}
+\chapter{Aplicación en un modelo físico de laboratorio}
 
-\section{Descripcion del modelo}
+\section{Descripción del modelo}
 
-Los ensayos que se llevaron a cabo en este trabajo se realizaron en un modelo fisico ubicado en el Laboratorio de Hidraulica [CITAR] de la Facultad de Ciencias Exactas, Fisicas y Naturales (UNC). El modelo es una representacion a escala reducida 1:65 del Dique Los Molinos, ubicado en la provincia Jujuy.
-Como se observa en la figura [REFERENCIAR], el dique está constituido por un terraplén de materiales sueltos y dos vertederos, un tramo a nivel fijo (dique fijo), y otro regulado por 4 compuertas, conocido como dique movil. Sobre el margen derecho, se encuentra el canal moderador.
+Los ensayos que se llevaron a cabo en este trabajo se realizaron en un modelo físico ubicado en el Laboratorio de Hidráulica de la Facultad de Ciencias Exactas, Físicas y Naturales (UNC). El modelo es una representación a escala reducida 1:65 del Dique Los Molinos, ubicado en la provincia Jujuy, sobre el río Grande. \\
 
-% ELEGIR OTRA IMAGEN POR QUE EN ESTA EL MODELO ESTA EN CONSTRUCCION
+Este modelo físico hidráulico presenta márgenes rígidas y lecho móvil, que permite representar a la obra de regulación, con todos sus componentes y elementos auxiliares de relevancia hidrosedimentológica. Cuenta con un tramo del curso fluvial con un desarrollo total de aproximadamente 1520 m (1000 m aguas arriba y 520 m aguas abajo del dique), y un ancho efectivo variable entre los 250 m a 700 m en prototipo. Estas características permiten analizar adecuadamente el comportamiento hidrosedimentológico de las obras, el funcionamiento de las operaciones de maniobras en el dique y la erosión en el tramo de río aguas abajo del dique. \\
+
+Como se observa en la figura [REFERENCIAR], el dique está constituido por un terraplén de materiales sueltos y dos vertederos, un tramo a nivel fijo (dique fijo), y otro regulado por 4 compuertas, conocido como dique móvil. Sobre margen derecha, se encuentra el canal moderador.
+
 \begin{figure}[ht]
 \centering\includegraphics[width=\imsizeS]
 {modelo-fisico-dique-los-molinos}
@@ -21,69 +23,106 @@ Como se observa en la figura [REFERENCIAR], el dique está constituido por un te
 \label{fig:dique-los-molinos}
 \end{figure}
 
-Sobre la zona de interes, se ha construido una plataforma movil que posibilita realizar las mediciones de erosion. Sus componentes principales son : 
+Los objetivos básicos para el estudio de este modelo físico, de interés para el presente trabajo, son los siguientes:
+\begin{itemize}
+
+\item Analizar y cuantificar las erosiones locales, aguas abajo de las estructuras de descarga a los fines de constatar el funcionamiento de las obras previstas en el proyecto. Esta evaluación se llevará a cabo para escenarios hidrológicos de diseño.
+
+\item Verificar y optimizar las consignas de operación de las estructuras de control, a los fines de regular los procesos hidrosedimentológicos presentes en las proximidades de la presa aguas arriba.
+
+\end{itemize}
+
+Sobre la zona relevante, se ha construido una plataforma móvil que posibilita realizar las mediciones de erosión. Sus componentes principales son :
 
 \begin{itemize}
 
-\item Un puente grua. Este puede ser trasladado para observar distintas areas del modelo.
+\item Un puente grúa. Este puede ser trasladado para observar distintas áreas del modelo.
 
-\item Una guia-riel y un carro-soporte para la camara Kinect. Ver \ref{fig:sistema-camara-carro}. La guia se anexa al puente grua, lo que permite la translacion de la camara a lo ancho del modelo.
+\item Una guia-riel y un carro-soporte para la cámara Kinect. Ver \ref{fig:sistema-camara-carro}. La guía se anexa al puente grua, lo que permite la traslación de la cámara a lo ancho del modelo.
 
 \end{itemize}
 
 \begin{figure}[ht]
 \centering\includegraphics[width=\imsize]
 {esquema-camara-puente-grua}
-\caption[Puente grua]{Puente grua. Las flechas indican la direcciones en la que se puede transladar la camara (esquematizada con el recuadro verde). En rojo, translacion utilizando el carro soporte, mientras que la trayectoria en azul, se consigue movilizando el puente grua.}
+\caption[Puente grua]{Puente grua. Las flechas indican la direcciones en la que se puede trasladar la cámara (esquematizada con el recuadro verde). En rojo, traslación utilizando el carro soporte, mientras que la trayectoria en azul, se consigue movilizando el puente grúa.}
 \label{fig:esquema-camara-puente-grua}
 \end{figure}
 
 \begin{figure}[ht]
-\centering\includegraphics[width=\imsize]
+\centering\includegraphics[width=\imsizeS]
 {sistema-camara-carro}
-\caption[Sistema camara-soporte]{Soporte construido para trasladar la camara sobre el modelo.}
+\caption[Sistema cámara-soporte]{Soporte construido para trasladar la cámara sobre el modelo.}
 \label{fig:sistema-camara-carro}
 \end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Etapas de un ensayo hidraulico}
+\section{Etapas de un ensayo hidráulico}
 \label{sec:etapas-previas-medicion}
 
-Un ensayo hidraulico esta compuesto por las siguientes etapas :  
+En cada ensayo hidráulico realizado, se cubrieron las siguientes etapas :  
 \begin{enumerate}
 
-\item Nivelacion del material suelto (arena) hasta la cota del terreno medido con la topografia provista. Esto establece la condicion inicial del modelo. Se utilizo una cota media de 1360 m s.n.m. Figura [REFERENCIAR].
+\item Se estableció la condición inicial del modelo, aguas abajo de las estructuras, nivelando el material suelto (arena) hasta la cota del terreno medido con la topografía provista. Figura \ref{fig:condicion-inicial-modelo}. Se utilizó una cota media de 1360 m s.n.m.
 
-\item Encendido del modelo. Se realiza un control del caudal hasta alcanzar el caudal asociado al ensayo.
+\item Encendido del modelo. Se encienden las bombas hidráulicas y comienza a recircular el agua dentro de cisternas y canales de aforos del laboratorio. Se realiza un manejo del sistema de bombeo hasta alcanzar el caudal establecido para cada  ensayo o escenario a simular.
 
-\item Monitoreo de la erosion durante el ensayo hasta alcanzar la condicion de estabilidad. Estas mediciones se llevan a cabo con nivel optico y mira.
+\item Monitoreo de la erosión durante cada ensayo hasta alcanzar la condición de estabilidad. Estas mediciones se llevan a cabo con nivel óptico y mira. Se realizan mediciones de nivel en las zonas de interés durante intervalos temporales regulares, hasta medir valores similares entre estos intervalos.
 
-\item Apagado del modelo. Se apaga la bomba hidraulica, se cierran las compuertas correspondientes, y se deja drenar el modelo.
+\item Apagado del modelo. Se apagan las bombas hidráulicas, se cierran las compuertas correspondientes, y se deja drenar el modelo.
 
-\item Medicion de erosion. 
+\item Medición de erosión. Esta etapa se desarrollará en detalle en el apartado siguiente.
 
 \end{enumerate}
 
-La tecnica propuesta en este trabajo solo aborda la etapa 5, por lo que no se describe con mas detalles las tareas previas.
+\begin{figure}[ht]
+\centering\includegraphics[width=\imsizeS]
+{condicion-inicial-modelo}
+\caption[Condición inicial del modelo]
+{Condición inicial del modelo}
+\label{fig:condicion-inicial-modelo}
+\end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Metodologia de medicion}
+\section{Metodología de medición con nivel óptico}
 
-En este seccion, se descibe la aplicacion de la tecnica digital de medicion de erosion. \\
+La técnica tradicional consiste en el relevamiento manual de puntos sobre perfiles longitudinales y transversales (en la figura \ref{fig:esquema-perfiles}), por lo general cada 10 cm, utilizando para dicha tarea el nivel óptico (en la figura \ref{fig:nivel-optico}) y una mira con una escala graduada al milímetro.  
 
-Se tuvieron en cuenta un conjunto de consideraciones que permiten obtener resultados optimos, estas son :
+\begin{figure}[ht]
+\centering\includegraphics[width=\imsize]
+{esquema-perfiles}
+\caption[Perfiles transversales]
+{Ubicación de perfiles transversales para medir las erosiones finales.}
+\label{fig:esquema-perfiles}
+\end{figure}
+
+\begin{figure}[ht]
+\centering\includegraphics[width=\imsize]
+{nivel-optico}
+\caption[Nivel óptico]
+{Medición con nivel óptico en modelo físico Los Molinos, cortesía de Nicolás Bellino.}
+\label{fig:nivel-optico}
+\end{figure}
+
+Por último, se realiza la digitalización manual y conversión de modelo a prototipo de los puntos relevados.
+
+\section{Metodología de medición con la cámara RGB-D}
+
+En este sección, se describe la aplicación de la técnica digital de medición de erosión propuesta en este trabajo. \\
+
+Se tuvieron en cuenta un conjunto de consideraciones que forman parte de la técnica de medición y permiten obtener resultados óptimos, estas consideraciones son las siguientes :
 
 \begin{itemize}
 
-\item La superfie debe estar libre de agua. Como se menciono en \ref{sec:consideraciones-kinect}, objetos con caracteristicas reflectantes afectan al sensor de profundidad de la Kinect. Figura \ref{fig:modelo-condiciones-agua}.
+\item La superficie a relevar debe estar libre de agua. Como se mencionó en \ref{sec:consideraciones-kinect}, se observó que los objetos con características reflectantes afectan al sensor de profundidad de la Kinect. Figura \ref{fig:modelo-condiciones-agua}.
 
-\item La escena debe estar al resguardo de la luz solar, como se explica en \ref{sec:consideraciones-kinect}. Para esto se utilizo un nylon de color negro colocado sobre el puente grua, como se puede observar en las figuras \ref{fig:modelo-lona1} y \ref{fig:modelo-lona2}. Alternativamente, se considero realizar las mediciones al atardecer cuando la luz solar es mas tenue. Se concluyo que utilizando el nylon se obtienen condiciones luminicas estables, sin importar el horario.
+\item La escena debe estar al resguardo de la luz solar, como se explica en \ref{sec:consideraciones-kinect}. Debido a que el modelo físico utilizado se encontraba al aire libre, en el exterior del Laboratorio de Hidráulica, fue necesario utilizar un nylon de color negro colocado sobre el puente grúa, como se puede observar en las figuras \ref{fig:modelo-lona1} y \ref{fig:modelo-lona2}. Alternativamente, se considero realizar las mediciones al atardecer cuando la luz solar es más tenue. Se concluye que utilizando el nylon se obtienen condiciones lumínicas estables, quitando así una restricción para el horario de medición.
 
-\item La guia debe estar horizontalizada. El plano desde el que se captura la escena debe estar a una altitud constante para que la representacion de la superficie sea consistente.
+\item La guía debe estar horizontalizada. El plano desde el que se captura la escena debe estar a una altitud constante para que la representación de la superficie sea consistente. Esta condición debe ser verificada al iniciar cada ensayo hidráulico.
 
-\item La camara debe ubicarse en un rango de 0.4 m a 2m [REVISAR GRAFICO] de la escena para que el error se mantenga dentro del intervalo aceptable \ref{sec:consideraciones-kinect}. EXPLICAR MEJOR.
+\item La cámara debe ubicarse en un rango de 0.4m a 1.5m de altura sobre escena a relevar, para que el error de medición se mantenga dentro del intervalo aceptable (menor igual a 5mm). \ref{sec:consideraciones-kinect}.
 
 \end{itemize}
 
@@ -101,7 +140,7 @@ Se tuvieron en cuenta un conjunto de consideraciones que permiten obtener result
 \end{center}
 \end{minipage}
 \hfill
-\caption{A la derecha condicion correcta para la medicion. A la izquiera se observan espejos de agua que interfieren el sensor infrarojo de la camara.}
+\caption{A la derecha condición correcta para la medición. A la izquierda se observan espejos de agua que interfieren el sensor infrarrojo de la cámara.}
 \label{fig:modelo-condiciones-agua}
 \end{figure}
 
@@ -109,7 +148,7 @@ Se tuvieron en cuenta un conjunto de consideraciones que permiten obtener result
 \centering\includegraphics[width=\imsizeS]
 {modelo-lona1}
 \caption[Modelo cubierto por nylon.]
-{Forma de colocar el nylon sobre el puente grua para cubrir todo el largo del riel.}
+{Forma de colocar el nylon sobre el puente grúa para cubrir todo el largo del riel.}
 \label{fig:modelo-lona1}
 \end{figure}
 
@@ -117,73 +156,131 @@ Se tuvieron en cuenta un conjunto de consideraciones que permiten obtener result
 \centering\includegraphics[width=\imsizeS]
 {modelo-lona2}
 \caption[Sombra generada por nylon sobre el modelo.]
-{Sombra producida por el nylon para tomar imagenes sin interferencias.}
+{Sombra producida por el nylon para tomar imágenes sin interferencias.}
 \label{fig:modelo-lona2}
 \end{figure}
 
-Habiendo verificado las condiciones anteriores, se introduce el carro-soporte en carril y se inicia el software de registracion REFERENCIAR[APLICACION]. \\
+Habiendo verificado las condiciones anteriores, se introduce el carro-soporte en carril guía y se inicia el software de registración REFERENCIAR[APLICACIÓN]. \\
  
-En la figura \ref{fig:aguas-abajo-desplazamiento-carro}, se observa como manipular la plataforma movil para capturar la escena. El carro se desplaza aproximadamente 40 cm entre cada captura, para que el area sobrelapada entre dos nubes puntos continuas este proxima al 50\%. Como se explica en REFERENCIAR[APLICACION], la aplicacion indica si la captura mas reciente pudo ser registrada, lo que permite correguir la ubicacion del sensor si es necesario.
+En la figura \ref{fig:aguas-abajo-desplazamiento-carro}, se observa cómo manipular la plataforma móvil para capturar la escena. El propone un desplazamiento del carro de aproximadamente 40 cm entre cada captura, para que el área sobrelapada entre dos nubes puntos continuas esté próxima al 50\%. Si la aplicación no lograr realizar la registración correctamente se corrige la ubicación del sensor a una posición intermedia.
 
 \begin{figure}[ht]
 \centering\includegraphics[width=\imsize]
 {aguas-abajo-desplazamiento-carro}
-\caption[Desplazamiento de la camara]{Recorrido del puente grúa y del carro-soporte sobre la escena. Las flechas rojas indican desplazamiento de la camara y las flechas azules representan el movimiento del puente.}
+\caption[Desplazamiento de la cámara]{Recorrido del puente grúa y del carro-soporte sobre la escena. Las flechas rojas indican desplazamiento de la cámara y las flechas azules representan el movimiento del puente.}
 \label{fig:aguas-abajo-desplazamiento-carro}
 \end{figure}
 
 AGREGAR IMAGEN QUE MUESTRE SOBRELAPAMIENTO.
 
-En REFERENCIAR[APLICACION] se describe que para poder realizar la conversion a prototipo es necesario un punto fijo con cota conocida en dicha escala. Con este fin, es recomendable que la escena capture estructuras con medidas de elevacion dada por mediciones topograficas. En caso contrario, se puede medir con nivel optico un punto visible en la escena y utilizar su cota prototipo como referencia.  
+En REFERENCIAR[APLICACIÓN] se describe que para poder realizar la conversión a prototipo es necesario un punto fijo con cota conocida en en el sistema del modelo y del prototipo. Con este fin, se recomienda que la escena capture las estructuras fijas en el modelo físico con medidas de elevación dada por mediciones topográficas. En caso contrario, se puede medir con nivel óptico un punto visible en la escena y utilizar su cota prototipo como referencia.  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Ensayos realizados}
 
-AGREGAR TABLA.
+\begin{tabular}{|c|c|c|}
+\hline
+Ensayo Nº & Caudal total m^{3}/s & Motivación \\
+\hline
+1 & 900 & Caudal Máximo Dique Móvil (DM) y \\
+  &     & Canal Moderador (CM) \\
+\hline
+2 & 3200 & Caudal Máximo Sólo Dique Fijo (DF) \\
+\hline
+3,7,9 & 4200 & Caudal para Periodo de Retorno T=10000 años \\
+\hline
+4 & 90 & Caudal de Despegue Canal Moderador (CM) \\
+\hline
+5 & 225 & Caudal de Despegue Dique Móvil (DM) \\
+\hline
+10 & 600 & Caudal de Verificación DF, DM y CM
+ \\
+\hline
+13 & 1600 & Caudal de Verificación DF, DM y CM
+ \\
+\hline
+14 & 600 & Caudal de Verificación DM y CM
+ \\
+\hline
+\end{tabular}
 
-\subsection{Medicion de erosion maxima}
+\subsection{Medición de erosión máxima}
+\label{ensayo-erosion-maxima}
 
-En ingenieria civil, este tipo de ensayo tiene como objetivo encontrar cotas maxima de erosion y determinar el nivel de fundacion de los muros del dique. \\ 
-Se muestran los mapas 3D en escala prototipo, generados a partir del relevamiento de fosos de erosion ubicados aguas abajo, para 2 ensayos con caudal de 900 m**3/s y 4200 m**3/s, respectivamente. \\
+En ámbito de la Ingeniería Civil, la representación con modelos físicos a escala reducida y la simulación de ensayos hidráulicos fluviales, como los que aquí se presentan, tiene entre sus objetivos principales definir las cotas de erosión máxima. Estas mediciones se realizan con el fin de establecer las profundidades de fundación de los muros de contención de las estructuras hidráulicas que componen el sistema evaluado. \\
+Se muestran los mapas de elevación en escala prototipo, generados a partir del relevamiento de fosos de erosión ubicados aguas abajo de las estructuras, para los ensayos 1 y 3. \\
+Como punto de referencia se utilizó el muro de separación entre canal moderador y dique móvil, con cota superior igual a 1370.45 m s.n.m.\\
 
-Muro de separacion entre canal moderador y dique movil : 1370,45 m s.n.m.\\
-
-Ensayo 900 m**3/s \\
+Ensayo 1. Caudal 900 m^{3}/s \\
 AGREGAR MAPA 3D RGB \\
-%{Foso de erosion aguas abajo del dique movil. Caudal 900 m**3/s. Modelo 3D en colores.}
+% \begin{figure}[ht]
+% \centering\includegraphics[width=\imsize]
+% {fosos_erosion_Q900_rgb}
+% \caption[Imagen RGB Ensayo 1]
+% {Ensayo 1. Foso de erosión aguas abajo del dique móvil.  Imagen RGB.}
+% \label{fig:fosos_erosion_Q900_rgb}
+% \end{figure}
+%{Ensayo 1. Foso de erosión aguas abajo del dique móvil.  Imagen RGB.}
 
 AGREGAR MAPA 3D ESCALA DE PROFUNDIDAD.\\
-%{Foso de erosion aguas abajo del dique movil. Caudal 900 m**3/s. Modelo 3D de elevaciones.}
+% \begin{figure}[ht]
+% \centering\includegraphics[width=\imsize]
+% {fosos_erosion_Q900_dem}
+% \caption[MDE Ensayo 1]
+% {Ensayo 1. Foso de erosión aguas abajo del dique móvil. Modelo digital de elevaciones (MDE).}
+% \label{fig:fosos_erosion_Q900_dem}
+% \end{figure}
 
-Ensayo 4200 m**3/s \\
+Ensayo 3. Caudal 4200 m^{3}/s \\
 AGREGAR MAPA 3D RGB \\
-%{Foso de erosion aguas abajo del dique movil. Caudal 4200 m**3/s. Modelo 3D en colores.}
+% \begin{figure}[ht]
+% \centering\includegraphics[width=\imsize]
+% {fosos_erosion_Q4200_rgb}
+% \caption[Imagen RGB Ensayo 3]
+% {Ensayo 3. Foso de erosión aguas abajo del dique móvil.  Imagen RGB.}
+% \label{fig:fosos_erosion_Q4200_rgb}
+% \end{figure}
 
-AGREGAR MAPA 3D ESCALA DE PROFUNDIDAD. \\
-%{Foso de erosion aguas abajo del dique movil. Caudal 4200 m**3/s. Modelo 3D de elevaciones.}
+AGREGAR MAPA 3D ESCALA DE PROFUNDIDAD.\\
+% \begin{figure}[ht]
+% \centering\includegraphics[width=\imsize]
+% {fosos_erosion_Q4200_dem}
+% \caption[MDE Ensayo 3]
+% {Ensayo 1. Foso de erosión aguas abajo del dique móvil.  Modelo digital de elevaciones.}
+% \label{fig:fosos_erosion_Q4200_dem}
+% \end{figure}
 
-AGREGAR PERFILES.\\
+AGREGAR PERFIL 2 4200.\\
+%Fecha : 31/10/2012. Caudal :  900 m^{3} / s.
+%Fecha : 05/11/2012. Caudal : 4200 m^{3} / s
 
-%Fecha : 31/10/2012. Caudal :  900 m**3 / s.
-%Fecha : 05/11/2012. Caudal : 4200 m**3 / s
+\subsection{Medición de formas de fondo}
+\label{ensayo-formas-de-fondo}
 
-\subsection{Medicion de formas de fondo}
+Estas mediciones se realizaron con el objetivo de verificar y optimizar las consignas de operación de las estructuras de control. El objetivo es regular los procesos hidrosedimentológicos presentes en las proximidades de la presa aguas arriba.
+En este ensayo se relevaron las canalizaciones hacia las compuertas del dique móvil y el canal moderador. El análisis de los canales que se formaron sobre la superficie del modelo, debido a las llamadas que se realiza con la operación de las estructuras de control, requiere relevar una densidad de puntos elevada y a la vez cubrir grandes áreas de superficie. La técnica digital aborda esta tarea de forma mucha más eficiente y precisa que la metodología tradicional. \\
+Se muestran los modelos 3D, en escala prototipo, generados a partir del área de modelación aguas arriba del dique, para un ensayo 10.\\
+Como punto de referencia se utilizó el muro de encauzamiento con cota superior igual a 1377.7 m s.n.m y ubicado aguas arriba entre dique móvil y dique fijo.
 
-En este ensayo se relevan canalizaciones hacia las compuertas del dique movil y el canal moderador, con el objetivo de evaluar la forma de operacion de cada compuerta. El analisis de canales sobre la superficie del modelo requiere una densidad de puntos elevada en grandes areas de superficie. La tecnica digital aborda esta tarea de forma mucha mas eficiente y precisa que la metodologia tradicional. \\
-Se muestran los modelos 3D, en escala prototipo, generados a partir del area de modelacion aguas arriba del dique, para un ensayo con caudal de XXX m**3/s.\\
-Como punto de referencia se utilizo el muro de encauzamiento a 1377.7 m s.n.m.
+Ensayo 10. Caudal 600 m^{3}/s \\
 
 AGREGAR MAPA 3D ESCALA DE PROFUNDIDAD. \\
 % \begin{figure}[ht]
 % \centering\includegraphics[width=\imsize]
 % {aguas_arriba_Q600_rgb}
-% \caption[Area aguas arriba del dique. Q600. RGB]
-% {Area aguas arriba del dique. Q600. RGB.}
+% \Imagen RGB Ensayo 10]
+% {Área aguas arriba del dique. Imagen RGB.}
 % \label{fig:aguas_arriba_Q600_rgb}
 % \end{figure}
 
 AGREGAR MAPA 3D ESCALA DE PROFUNDIDAD. \\
-% {Area aguas arriba del dique. Caudal XXX m**3/s. Modelo 3D de elevaciones.}
+% \begin{figure}[ht]
+% \centering\includegraphics[width=\imsize]
+% {aguas_arriba_Q600_dem}
+% \MDE Ensayo 10]
+% {Área aguas arriba del dique. Modelo digital de elevaciones.}
+% \label{fig:aguas_arriba_Q600_dem}
+% \end{figure}
 
-% Fecha : 29/10/2013. Caudal : XXX m**3 / s.
+% Fecha : 29/10/2013. Caudal : 600 m^{3}/s

@@ -8,13 +8,12 @@ Tradicionalmente, la medición de variables sedimentarias en laboratorio ha cons
 Esta metodología, de carácter intrusiva (debido a que se apoya la mira sobre la superficie a relevar), presenta errores intrínsecos generados por la intervención humana y restricciones relativas a los instrumentos de medición, que pueden alcanzar los 1.5 cm. Algunas fuentes de error están relacionados con la incorrecta verticalidad de la mira, el apoyo del palpador sobre el modelo (que puede alterar la superficie a medir), errores en las lecturas y/o transcripción de las mismas, entre otros.
 
 Por otro lado, la precisión de los productos derivados (curvas de nivel, modelos tridimensionales (3D), perfiles transversales, etc.) y los análisis de dichos productos, se verán afectados por la densidad de puntos relevados y la elección de los mismos.
-Esta limitación produce un trade off entre la densidad de puntos, el área relevada y el tiempo dedicado a cada ensayo, que el ingeniero debe afrontar a la hora de realizar y completar un ensayo hidráulico fluvial en laboratorio. \\
+Esta limitación produce un trade off entre la densidad de puntos obtenida, el área relevada y el tiempo dedicado a cada ensayo, que el ingeniero debe afrontar a la hora de realizar y completar un ensayo hidráulico fluvial en laboratorio. \\
 
 %%% AGREGAR referencias
 
 En el campo de la robótica, la construcción de mapas 3D del entorno físico ha sido considerado, por años, una tarea fundamental para su aplicación en la navegación autónoma y la manipulación de objetos por parte de un robot. Diferentes sensores han sido utilizados para lograr este propósito, entre ellos se puede mencionar el uso de sonares[ref], escáneres láser[ref], cámaras estereoscópicas[ref], cámaras RGB-D[ref], etc.
-
-En los últimos años, sensores RGB-D como el dispositivo Microsoft Kinect han surgido en la industria del entretenimiento. Sus prestaciones técnicas y costo asequible lo han convertido en una solución idónea para ser utilizada en diferentes aplicaciones de Computer Vision, como es el caso de la generación de mapas en 3D. \\
+En los últimos años, sensores RGB-D como el dispositivo Microsoft Kinect han surgido en la industria del entretenimiento. Sus prestaciones técnicas y costo asequible lo han convertido en una solución idónea para ser utilizada en diferentes aplicaciones de Computer Vision, como es el caso de la generación de mapas 3D. \\
 
 %%% AGREGAR : breve introducción en generacion de mapas 3D
 
@@ -28,7 +27,7 @@ La metodología propuesta busca mejorar la caracterización obtenida del modelo 
 El objetivo de este trabajo es desarrollar un software para la generación de un mapa 3D de un modelo físico a escala reducida utilizando una cámara RGB-D. Esta aplicación permitirá medir digital y automáticamente las variables de erosion y sedimentacion en laboratorio. \\
 Para crear un mapa 3D del modelo, el sistema deberá capturar nubes de puntos del área de trabajo, alinearlas en un mismo sistema de coordenadas, filtrar posibles inconsistencias y realizar una conversión de escala modelo a prototipo. \\
 Se validará esta nueva técnica digital con respecto a la técnica tradicional para realizar una evaluación de su precisión y verificar si es viable su aplicacion. \\
-Por ultimo, se propone desarrollar una librería extensible y modular que permitirá la creación de nuevas aplicaciones, con el objetivo de aportar mejores soluciones al problema de la medición de erosión. \\
+Dentro de este marco, se propone desarrollar una librería extensible y modular que permita la creación de nuevas aplicaciones, con el objetivo de aportar nuevas soluciones al problema de la medición de erosión. \\
 
 %%% Local Variables: 
 %%% mode: latex
