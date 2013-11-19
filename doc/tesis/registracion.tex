@@ -137,3 +137,108 @@ El descriptor resultante se compone por los vectores de cada subregion, por lo q
 \end{subsection}
 
 \end{subsection}
+
+\begin{subsection}
+{Oriented FAST and Rotated BRIEF (ORB)}
+
+ORB es un detector y descriptor \cite{RubleeRKB11} de caracteristicas basado en el detector FAST \cite{Rosten06machinelearning} y el descriptor BRIEF \cite{Calonder12}. Si bien BRIEF es robusto ante cambios de iluminacion y presencia de ruido, es muy sensible a rotaciones in-plane. Teniendo en cuenta este problema, ORB extiende FAST para detectar la orientacion de las caracteristicas (tipo corner) y aplica mejoras sobre BRIEF dirigidas a aprovechar la informacion de orientacion.
+
+\begin{subsection}
+{Oriented FAST (oFAST)}
+
+La deteccion de caracteristicas oFAST se compone de 4 etapas :
+\begin{enumerate}
+
+\item Deteccion de caracteristicas FAST. Se utiliza un umbral t de intensidad apropiado entre el pixel del centro y los pixeles del anillo circular. En oFAST se utiliza FAST-9 (radio del anillo de 9 pixeles) porque se comprobo que ofrece buenos resultados.
+
+\item FAST no produce una medida de la bondad de los corners y responde positivamente ante la presencia de bordes, por lo que en oFAST se realiza un filtrado con el fin de detectar las mejores caracteristicas. Para obtener los mejores N corners, se aplica una medida de bondad de los corners dada por Harris REFERENCIAR[], se ordena las caractertisticas en funcion de esa medida y se seleccionan las N mejores. Se establece un umbral sufiecientemente bajo para la bondad de los corners, con el fin de obtener al menos N caracteristicas.
+
+\item FAST no produce caracteristicas multi-escala. Para solventar este problema, se construye una piramide de escalas de la imagen (similar a SIFT y SURF), se calcula FAST (filtrado por Harris) en cada nivel y se aplica interpolacion obtener unos mejores resultados. 
+
+\item Estimacion de la orientacion. Para calcular la orientacion se utiliza la medida intensity centroid REFERENCIAR[PAPER] dentro del patch (area rectangular) alrededor del keypoint. Se puede construir un vector O->C desde el centro del corner O hacia el intensity centroid C, y calcular la orientacion del patch como 
+\begin{equation}
+tita = atan(Cy, Cx)
+\end{equation}
+
+\end{enumerate}
+
+\end{subsection}
+
+\begin{subsection}
+{Rotated BRIEF (rBRIEF) }
+
+\begin{subsection}
+{Binary Robust Independent Elementary Features (BRIEF) }
+El descriptor BRIEF REFERENCIA es una cadena de bits (bit string) que describe un patch (centrado en el keypoint) de la imagen. Esta formado por un conjunto de tests binarios aplicados sobre los pixeles. Dado un patch p de la imagen suavizada (mayor robustez frente al ruido), un test binario t se define como : 
+
+\begin{equation}
+t(p; x, y) := { 1 : p(x) < p(y), 0 : p(x) >= p(y) }
+\end{equation}
+
+donde p(x) es el valor de intensidad de p en la posicion x.
+El descriptor se define como un vector de n tests binarios :
+fn(p) := sum 1<=i<=n 2**i-1 t (p; xi, yi) 
+
+Hay varios enfoques para la seleccion del conjunto de posiciones a testear. En la version estandar de BRIEF, se utiliza una distribucion Gaussiana alrededor del centro del patch debido a que se comprobo que da los mejores resultados.
+
+\end{subsection}
+
+\begin{subsection}
+{Mejoras aplicadas en rBRIEF}
+
+BRIEF posee 2 caracteristicas importantes para un descriptor :
+\begin{itemize}
+
+\item Descriptores con elevada varianza y una media cercana a 0.5, lo que permite diferenciar descriptores mas facilmente, dado que distintas caracteristicas responden de forma diferente.
+
+\item Tests poco correlacionados, para que cada uno de ellos aporte informacion distinta y disminuya la redundancia.
+
+\end{itemize}
+
+Estas cualidades se ven disminuidas al agregar la informacion de orientacion. Para solventar este problema, se sigue un enfoque de aprendizaje, por medio del cual se determinan un conjunto de pares de pixeles para ser comparados en cada test. \\
+Para comenzar se obtienen los patches centrados en cada keypoint oFAST extraidos a partir de un conjunto de imagenes de entrenamiento. Cada test es un par de sub-ventanas 5x5 pixeles de un patch de 31x31. Da todos los posibles tests, se eliminan aquellos que sobrelapan, finizalizando con un total de M = 205590 posibles tests.
+El algorimo se describe como : 
+
+\begin{enumerate}
+
+\item Obtener los resultados del conjunto de tests sobre cada uno de los patches de entranamiento.
+
+\item Ordenar los tests por su distancia a una media de 0.5 formando el vector T. Una media cercana a 0.5 indica alta varianza, mientras que medias alrededor de 0 o 1, indican una varianza menor y una menor capacidad de diferenciacion.
+
+\item Realizar una busqueda greedy de tests poco correlacionados. Se compone de los siguentes pasos : 
+\begin{enumerate} {label=(\alph*)}
+\item Poner el primer test en el vector resultado R.
+
+\item Escoger el siguiente test de T y compararlo contra todo los tests de R. Si la correlacion absoluta es mayor que un cierto umbral, se descarta; en otro caso se añade a R.
+
+\item Se repite el paso anterior hasta que se dispongan de n = 256 tests. Si no se alcanza esta cantidad, se aumenta el umbral de la correlacion y se repite el paso desde b).
+
+\end{enumerate}
+\end{enumerate}
+
+En la figura \ref{fig:correlacion-orb} se muestran los tests binarios aplicando el algoritmo de aprendizaje de tests poco correlacionados frente a la solucion sin aprendizaje.
+
+\begin{figure}[ht]
+\centering\includegraphics[width=\imsize]
+{correlacion-orb}
+\caption[Comparacion tests binarios con y sin aprendizaje ORB.]
+{ Izquerda : conjunto de tests binarios obtenidos sin aprendizaje (utilizando orientacion con el enfoque de BRIEF). Derecha : conjunto de tests binarios obtenidos por medio del algoritmo de aprendizaje. 	El color violeta indica poco correlacion, mientras que el color naranja representa alta correlacion. Se puede observar que los tests por medio de aprendizaje tienen una mejor distribucion y estan menos correlacionados. Imagen original : \cite{RubleeRKB11}.}
+\label{fig:correlacion-orb}
+\end{figure}
+
+Para la construccion de cada descriptor, se utiliza la orientacion obtenida en la fase de deteccion como sigue :
+\begin{enumerate}
+
+\item Se construye la matriz S de 2xn con las coordenadas de los pares de puntos de los tests, obtenidas a partir del algoritmo de apendizaje.
+S = ( x1, ... , xn ; y1, ..., yn )
+
+\item Usando la orientacion del patch teta, se construye la correspondiente matriz de rotacion Rteta y se obtiene la version rotada Steta de S. 
+
+Steta = Rteta S
+\item Por ultimo, se utiliza el operador de BRIEF fn(p) sobre los tests rotados obteniendo el operador de rBRIEF. gn(p, teta) := fn(p)|(xi, yi) pertenece Steta.
+
+\end{subsection}
+
+En la implementacion, el algoritmo de aprendizaje se lleva a cabo en un proceso offline. Ademas, se discretizan los angulos en incrementos de 2pi/30 (12 grados) y se construye una lookup table de patrones punto-angulo precalculados.
+
+\end{subsection}
