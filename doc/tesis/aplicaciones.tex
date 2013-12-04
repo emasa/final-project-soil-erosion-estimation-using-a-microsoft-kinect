@@ -1,0 +1,110 @@
+
+\chapter{Aplicaciones}
+
+\section{Librerias utilizadas}
+
+Este proyecto ha sido implementado en el lenguaje de programacion C++ haciendo extenso uso de librerias open source. En primer lugar, se presentan las librerias utilizadas, y de forma seguida, se describe brevemente cual fue su aplicacion en el presente trabajo.
+
+\begin{itemize}
+
+\item OpenNI. (Open Natural Interaction) OpenNI es un conjunto de API’s escritas en C/C++, open source, distribuidas bajo la licencia LGPL. Las API's (Application Programming Interface) de OpenNI incluyen interfaces de acceso a las camaras RGB, de rango, microfonos, asi como componentes de mas alto nivel como deteccion de gestos, skeleton tracking, etc.
+Son soportadas por la organizacion sin animo de lucro, OpenNI, liderada por la industria y centrada en la mejora de los dispositivos de interaccion de forma natural. Uno de sus socios principales es PrimeSense, empresa responsable de la tecnologia que utiliza el sensor Kinect. 
+
+\item OpenCV. (Open Source Computer Vision Library) Libreria escrita en C/C++, multiplataforma y open source, distribuida bajo la licencia BSD. La libreria OpenCV incluye algoritmos de procesamiento de imagenes y de vision por computadora como emparejamiento de caracteristicas, vision estereo, deteccion de objetos, etc.
+
+\item PCL. (Point Cloud Library) Libreria escrita en C++, multiplataforma y open source, distribuida bajo la licencia BSD. La libreria PCL incluye algoritmos para el procesamiento de nubes de puntos n-dimensionales y geometria 3D, asi como metodos especificos para realizar filtrado, segmentacion, deteccion de caracteristicas, reconstruccion 3D, etc.
+
+\item Eigen. Libreria escrita en C++, open source, distribuida bajo la licencia LGPL. La libreria incluye metodos de algebra lineal; como operaciones sobre matrices y vectores, metodos numericos de resolucion de sistemas lineales, etc.
+
+\item FLANN. (Fast Library for Approximate Nearest Neighbors) Libreria escrita en C++, multiplataforma y open source, distribuida bajo la licencia BSD. La libreria FLANN incluye algoritmos para realizar busquedas de los vecinos mas cercanos en espacios de elevada dimension.
+
+\item Boost. Conjunto de librerias escritas en C++, multiplataforma y open source, distribuidas bajo la licencia Boost Software License. Las librerias Boost incluyen metodos para algebra lineal, multithreading, smartpointers, procesamiento de imagenes, test unitarios, etc.
+
+\item VTK. (Visualization Toolkit) Libreria escrita en C++, multiplataforma y open source, distribuida bajo la licencia BSD. La libreria incluye una amplia variedad de algoritmos para visualizaci1on de texturas, volumenes, etc.
+
+\end{itemize}
+
+Conceptualmente, el proyecto puede dividirse en varios bloques de software, que se describen a continuacion :
+\begin{itemize}
+
+\item Captura y almacenamiento de datos: se utiliza el formato PCD (Point Cloud Data), propio de PCL, para almacenar nubes de puntos. Para capturar los datos sensados por la Kinect, se utiliza un API provista por PCL, que por debajo interactua con el driver OpenNI para acceder al dispositivo. Se aprovecha el modo de captura sincronizada de frames RGB y de profundidad (implementado en OpenNI) para integrar la informacion en nubes de puntos RGB-D.
+
+\item Procesamiento de imagenes 2D: OpenCV provee algoritmos para la deteccion de caracteristicas 2D, entre ellos destacan las implementaciones de ORB y SURF, y procedimientos para determinar correspondencias tanto con descriptores binarios como reales.
+
+\item Procesamiento de nubes de puntos 3D: PCL contribuye en multiples etapas en el proceso de registracion : provee la aproximacion de la pose utilizando SVD y soporta varias versiones de ICP para el refinamiento de la transformacion rigida. Contiene una implementacion generica de RANSAC, que puede ser instanciada con el modelo de transformacion rigida para eliminar outliers 3D. En el terreno de GraphSLAM, brinda una estructura para construir el grafo de poses e implementa un algoritmo para optimizacion global basado en el enfoque de Lu y Milios. Por ultimo, cabe destacar que PCL cuenta con varios metodos de filtrado de puntos, entre ellos la tecnica de filtrado estadistico presentada en la seccion \ref{sec:filtrado-estadistico-de-inconsistencias}.
+
+\item Visualizacion de datos: se utiliza el framework de visualizacion de nubes de puntos 3D provisto por PCL, construido encima de la libreria VTK.
+
+\item Librerias auxiliares de proposito especifico: PCL y OpenCV implementan algoritmos utilizando otras librerias open source que llevan a cabo tareas mas especificas. Para manejar vectores y transformaciones rigidas (representadas por matrices) PCL utiliza Eigen, con soporte para operaciones de algebra lineal. Boost se encarga del manejo automatico de la memoria en PCL y contiene estructuras para construir el grafo de poses. Tanto OpenCV como PCL se apoyan en FLANN para realizar busquedas de vecinos mas cercanos, el primero en espacios de grandes dimensiones, mientras que el ultimo principalmente en 3D.
+
+\end{itemize}
+
+\section{Aplicaciones}
+
+Este proyecto se ha implementado y probado sobre el sistema operativo Ubuntu 12.10 CITAR y requiere de las librerias open source introducidas en la seccion anterior. El sistema se divide en dos componentes, la aplicacion ModelMapper que genera un mapa 3D (en sistema modelo) a partir de la condicion de erosion del modelo fisico y la aplicacion RealWorldConverter que filtra insconsistencias y retorna un mapa 3D convertido a sistema prototipo. Para simplificar la implementacion, se utiliza una interfaz de lineas de comandos CITAR, estandar en sistemas Linux. CITAR.
+
+% Se desacopla las aplicaciones de esta forma para simplificar las interfaces de ambas y debido a que las tareas realizadas por RealWorldConverter parametrosde esta forma debido a que la etapa de conversion
+
+\section{Aplicacion ModelMapper}
+
+La finalidad de esta aplicacion es generar un mapa 3D de una zona de interes del modelo fisico. Toma nubes de puntos RGB-D como entrada y devuelve las nubes de puntos alineadas en el sistema de coordenadas modelo (apartado \ref{sec:conversion-mapa3D-prototipo}) utilizando la tecnica de registracion presentada en \ref{sec:descripcion-general-registracion}. \\
+Al finalizar la registracion, las nubes de puntos alineadas se almacenan en un directorio llamado registration, creado (automaticamente) dentro de un directorio base especificado por el usuario. La ruta del directorio base se ingresa a traves de la opcion --output-dir (requerimiento obligatorio). \\
+La opcion --backup habilita el guardado de las nubes de puntos de entrada (a medida que se van procesando) en un directorio llamado backup, creado (automaticamente) dentro del directorio base. Deshabilitada por default.\\
+
+Hay dos metodos para ingresar las nubes de puntos, que se pueden seleccionar utilizando la opcion --mode.
+Los valores aceptados son camera (modo camara) y files (modo archivos). Default: modo camara.
+\begin{itemize}
+
+\item Modo camara: los frames RGB-D son capturados directamente desde el sensor Kinect y registrados inmediatamente. En la figura REFERENCIAR, se muestra la pantalla observada en este modo. A la izquierda, se visualiza la ultima nube de puntos capturada. A la derecha, se observa el estado parcial de la registracion. Se requiere presionar la tecla espacio para ingresar un nuevo frame. Presionando la tecla p se finaliza la registracion.
+
+\item Modo archivos: los frames RGB-D son obtenidos desde el sistema de archivos. Este modo esta pensado para correr el proceso de registracion con frames capturados con el modo camara (con la opcion --backup habilitada) y probar diferentes parametros para el algoritmo de registracion (explicados mas abajo). Se requiere ingresar la opcion --input-dir seguida del directorio base que contiene la carpeta backup. Este modo es completamente automatico, es decir, que no requiere interaccion alguna por parte del usuario (nota: no se muestra el visualizador con las nubes de puntos).
+
+\end{itemize}
+
+A continuacion, se lista una serie de parametros del algoritmo de registracion que pueden ser modificados desde la interfaz de lineas de comandos:
+
+\begin{itemize}
+
+\item Opcion --features: tipo de algoritmo para extraer caracteristicas visuales. Posibles valores: surf, orb. Default : orb. Detalles en el apartado \ref{sec:features}.
+
+\item Opcion --min-num-inliers: minima cantidad de correspondencias correctas para considerar que la odometria fue medida exitosamente. Default: 45. Detalles en el apartado frontend de GraphSLAM\ref{slam-frontend}.	
+
+\item Opcion --min-num-extra-inliers: minima cantidad de correspondencias correctas para la deteccion de bucles en un mapa. Default: 25. Detalles en el apartado frontend de GraphSLAM\ref{slam-frontend}.
+
+\item Opcion --extra-edges: Maxima cantidad de aristas con las que se puede extender el grafo de poses en la etapa de deteccion de bucles. Default: 2. Detalles en el apartado frontend de GraphSLAM\ref{slam-frontend}.
+
+\end{itemize}
+
+Se destaca que esta aplicacion explicitamente almacena las nubes de puntos 
+
+\section{Aplicacion RealWorldConverter}
+ 
+Esta aplicacion cumple dos tareas, eliminar posibles inconsistencias del mapa 3D generado con ModelMapper utilizando la tecnica de filtrado estadistico (explicada en la seccion \ref{sec:filtrado-estadistico-de-inconsistencias}) y generar un mapa 3D en sistema prototipo (presentado en la seccion \ref{sec:conversion-mapa3D-prototipo}) para que pueda ser utilizado en estudios de la erosion.
+
+ModelMapper almacena el mapa 3D dividido en diferentes archivos por una razon. RealWorldConverter brinda la posibilidad de seleccionar un subconjunto del total de nubes de puntos, con la finalidad de crear un mapa mas liviano o de una zona especifica. 
+
+Los parametos obligatorios para esta aplicacion son :
+
+\begin{itemize}
+\item Opcion --input $ cloud_{1} ... cloud_{n} $: lista de nubes de puntos de entrada.
+
+\item Opcion --output cloud\_final.pcd: path para almacenar el mapa 3D filtrado en sistema prototipo.
+
+\item Opcion --scale s : factor de escala.
+
+\item Opcion --real\_base r: cota de referencia en prototipo.
+
+\end{itemize}
+
+Para ingresar la cota de referencia en modelo hay dos posibilidades: 
+\begin{itemize}
+
+\item Ingresar la opcion --model\_base m  donde m es valor de la cota.
+
+\item Visualizar el mapa 3D en sistema modelo y seleccionar un punto 3D (con la combinacion shift + click derecho) para utilizar su altitud en z como cota de referencia.
+
+\end{itemize}
+
+Hay dos parametros opcionales para configurar el algoritmo de filtrado estadistico :
+
+AGREGAR PARAMETROS

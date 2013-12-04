@@ -5,9 +5,9 @@
 
 Los ensayos que se llevaron a cabo en este trabajo se realizaron en un modelo físico ubicado en el Laboratorio de Hidráulica de la Facultad de Ciencias Exactas, Físicas y Naturales (UNC). El modelo es una representación a escala reducida 1:65 del Dique Los Molinos, ubicado en la provincia Jujuy, sobre el río Grande. \\
 
-Este modelo físico hidráulico presenta márgenes rígidas y lecho móvil, que permite representar a la obra de regulación, con todos sus componentes y elementos auxiliares de relevancia hidrosedimentológica. Cuenta con un tramo del curso fluvial con un desarrollo total de aproximadamente 1520 m (1000 m aguas arriba y 520 m aguas abajo del dique), y un ancho efectivo variable entre los 250 m a 700 m en prototipo. Estas características permiten analizar adecuadamente el comportamiento hidrosedimentológico de las obras, el funcionamiento de las operaciones de maniobras en el dique y la erosión en el tramo de río aguas abajo del dique. \\
+Este modelo físico hidráulico presenta márgenes rígidas y lecho móvil, que permite representar a la obra de regulación, con todos sus componentes y elementos auxiliares de relevancia hidrosedimentológica. Cuenta con un tramo del curso fluvial con un desarrollo total de aproximadamente 1520 m (1000 m aguas arriba y 520 m aguas abajo del dique), y un ancho efectivo variable entre los 250 m a 700 m en prototipo. Estas características permiten analizar adecuadamente el comportamiento hidrosedimentológico de las obras, el funcionamiento de las operaciones de maniobra y la erosión en el tramo de río aguas abajo del dique. \\
 
-Como se observa en la figura [REFERENCIAR], el dique está constituido por un terraplén de materiales sueltos y dos vertederos, un tramo a nivel fijo (dique fijo), y otro regulado por 4 compuertas, conocido como dique móvil. Sobre margen derecha, se encuentra el canal moderador.
+Como se observa en la figura \ref{fig:modelo-fisico-dique-los-molinos}, el dique está constituido por un terraplén de materiales sueltos y dos vertederos, un tramo a nivel fijo (dique fijo), y otro regulado por 4 compuertas, conocido como dique móvil. Sobre margen derecha, se encuentra el canal moderador.
 
 \begin{figure}[ht]
 \centering\includegraphics[width=\imsizeS]
@@ -17,13 +17,15 @@ Como se observa en la figura [REFERENCIAR], el dique está constituido por un te
 \end{figure}
 
 \begin{figure}[ht]
+
 \centering\includegraphics[width=\imsizeS]
 {dique-los-molinos}
 \caption[Dique Los Molinos]{Dique Los Molinos, Jujuy.}
 \label{fig:dique-los-molinos}
+
 \end{figure}
 
-Los objetivos básicos para el estudio de este modelo físico, de interés para el presente trabajo, son los siguientes:
+Teniendo en cuenta el alcance de este trabajo, los objetivos para el estudio de este modelo :
 \begin{itemize}
 
 \item Analizar y cuantificar las erosiones locales, aguas abajo de las estructuras de descarga a los fines de constatar el funcionamiento de las obras previstas en el proyecto. Esta evaluación se llevará a cabo para escenarios hidrológicos de diseño.
@@ -109,6 +111,7 @@ La técnica tradicional consiste en el relevamiento manual de puntos sobre perfi
 Por último, se realiza la digitalización manual y conversión de modelo a prototipo de los puntos relevados.
 
 \section{Metodología de medición con la cámara RGB-D}
+\label{sec:metodologia-medicion-digital}
 
 En este sección, se describe la aplicación de la técnica digital de medición de erosión propuesta en este trabajo. \\
 
@@ -179,9 +182,9 @@ En REFERENCIAR[APLICACIÓN] se describe que para poder realizar la conversión a
 
 \section{Ensayos realizados}
 
-\begin{tabular}{|c|c|c|}
+\begin{tabular}{ccc}
 \hline
-Ensayo Nº & Caudal total m^{3}/s & Motivación \\
+Ensayo  & Caudal total $m^{3}/s$ & Motivación \\
 \hline
 1 & 900 & Caudal Máximo Dique Móvil (DM) y \\
   &     & Canal Moderador (CM) \\
@@ -206,81 +209,76 @@ Ensayo Nº & Caudal total m^{3}/s & Motivación \\
 \end{tabular}
 
 \subsection{Medición de erosión máxima}
-\label{ensayo-erosion-maxima}
+\label{sec:ensayo-erosion-maxima}
 
 En ámbito de la Ingeniería Civil, la representación con modelos físicos a escala reducida y la simulación de ensayos hidráulicos fluviales, como los que aquí se presentan, tiene entre sus objetivos principales definir las cotas de erosión máxima. Estas mediciones se realizan con el fin de establecer las profundidades de fundación de los muros de contención de las estructuras hidráulicas que componen el sistema evaluado. \\
 Se muestran los mapas de elevación en escala prototipo, generados a partir del relevamiento de fosos de erosión ubicados aguas abajo de las estructuras, para los ensayos 1 y 3. \\
 Como punto de referencia se utilizó el muro de separación entre canal moderador y dique móvil, con cota superior igual a 1370.45 m s.n.m.\\
 
-Ensayo 1. Caudal 900 m^{3}/s \\
+Ensayo 1. Caudal 900 $m^{3}/s$ \\
+
 AGREGAR MAPA 3D RGB \\
-% \begin{figure}[ht]
-% \centering\includegraphics[width=\imsize]
-% {fosos_erosion_Q900_rgb}
-% \caption[Imagen RGB Ensayo 1]
-% {Ensayo 1. Foso de erosión aguas abajo del dique móvil.  Imagen RGB.}
-% \label{fig:fosos_erosion_Q900_rgb}
-% \end{figure}
-%{Ensayo 1. Foso de erosión aguas abajo del dique móvil.  Imagen RGB.}
+\begin{figure}[ht]
+\centering\includegraphics[width=\imsize]
+{fosos_erosion_Q900_rgb}
+\caption[Imagen RGB Ensayo 1]
+{Ensayo 1. Foso de erosión aguas abajo del dique móvil.  Imagen RGB.}
+\label{fig:fosos_erosion_Q900_rgb}
+\end{figure}
 
-AGREGAR MAPA 3D ESCALA DE PROFUNDIDAD.\\
-% \begin{figure}[ht]
-% \centering\includegraphics[width=\imsize]
-% {fosos_erosion_Q900_dem}
-% \caption[MDE Ensayo 1]
-% {Ensayo 1. Foso de erosión aguas abajo del dique móvil. Modelo digital de elevaciones (MDE).}
-% \label{fig:fosos_erosion_Q900_dem}
-% \end{figure}
+\begin{figure}[ht]
+\centering\includegraphics[width=\imsize]
+{Q900_dem}
+\caption[MDE Ensayo 1]
+{Ensayo 1. Foso de erosión aguas abajo del dique móvil. Modelo digital de elevaciones.}
+\label{fig:Q900_dem}
+\end{figure}
 
-Ensayo 3. Caudal 4200 m^{3}/s \\
-AGREGAR MAPA 3D RGB \\
-% \begin{figure}[ht]
-% \centering\includegraphics[width=\imsize]
-% {fosos_erosion_Q4200_rgb}
-% \caption[Imagen RGB Ensayo 3]
-% {Ensayo 3. Foso de erosión aguas abajo del dique móvil.  Imagen RGB.}
-% \label{fig:fosos_erosion_Q4200_rgb}
-% \end{figure}
+Ensayo 3. Caudal 4200 $m^{3}/s$ \\
 
-AGREGAR MAPA 3D ESCALA DE PROFUNDIDAD.\\
-% \begin{figure}[ht]
-% \centering\includegraphics[width=\imsize]
-% {fosos_erosion_Q4200_dem}
-% \caption[MDE Ensayo 3]
-% {Ensayo 1. Foso de erosión aguas abajo del dique móvil.  Modelo digital de elevaciones.}
-% \label{fig:fosos_erosion_Q4200_dem}
-% \end{figure}
+\begin{figure}[ht]
+\centering\includegraphics[width=\imsize]
+{Q4200_rgb}
+\caption[Imagen RGB Ensayo 3]
+{Ensayo 3. Foso de erosión aguas abajo del dique móvil.  Imagen RGB.}
+\label{fig:Q4200_rgb}
+\end{figure}
 
-AGREGAR PERFIL 2 4200.\\
+\begin{figure}[ht]
+\centering\includegraphics[width=\imsize]
+{Q4200_dem}
+\caption[MDE Ensayo 3]
+{Ensayo 1. Foso de erosión aguas abajo del dique móvil.  Modelo digital de elevaciones.}
+\label{fig:Q4200_dem}
+\end{figure}
+
 %Fecha : 31/10/2012. Caudal :  900 m^{3} / s.
 %Fecha : 05/11/2012. Caudal : 4200 m^{3} / s
 
 \subsection{Medición de formas de fondo}
-\label{ensayo-formas-de-fondo}
+\label{sec:ensayo-formas-de-fondo}
 
 Estas mediciones se realizaron con el objetivo de verificar y optimizar las consignas de operación de las estructuras de control. El objetivo es regular los procesos hidrosedimentológicos presentes en las proximidades de la presa aguas arriba.
 En este ensayo se relevaron las canalizaciones hacia las compuertas del dique móvil y el canal moderador. El análisis de los canales que se formaron sobre la superficie del modelo, debido a las llamadas que se realiza con la operación de las estructuras de control, requiere relevar una densidad de puntos elevada y a la vez cubrir grandes áreas de superficie. La técnica digital aborda esta tarea de forma mucha más eficiente y precisa que la metodología tradicional. \\
 Se muestran los modelos 3D, en escala prototipo, generados a partir del área de modelación aguas arriba del dique, para un ensayo 10.\\
 Como punto de referencia se utilizó el muro de encauzamiento con cota superior igual a 1377.7 m s.n.m y ubicado aguas arriba entre dique móvil y dique fijo.
 
-Ensayo 10. Caudal 600 m^{3}/s \\
+Ensayo 10. Caudal 600 $m^{3}/s$ \\
 
-AGREGAR MAPA 3D ESCALA DE PROFUNDIDAD. \\
-% \begin{figure}[ht]
-% \centering\includegraphics[width=\imsize]
-% {aguas_arriba_Q600_rgb}
-% \Imagen RGB Ensayo 10]
-% {Área aguas arriba del dique. Imagen RGB.}
-% \label{fig:aguas_arriba_Q600_rgb}
-% \end{figure}
+\begin{figure}[ht]
+\centering\includegraphics[width=\imsize]
+{Q600_rgb}
+[Imagen RGB Ensayo 10]
+{Área aguas arriba del dique. Imagen RGB.}
+\label{fig:Q600_rgb}
+\end{figure}
 
-AGREGAR MAPA 3D ESCALA DE PROFUNDIDAD. \\
-% \begin{figure}[ht]
-% \centering\includegraphics[width=\imsize]
-% {aguas_arriba_Q600_dem}
-% \MDE Ensayo 10]
-% {Área aguas arriba del dique. Modelo digital de elevaciones.}
-% \label{fig:aguas_arriba_Q600_dem}
-% \end{figure}
+\begin{figure}[ht]
+\centering\includegraphics[width=\imsize]
+{Q600_dem}
+[MDE Ensayo 10]
+{Área aguas arriba del dique. Modelo digital de elevaciones.}
+\label{fig:Q600_dem}
+\end{figure}
 
 % Fecha : 29/10/2013. Caudal : 600 m^{3}/s

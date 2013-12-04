@@ -8,6 +8,10 @@
 % Por conveniencia: aqu\'{\i} puede cargar todos los paquetes y definir los comandos 
 % que necesite
 \usepackage{extra}
+\usepackage{enumerate}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%% Informacion sobre la tesis %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \title{Software para medici\'{o}n de erosi\'{o}n y sedimentaci\'{o}n en modelos f\'{i}sicos por medio de relevamiento digital de superficies}
@@ -46,14 +50,10 @@ A toda esa otra gente que no
 
 %%% \'{I}ndices %%%%
 \tableofcontents                %\'{I}ndice
-
-\begin{abreviaturas}
-                                %Abreviaturas
-\end{abreviaturas}
-
+% \begin{abreviaturas}
+% \end{abreviaturas}
 \listoffigures                  %Figuras
-
-\listoftables                   %Tablas
+% \listoftables                   %Tablas
 
 \include{resumen}
 
@@ -62,7 +62,11 @@ A toda esa otra gente que no
 % Podemos usar cualquiera de los dos comandos: \input o \include para incluir el texto
 \include{introduccion}
 \include{revision-estado-del-arte}
+\include{overview}
 \include{sensor-kinect}
+\include{registracion}
+\include{filtrado_y_conversion_prototipo}
+\include{aplicaciones}
 \include{ensayos}
 \include{resultados_y_analisis}
 
