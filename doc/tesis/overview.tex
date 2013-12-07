@@ -1,19 +1,27 @@
+
 \chapter{Visión general}
 
-Desde una perspectiva global, para generar un mapa 3D de un modelo físico se considera necesario realizar las siguientes etapas :
+Desde una perspectiva global, para generar un mapa 3D de la condición de erosión de un modelo físico utilizando una cámara RGB-D, es necesario ejecutar las siguientes etapas:
 \begin{itemize}
 
-\item Captura de la imagen a partir de la cámara RGB-D.
+\item Captura del frame RGB-D desde el sensor RGB-D (o desde el sistema de archivos si ya hubiesen sido grabados).
 
-\item Registración de la imagen. En esta etapa para unificar los puntos en un mismo sistema de coordenadas.
+\item Registración del frame RGB-D. Se alinea el frame a un sistema de coordenadas de referencia (sistema modelo).
 
 \item Eliminación de inconsistencias. La cámara puede relevar puntos sin información de profundidad o con mediciones incorrectas que deben ser filtrados para obtener mapas 3D consistentes. 
 
-\item Conversión del sistema de coordenadas de modelo a prototipo. Inicialmente, el conjunto de imágenes (habiendo sido alineadas o no) están en un sistema de coordenadas que tiene su origen en el sensor RGB-D. En esta instancia, se cambia el sistema de coordenadas y se aplica un cambio de escala, con el fin de obtener una representación del mapa digital de elevaciones (DEM) del prototipo.
+\item Conversión del sistema de coordenadas modelo al sistema prototipo. Inicialmente, el conjunto de frames (habiendo sido alineados o no) están en un sistema de coordenadas que tiene su origen en el sensor. Se transforma el sistema de coordenadas y se aplica el cambio de escala correspondiente (propiedad de construcción del modelo físico), a fin de obtener un modelo 3D que representa el mapa digital de elevaciones (DEM) de la condición de erosión en prototipo.
 
 \end{itemize}
 
-En este trabajo, la etapa de captura y registración se ejecutan incrementalmente hasta obtener un mapa 3D de la escena. Una vez finalizada la alineación, se realiza la eliminación de inconsistencias y finalmente la conversión a prototipo. En la figura REFERENCIAR[FIGURA] se ilustra el procedimiento implementado.
+En este trabajo, la etapa de captura y registración se ejecutan incrementalmente hasta obtener un mapa 3D de la escena observada. Una vez finalizada la alineación, se realiza la eliminación de inconsistencias y finalmente se lleva a cabo la conversión a prototipo. En la figura \ref{fig:esquema-general-aplicacion} se ilustra el procedimiento implementado.
+En los siguientes capítulos se explica con mayor detalle cada una de las etapas mencionadas.
 
-AGREGAR GRAFICO
+\begin{figure}[ht]
+\centering\includegraphics[width=\imsizeS]
+{esquema-general-aplicacion}
+\caption[Esquema general para generar mapa 3D en escala prototipo a partir de frames RGB-D.]
+{Esquema general para generar mapa 3D en escala prototipo a partir de frames RGB-D.}
+\label{fig:esquema-general-aplicacion}
+\end{figure}
 

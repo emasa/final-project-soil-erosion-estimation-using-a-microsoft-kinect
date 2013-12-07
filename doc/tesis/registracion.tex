@@ -2,7 +2,7 @@
 
 \chapter{Registración de imágenes}
 
-\begin{section}{Descripción general}
+\section{Descripción general}
 \label{sec:descripcion-general-registracion}
 
 La registración de imágenes es el proceso de transformación de diferentes conjuntos de datos a un mismo sistema de coordenadas. Los imágenes a registrar pueden ser provistas por varios sensores, haber sido tomadas en diferentes épocas o desde distintos puntos de vista. Esta técnica se utiliza en diversas áreas, tales como visión por computador, tratamiento de imágenes médica, reconocimiento automático de objetivos, procesamiento de datos satelitales, entre otros. El producto de la registración permite comparar o integrar los datos obtenidos a partir de diferentes fuentes. \\
@@ -24,19 +24,17 @@ La solución \textit{Pairwise alignment} implementada en este trabajo se divide 
 \end{enumerate}
 
 En las siguientes secciones se describe con mayor detalle cada etapa del procedimiento de alineación de pares de \textit{frames}. Por ultimo, en la seccion \ref{sec:acumulacion-del-error-slam}, se expone el problema de la acumulacion de error que aparece al utilizar exclusivamente un enfoque de odometría y se motiva el uso de la técnica de optimización global, conocida como SLAM, que permite la construcción de mapas consistentes.
-\end{section}
-\begin{section}{Características visuales}
+
+\section{Características visuales}
 \label{sec:features}
 
 La extracción de características (\textit{features}) visuales es una técnica muy utilizada en visión por computador para la detección, reconocimiento y seguimiento de objetos. Este procedimiento está compuesto por dos etapas : la detección de un punto de interés (\textit{keypoint}) que identifica un área relevante en la imagen, y el cómputo de un \textit{descriptor}, que caracteriza a la región. Por lo general, el algoritmo de detección identifica regiones con gran variación de intensidad, por ejemplo bordes o esquinas de un objeto, y se selecciona el centro de la región como \textit{keypoint}. El \textit{descriptor} se representa como un vector multidimensional, que suele calcularse en función de ciertas métricas (por ejemplo la orientación o la escala) utilizando los puntos circundantes al \textit{keypoint}. Dependiendo el tipo de aplicación puede desearse que las características sean invariantes a diferentes transformaciones, entre ellas, rotación, traslación, cambios de iluminación y escala. En las siguientes secciones se presentan los algoritmos SURF y ORB, considerados actualmente parte del estado del arte en la detección y descripción de características visuales.
 
-\begin{subsection}
-{Speeded Up Robust Feature (SURF)}
+\subsection{Speeded Up Robust Feature (SURF)}
 
 SURF\cite{bay2008speeded} es un detector y descriptor de características visuales inspirado por el descriptor de SIFT\cite{Lowe04}. Su principal diferencia radica en su velocidad, siendo la versión estándar de SURF un orden magnitud más rápido que SIFT, y según sus autores, más robusto ante diferentes tipos de transformaciones.
 
-\begin{subsection}
-{El detector de caracterısticas de SURF}
+\subsubsection{El detector de caracterısticas de SURF}
 EL detector de SURF se basa en el determinante de la matriz Hessiana. Dada una función continua $ f(x, y) $, la matriz Hessiana \textit{H} está formada por las derivadas parciales de \textit{f}:
 
 \begin{equation}
@@ -94,10 +92,8 @@ El proceso de detección SURF se divide en 3 etapas:
 \item Interpolación: se interpolan los datos en la cercanía del candidato para obtener una localización con precisión de subpixel.
 
 \end{itemize}
-\end{subsection}
 
-\begin{subsection}
-{El descriptor de SURF}
+\subsubsection{El descriptor de SURF}
 El descriptor de SURF describe cómo se distribuye la intensidad de los píxeles circundantes al centro de la característica. El cómputo del descriptor tiene 2 etapas: la extracción de la orientación
 \footnote{Para algunas aplicaciones, la invarianza de rotación no es necesaria, por lo que se puede evitar el cálculo de la orientación, dando lugar al denominado Upright SURF (U-SURF).}
 predominante de la característica y el cómputo de los componentes del vector utilizando \textit{Haar wavelets}. Los \textit{Haars wavelets} son filtros de convolución que se utilizan para calcular los gradientes de intensidad en \textit{x} y \textit{y}. Como se observa en la figura \ref{fig:haar-wavelet}, la convolución con \textit{Haar wavelets} puede ser implementada de forma eficiente, utilizando la representación de la imagen integral.
@@ -162,17 +158,11 @@ El descriptor resultante se compone por los vectores de cada subregión, por lo 
 \label{fig:componentes-descriptor-surf}
 \end{figure}
 
-\end{subsection}
-
-\end{subsection}
-
-\begin{subsection}
-{Oriented FAST and Rotated BRIEF (ORB)}
+\subsection{Oriented FAST and Rotated BRIEF (ORB)}
 
 ORB\cite{RubleeRKB11} es un detector y descriptor de características basado en el detector FAST\cite{Rosten06machinelearning} y el descriptor BRIEF\cite{Calonder12}. Si bien BRIEF es robusto ante cambios de iluminación y presencia de ruido, es muy sensible a rotaciones en el plano(\textit{in-plane}). Teniendo en cuenta este problema, ORB extiende FAST para detectar la orientación de las características (tipo \textit{corner}) y aplica mejoras sobre BRIEF dirigidas a aprovechar la información de orientación.
 
-\begin{subsection}
-{Oriented FAST (oFAST)}
+\subsubsection{Oriented FAST (oFAST)}
 
 La detección de características oFAST se compone de 4 etapas :
 \begin{enumerate}
@@ -199,12 +189,11 @@ Se puede construir un vector $\vec{OC}$ desde el centro del corner O hacia el \t
 \end{equation}
 
 \end{enumerate}
-\end{subsection}
 
-\begin{subsection}
-{Rotated BRIEF (rBRIEF)}
-\begin{subsection}
-{Binary Robust Independent Elementary Features (BRIEF)}
+\subsubsection{Rotated BRIEF (rBRIEF)}
+
+\paragraph{Binary Robust Independent Elementary Features (BRIEF)}
+
 Dado que el descriptor de ORB es una modificación de BRIEF, se presenta este último brevemente. El descriptor BRIEF\cite{Calonder12} es una cadena de bits (\textit{bit string}) que describe un \textit{patch} (centrado en el \textit{\textsl{keypoint}}) de la imagen. Está formado por un conjunto de tests binarios aplicados sobre los pixeles. Dado un \textit{patch} \textbf{p} de la imagen suavizada (para obtener mayor robustez frente al ruido), un test binario se define como:
 
 \begin{equation}
@@ -223,10 +212,8 @@ f_{n}(\textbf{p}) := \sum_{i=1}^{n} 2^{i-1}\tau(\textbf{p}; \textbf{x}_{i}, \tex
 \end{equation}
 
 Hay varios enfoques para seleccionar el conjunto de posiciones a testear. En la versión estándar de BRIEF, se aplica una distribución Gaussiana alrededor del centro del \textit{patch} debido a que se comprobó muy buenos resultados.
-\end{subsection}
 
-\begin{subsection}
-{Mejoras aplicadas en rBRIEF}
+\paragraph{Mejoras aplicadas en rBRIEF}
 
 BRIEF posee 2 características importantes para un descriptor :
 \begin{itemize}
@@ -296,20 +283,13 @@ g_{n}(\textbf{p}, \theta) := f_{n}(\textbf{p})|(\textbf{x}_{i}, \textbf{y}_{i}) 
 
 En la implementación, el algoritmo de aprendizaje se lleva a cabo en un proceso \textit{offline}. Además, se discretizan los ángulos en incrementos de $2\pi/30$ (12 grados) y se construye una \textit{lookup-table} de patrones punto-ángulo precalculados.
 
-\end{subsection}
-\end{subsection}
-
-\end{subsection}
-
-\end{section}
-
 \section{Correspondencia de características}
 
 \subsection{Correspondencia de características 2D}
 En la sección \ref{sec:features}, se describe el concepto de detección y representación (construyendo un descriptor) de características visuales. El descriptor es un vector de tamaño fijo, que permite establecer correspondencias entre características observadas en distintas imágenes. \\
 Dado conjuntos de descriptores origen y destino, el procedimiento para establecer correspondencias consiste en hallar, para cada elemento del conjunto de origen, el elemento más próximo en el conjunto de destino.
 
-AGREGAR FIGURA QUE MUESTRE UN MATCHING.
+% AGREGAR FIGURA QUE MUESTRE UN MATCHING.
 
 El concepto de distancia suele definirse en función de la naturaleza del descriptor :
 \begin{itemize}
@@ -530,11 +510,11 @@ Para enfrentar este problema, se presenta una técnica de optimización global, 
 \label{fig:maps-noisy-slam}
 \end{figure}
 
-\begin{subsection}{Simultaneous Localization And Mapping (SLAM) }
+\subsection{Simultaneous Localization And Mapping (SLAM)}
 
 SLAM plantea la problemática de que un robot (de forma general, un sistema sensorial) pueda construir un mapa incrementalmente del entorno y al mismo tiempo determinar su ubicación dentro del mapa, sin conocimiento a priori de su ubicación inicial. La solución al problema SLAM ha sido objeto de estudio de la comunidad de robótica móvil durante los últimos 20 años. SLAM ha sido planteado y resuelto teóricamente de diferentes formas, y aplicado en áreas diversas de la robótica, tales como robots en interiores, exteriores, subacuáticos, incluso sistemas aéreos. La presencia de ruido en el sistema sensorial, los inevitables errores, aproximaciones efectuadas en los modelos empleados y la complejidad creciente al procesar mayor cantidad de información, han sido inconvenientes en la aplicación práctica de soluciones SLAM, por lo que sigue siendo área de investigación. Debido a la presencia del error en las mediciones del sensor, las soluciones más exitosas se han basado en herramientas probabilísticas.
 
-\begin{subsection}{Formulación probabilística de SLAM}
+\subsubsection{Formulación probabilística de SLAM}
 
 La formulación clásica de SLAM asume que el sensor se desplaza en un entorno desconocido siguiendo la trayectoria $\textbf{x}_{1:T} = \{\textbf{x}_{1}, ..., \textbf{x}_{T}\}$ en intervalos discretos de tiempo 1 a \textsl{T}. Durante su recorrido, el sensor releva medidas de odometría $\textbf{u}_{1:T} = \{\textbf{u}_{1}, ..., \textbf{u}_{T}\}$ y toma conjuntos de observaciones (puntos de interés) $\textbf{z}_{1:T} = \{\textbf{z}_{1}, ..., \textbf{z}_{T}\}$. Resolver SLAM consiste en estimar la probabilidad a posteriori de la trayectoria del $\textbf{z}_{1:T}$ y el mapa \textbf{m} del entorno dadas las mediciones y la posición inicial $\textbf{x}_{0}$:
 \begin{equation}
@@ -549,9 +529,16 @@ En la práctica, resolver el problema SLAM requiere:
 \item Un modelo de observación, que representa la probabilidad $p(\textbf{z}_{t} | \textbf{x}_{t}, \textbf{m})$ de hacer una observación $\textbf{z}_{t}$ dado que el sensor se encuentra en la posición $\textbf{x}_{t}$ en el mapa \textbf{m}.
 
 \end{itemize}
-\end{subsection}
 
-\begin{subsection}{Solución \textit{GraphSLAM}}
+\begin{figure}[ht]
+\centering\includegraphics[width=\imsize]
+{slam-esquema}
+\caption[Formulación SLAM]
+{El problema esencial de SLAM. Se requiere una estimación simultánea tanto de la localización del sensor como de los landmarks. Las localizaciones reales no se pueden conocer ni medir directamente debido a las limitaciones del sensor. Las observaciones se toman entre el sensor real y las localizaciones de los \textit{landmarks}.}
+\label{fig:slam-esquema}
+\end{figure}
+
+\subsubsection{Solución \textit{GraphSLAM}}
 
 La literatura presenta diferentes técnicas para resolver este problema. Tradicionalmente, se han utilizado soluciones basadas en Filtros de Kalman extendido\cite{wiki-ekf} y filtros de partículas\cite{wiki-filtro-de-particulas}. Una alternativa más reciente es la denominada \textit{GraphSLAM}. En la representación \textit{GraphSLAM}, las poses del sensor se representan como nodos en un grafo, mientras que las restricciones espaciales entre las poses, obtenidas a partir de las observaciones y la odometría, se modelan como aristas. Una vez que el grafo está construido, se trata de buscar la configuración de las poses del sensor que mejor satisfacen las restricciones. En la figura \ref{fig:graphslam-frontend-backend} se ilustra un sistema típico \textit{GraphSLAM}. Conceptualmente, el sistema se divide en 2 tareas:
 
@@ -571,8 +558,7 @@ La literatura presenta diferentes técnicas para resolver este problema. Tradici
 \label{fig:graphslam-frontend-backend}
 \end{figure}
 
-\begin{subsection}
-{El grafo de poses y restricciones espaciales}
+\paragraph{El grafo de poses y restricciones espaciales}
 
 La técnica de \textit{GraphSLAM} construye un grafo que representa la topología del entorno por donde se mueve el sensor. En la figura \ref{fig:grafo-graphslam} se observa la estructura del grafo, donde cada nodo $\textbf{x}_{t}$ posee la posición del sensor en el instante \textsl{t} y cada arista $\textbf{e}_{ij}$ contiene las restricciones espaciales entre los nodos \textsl{i, j}. Las poses consecutivas modelan mediciones de odometría, mientras que aristas entre poses no consecutivas representan restricciones espaciales que se agregan a partir de múltiples observaciones de la misma zona.\\
 Detectar zonas por donde ya se ha pasado anteriormente, se conoce en la literatura como \textit{detección de bucles}, debido al hecho a que da lugar a trayectorias cerradas. También se utiliza el término \textit{cierre de bucles}, para indicar la acción de detectar una zona ya visitada y utilizar esta información para optimizar el grafo.
@@ -585,10 +571,7 @@ Detectar zonas por donde ya se ha pasado anteriormente, se conoce en la literatu
 \label{fig:grafo-graphslam}
 \end{figure}
 
-\end{subsection}
-
-\begin{subsection}
-{\textit{\textsl{Front-end}} : detección de bucles y construcción del grafo de poses}
+\paragraph{\textit{\textsl{Front-end}} : detección de bucles y construcción del grafo de poses}
 \label{sec:slam-frontend}
 
 En este trabajo, se sigue un enfoque de detección de bucles similar al presentado en \cite{henry2010rgb}, que si bien se caracteriza por ser sencillo, sirve para construir grafos (pequeños) que se ajustan a los requerimientos para mapear una superficie en laboratorio. \\
@@ -597,10 +580,8 @@ Para obtener la odometría (desplazamiento del sensor) desde $\textbf{x}_{t-1}$ 
 Para llevar a cabo la detección de bucles, se alinea el frame actual con los frames previos (asociados a poses en el grafo). Si el número de correspondencias consistentes es superior a un umbral $n_{e}$, se considera que se ha vuelto a pasar por un lugar visitado anteriormente. En tal caso, se añade una arista (restricción espacial) entre dicha pose y la actual. Si no se alcanza $n_{e}$, se concluye que los frames no visualizan la misma zona. En la implementación, se utiliza la información de la poses (posición y orientación) para determinar frames próximos al actual y evitar el proceso de alineación entre frames muy alejados, que probablemente no puedan aportar restricciones espaciales nuevas. \\
 En base a los experimentos realizados en el Laboratorio de Hidráulica en el marco de este trabajo, se determinó que se requieren alrededor $n_{e} = 25$ correspondencias para determinar si una escena es revisitada. Para estimar la odometría, se seteo $n_{u} = 45$ teniendo en cuenta que entre frames consecutivos la transformación debe ser precisa y el porcentaje de área sobrelapada debería ser cercano al 50\%. \\
 En la implementación es posible limitar la cantidad de aristas que se agregan en la etapa detección de bucles para reducir el costo computacional de esta etapa.
-\end{subsection}
 
-\begin{subsection}
-{\textit{Back-end}: Optimización del grafo de poses}
+\paragraph{\textit{Back-end}: Optimización del grafo de poses}
 
 Considere $\textbf{x} = (\textbf{x}_{1}, ..., \textbf{x}_{T})^{T}$ un vector donde cada componente $\textbf{x}_{i}$ contiene el nodo \textsl{i}. Además, para cada restricción espacial, entre nodos \textsl{i, j}, se les puede asociar una medición $\textbf{z}_{ij}$ con distribución Normal de media $\hat{\textbf{z}_{ij}}$ y matrix de información $\Omega_{ij}$ (inversa de la matriz de covarianza $\Sigma_{ij}$). \\
 Utilizando el criterio máxima de verosimilitud, tenemos que la función de verosimilitud o de probabilidad conjunta \cite{wiki-mle} sobre todas las mediciones $\textbf{z}_{ij}$ se define como :
@@ -637,9 +618,3 @@ Cabe notar que se requiere minimizar la suma, dado que los términos individuale
 \end{figure}
 
 En este trabajo, el problema de minimización se resuelve por medio del enfoque aplicado en \cite{lingemannefficient}, basado en la propuesta original de \textit{GraphSLAM} presentada por Lu y Milios\cite{Lu97globallyconsistent} (1997).
-
-\end{subsection} % fin de back-end
-
-\end{subsection} % fin de GraphSlam
-
-\end{subsection}

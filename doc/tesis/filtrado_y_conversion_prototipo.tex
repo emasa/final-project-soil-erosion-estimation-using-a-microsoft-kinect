@@ -8,7 +8,7 @@ En el apartado \ref{sec:consideraciones-kinect}, se explica que el sensor Kinect
 Con la motivación anterior, se decide aplicar una tecnica de analisis estadistico presentada en \cite{Rusu08towards3d}, que busca eliminar mediciones incorrectas. Este enfoque se basa en el cómputo de la distribución de la distancias entre los puntos 3D. Para cada punto, el procedimiento calcula la media $\mu$ y la desviación estándar $\sigma$ de las distancias a sus \textsl{k} vecinos más cercanos. Asumiendo que la distribución resultante es normal $\mathcal{N}(\mu, \sigma^{2})$, todos los puntos que caen fuera del intervalo $\mu \pm \alpha \sigma$ pueden ser considerados \textit{outliers} y removidos del conjunto de datos. La figura \ref{fig:statistical-removal} muestra el efecto de la eliminación de \textit{outliers} sobre una nube de puntos 3D afectada por el ruido. \\ 
 El valor de $\alpha$ depende del tamaño de la vecindad \textsl{k} analizada. En el presente trabajo, se utilizaron los valores $k=20, \alpha=2.5$, dando resultados satisfactorios, considerando aproximadamente 1\% de los puntos como \textit{outliers}.
 
-\begin{figure}[h]
+\begin{figure}[ht]
 \centering\includegraphics[width=\imsize]
 {statistical-removal}
 \caption[Eliminación de datos espurios con técnica estadística]
@@ -35,7 +35,7 @@ z_{p} = - s \cdot (z_{p} - c_{m}) + c_{p}
 
 donde $c_{m}, c_{p}$ son las cotas de referencia para los sistema de coordenadas modelo y prototipo respectivamente, y \textsl{s} es la escala. \\
 
-\begin{figure}[h]
+\begin{figure}[ht]
 \centering\includegraphics[width=\imsize]
 {sistema-coordenadas-modelo}
 \caption[Sistema de coordenadas modelo]
@@ -43,7 +43,7 @@ donde $c_{m}, c_{p}$ son las cotas de referencia para los sistema de coordenadas
 \label{fig:sistema-modelo}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[ht]
 \centering\includegraphics[width=\imsize]
 {sistema-coordenadas-prototipo}
 \caption[Sistema de coordenadas prototipo]
