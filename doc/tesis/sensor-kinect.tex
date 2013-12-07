@@ -13,11 +13,10 @@ El sensor Microsoft Kinect \cite{microsoft-kinect}, inicialmente diseñado para 
 
 \section{Descripción}
 \label{sec:descripcion-kinect}
-La cámara RGB produce un \textit{stream} de datos de 24 bits por pixel, 8 bits por cada color. Su resolución estándar es 640x480 pixeles con una tasa de muestreo máxima de 30 FPS. \\
-El sensor de profundidad está compuesto por un emisor láser infrarrojo (IR) y un sensor CMOS monocromo. Produce un \textit{stream} de datos de 11 bits. Posee una resolución estándar de 640x480 pixeles a una tasa de muestreo máxima de 30 FPS. \\
+La cámara RGB produce un \textit{stream} de datos de 24 bits por píxel, 8 bits por cada color. Su resolución estándar es 640x480 píxeles con una tasa de muestreo máxima de 30 FPS. \\
+El sensor de profundidad está compuesto por un emisor láser infrarrojo (IR) y un sensor CMOS monocromo. Produce un \textit{stream} de datos de 11 bits. Posee una resolución estándar de 640x480 píxeles a una tasa de muestreo máxima de 30 FPS. \\
 El campo de visión es de 57° horizontal y 43° vertical. \\
 Los cámara presenta otros sensores y un mecanismo de inclinación que no fueron utilizados en este trabajo. \\
-
 Cabe señalar que para un objeto observado en la escena, el valor de profundidad obtenido, no es la distancia real desde la Kinect al objeto, sino la distancia desde el plano del sensor (Figura \ref{fig:esquema-plano-profundidad-kinect}).
 
 \begin{figure}[ht]
@@ -45,7 +44,7 @@ Para obtener una imagen de profundidad el emisor láser emite un patrón de punt
 El proceso que se describe en la patente de PrimeSense\cite{garcia2008range} se divide en las siguientes etapas :
 \begin{enumerate}
 \item Capturar el patrón de puntos para un conjunto de imágenes de referencia a diferentes distancias del plano del sensor.
-\item Capturar el patrón de puntos sobre una imagen de test de la region de interes.
+\item Capturar el patrón de puntos sobre una imagen de test de la región de interés.
 \item Encontrar la imagen de referencia que mayor similitud tiene con la imagen de test utilizando un método de Correlación Cruzada\cite{wiki-cross-correlation}.
 \item Estimar el mapa 3D de la escena por medio de un proceso de triangulación utilizando los desplazamientos entre la imagen de test y la imagen de referencia elegida.
 \end{enumerate}
@@ -53,7 +52,7 @@ El proceso que se describe en la patente de PrimeSense\cite{garcia2008range} se 
 En el caso del Microsoft Kinect, las imágenes de referencia han sido capturadas contra una superficie plana a distancias predefinidas y están almacenadas en el dispositivo. El sensor devuelve la imagen de profundidad en forma de valores de disparidad que luego son traducidos a distancias en metros, en un procedimiento externo, mediante la conversión :
 
 \begin{equation}
-distancia=0.1236 \cdot \tan(\frac{disparidad}{2842.5} + 1.1863)
+distancia=0,1236 \cdot \tan(\frac{disparidad}{2842,5} + 1,1863)
 \end{equation}
 
 Si bien el sensor Kinect captura las imágenes RGB y de profundidad de forma independiente, en este trabajo se utiliza una librería que brinda la posibilidad de sincronizar automáticamente ambos tipos de imágenes, dando como resultado una imagen RGB-D o frame RGB-D.
@@ -63,17 +62,17 @@ Si bien el sensor Kinect captura las imágenes RGB y de profundidad de forma ind
 
 En este apartado se describen algunas especificaciones para el uso del dispositivo Kinect que se consideran relevantes para este trabajo.
 
-De acuerdo a las especificaciones oficiales, el rango de operación del sensor de profundidad se encuentra entre 0.4 m a 4 m. En Khoshelham\cite{khoshelham2011accuracy} (2011) se analiza la precisión del sensor, midiendo la profundidad de una superficie plana a diferentes distancias y se concluye que el error aleatorio de los datos de profundidad crece cuadráticamente con el aumento de la distancia entre el dispositivo y la escena observada, según se presenta en la figura \ref{fig:error-kinect}.
+De acuerdo a las especificaciones oficiales, el rango de operación del sensor de profundidad se encuentra entre 0,4 m a 4 m. En Khoshelham (2011) \cite{khoshelham2011accuracy} se analiza la precisión del sensor, midiendo la profundidad de una superficie plana a diferentes distancias y se concluye que el error aleatorio de los datos de profundidad crece cuadráticamente con el aumento de la distancia entre el dispositivo y la escena observada, según se presenta en la figura \ref{fig:error-kinect}.
 
 \begin{figure}[ht]
 \centering\includegraphics[width=\imsize]
 {error-kinect}
-\caption[Error camara Kinect]
-{Desviación estándar del error en la estimación de profundidad, posicionando el sensor a diferentes distancias del plano de referencia. En rojo se muestra la curva que mejor ajusta al error. La desviación estándar presenta un valor de 0,5 cm a una distancia de 1,5 m y un maximo cercano a 4,25 cm para una distancia de 5 m. Fuente : \cite{khoshelham2011accuracy}.}
+\caption[Error cámara Kinect]
+{Desviación estándar del error en la estimación de profundidad, posicionando el sensor a diferentes distancias del plano de referencia. En rojo se muestra la curva que mejor ajusta al error. La desviación estándar presenta un valor de 0,5 cm a una distancia de 1,5 m y un máximo cercano a 4,25 cm para una distancia de 5 m. Fuente : \cite{khoshelham2011accuracy}.}
 \label{fig:error-kinect}
 \end{figure}
 
-En Andersen y Ahrendt\cite{andersen12} (2012) se realiza otro análisis del sensor de profundidad del Microsoft Kinect concluyendo lo siguiente :
+En Andersen y Ahrendt (2012) \cite{andersen12} realizan otro estudio del sensor de profundidad del Microsoft Kinect concluyendo lo siguiente :
 \begin{itemize}
 
 \item Materiales con características reflectantes influyen sobre el sensor de profundidad imposibilitando la medición de distancias o derivando en mediciones incorrectas.
@@ -109,5 +108,4 @@ En Andersen y Ahrendt\cite{andersen12} (2012) se realiza otro análisis del sens
 \caption[Silla con zonas sin medición de profundidad]{Imágenes RGB (derecha) y de profundidad (izquierda) de una silla con zonas sin mediciones de profundidad (en azul). Imagen original : \cite{andersen12}.}
 \label{fig:silla-sombra-kinect}
 \end{figure}
-
 

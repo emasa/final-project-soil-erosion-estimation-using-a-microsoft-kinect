@@ -4,8 +4,7 @@
 \section{Descripción del modelo}
 
 Los ensayos que se llevaron a cabo en este trabajo se realizaron en un modelo físico ubicado en el Laboratorio de Hidráulica de la Facultad de Ciencias Exactas, Físicas y Naturales (UNC). El modelo es una representación del Dique Los Molinos a escala reducida de longitudes 1:65. Este Dique se encuentra ubicado en la provincia Jujuy, sobre el río Grande, aguas debajo de la confluencia con el río Reyes. \\
-Este modelo físico hidráulico está representado con fondo fijo en las márgenes y fondo móvil en el lecho del río. Se representaron las obras de regulación, con todos sus componentes y elementos auxiliares de relevancia hidrosedimentológica. Cuenta con un tramo del curso fluvial con un desarrollo total de aproximadamente 1520 m (1000 m aguas arriba y 520 m aguas abajo del dique), y un ancho efectivo variable entre los 250 m a 700 m en prototipo. Estas características permiten analizar adecuadamente el comportamiento hidrosedimentológico del flujo en cercanías de las obras, el funcionamiento de las operaciones de maniobra y la erosión en el tramo de río aguas abajo del dique. \\
-Como se observa en la figura \ref{fig:modelo-fisico-dique-los-molinos}, el dique está constituido por un terraplén de materiales sueltos y dos vertederos, un tramo a nivel fijo (dique fijo), y otro regulado por 4 compuertas, conocido como dique móvil. Sobre margen derecha, se encuentra el canal moderador.
+Este modelo físico hidráulico está representado con fondo fijo en las márgenes y fondo móvil en el lecho del río. Se representaron las obras de regulación, con todos sus componentes y elementos auxiliares de relevancia hidrosedimentológica. Cuenta con un tramo del curso fluvial con un desarrollo total de aproximadamente 1520 m (1000 m aguas arriba y 520 m aguas abajo del dique), y un ancho efectivo variable entre los 250 m a 700 m en prototipo. Estas características permiten analizar adecuadamente el comportamiento hidrosedimentológico del flujo en cercanías de las obras, el funcionamiento de las operaciones de maniobra y la erosión en el tramo de río aguas abajo del dique. Como se observa en la figura \ref{fig:modelo-fisico-dique-los-molinos}, el dique está constituido por un terraplén de materiales sueltos y dos vertederos, un tramo a nivel fijo (dique fijo), y otro regulado por 4 compuertas, conocido como dique móvil. Sobre margen derecha, se encuentra el canal moderador.
 
 \begin{figure}[ht]
 \centering\includegraphics[width=\imsize]
@@ -23,7 +22,7 @@ Como se observa en la figura \ref{fig:modelo-fisico-dique-los-molinos}, el dique
 
 \end{figure}
 
-Teniendo en cuenta el alcance de este trabajo, los objetivos para el estudio sobre este modelo fueron:
+Teniendo en cuenta el alcance de este trabajo, los objetivos para el estudio sobre este modelo fueron los siguientes:
 \begin{itemize}
 
 \item Analizar y cuantificar las erosiones locales, aguas abajo de las estructuras de descarga a los fines de constatar el funcionamiento de las obras previstas en el proyecto. Esta evaluación se llevará a cabo para escenarios hidrológicos de diseño.
@@ -32,20 +31,20 @@ Teniendo en cuenta el alcance de este trabajo, los objetivos para el estudio sob
 
 \end{itemize}
 
-Sobre la zona relevante, se ha construido una plataforma móvil que posibilita realizar las mediciones de erosión. Figura \ref{fig:sistema-camara-carro}. Sus componentes principales son :
+Sobre la zona relevante, se ha construido una plataforma móvil que posibilita realizar las mediciones de erosión. Figura \ref{fig:sistema-camara-carro}. Sus componentes principales son:
 
 \begin{itemize}
 
 \item Un puente grúa. Este puede ser trasladado para observar distintas áreas del modelo.
 
-\item Una guia-riel y un carro-soporte para la cámara Kinect. La guía se anexa al puente grua, lo que permite la traslación de la cámara a lo ancho del modelo.
+\item Una guía-riel y un carro-soporte para la cámara Kinect. La guía se anexa al puente grúa, lo que permite la traslación de la cámara a lo ancho del modelo.
 
 \end{itemize}
 
 \begin{figure}[ht]
 \centering\includegraphics[width=\imsize]
 {esquema-camara-puente-grua}
-\caption[Puente grua]{Puente grua. Las flechas indican la direcciones en la que se puede trasladar la cámara (esquematizada con el recuadro verde). En rojo, traslación utilizando el carro soporte, mientras que la trayectoria en azul, se consigue movilizando el puente grúa.}
+\caption[Puente grúa]{Puente grúa. Las flechas indican la direcciones en la que se puede trasladar la cámara (esquematizada con el recuadro verde). En rojo, traslación utilizando el carro soporte, mientras que la trayectoria en azul, se consigue movilizando el puente grúa.}
 \label{fig:esquema-camara-puente-grua}
 \end{figure}
 
@@ -61,7 +60,7 @@ Sobre la zona relevante, se ha construido una plataforma móvil que posibilita r
 \section{Etapas de un ensayo hidráulico}
 \label{sec:etapas-previas-medicion}
 
-En cada ensayo hidráulico realizado, se cubrieron las siguientes etapas :  
+En cada ensayo hidráulico realizado, se cubrieron las etapas enumeradas a continuación:  
 \begin{enumerate}
 
 \item Se estableció la condición inicial del modelo, aguas abajo de las estructuras, nivelando el material suelto (arena) hasta la cota del terreno medido con la topografía provista. Figura \ref{fig:condicion-inicial-modelo}. Se utilizó una cota media de 1360 m s.n.m.
@@ -113,17 +112,17 @@ Por último, se realiza la digitalización manual y conversión de modelo a prot
 
 En esta sección, se describe la aplicación de la técnica digital de medición de erosión propuesta en este trabajo. \\
 
-Se tuvieron en cuenta un conjunto de consideraciones que forman parte de la técnica de medición y permiten obtener resultados óptimos, estas consideraciones son las siguientes :
+Se tuvieron en cuenta un conjunto de consideraciones que forman parte de la técnica de medición y permiten obtener resultados óptimos, las cuales se presentan a continuación:
 
 \begin{itemize}
 
 \item La superficie a relevar debe estar libre de agua. Como se mencionó en \ref{sec:consideraciones-kinect}, se observó que los objetos con características reflectantes afectan al sensor de profundidad de la Kinect. Figura \ref{fig:modelo-condiciones-agua}.
 
-\item La escena debe estar al resguardo de la luz solar, como se explica en \ref{sec:consideraciones-kinect}. Debido a que el modelo físico utilizado se encontraba al aire libre, en el exterior del Laboratorio de Hidráulica, fue necesario utilizar un nylon de color negro colocado sobre el puente grúa, como se puede observar en la figura \ref{fig:modelo-lona}. Alternativamente, se considero realizar las mediciones al atardecer cuando la luz solar es más tenue. Se concluye que utilizando el nylon se obtienen condiciones lumínicas estables, quitando así una restricción para el horario de medición.
+\item La escena debe estar al resguardo de la luz solar, como se explica en \ref{sec:consideraciones-kinect}. Debido a que el modelo físico utilizado se encontraba al aire libre, en el exterior del Laboratorio de Hidráulica, fue necesario utilizar un nailon de color negro colocado sobre el puente grúa, como se puede observar en la figura \ref{fig:modelo-lona}. Alternativamente, se considero realizar las mediciones al atardecer cuando la luz solar es más tenue. Se concluye que utilizando el nailon se obtienen condiciones lumínicas estables, quitando así una restricción para el horario de medición.
 
 \item La guía debe estar horizontalizada. El plano desde el que se captura la escena debe estar a una altitud constante para que la representación de la superficie sea consistente. Esta condición debe ser verificada al iniciar cada ensayo hidráulico.
 
-\item La cámara debe ubicarse en un rango de 0.4 m  a 1.5 m de altura sobre escena a relevar, para que el error de medición se mantenga dentro del intervalo aceptable (aproximadamente 5 mm), segun el analisis del sensor Kinect presentado en \ref{sec:consideraciones-kinect}.
+\item La cámara debe ubicarse en un rango de 0.4 m  a 1.5 m de altura sobre escena a relevar, para que el error de medición se mantenga dentro del intervalo aceptable (aproximadamente 5 mm), según el análisis del sensor Kinect presentado en \ref{sec:consideraciones-kinect}.
 
 \end{itemize}
 
@@ -141,7 +140,7 @@ Se tuvieron en cuenta un conjunto de consideraciones que forman parte de la téc
 \end{center}
 \end{minipage}
 \hfill
-\caption{A la derecha condición correcta para la medición. A la izquierda se observan espejos de agua que interfieren el sensor infrarrojo de la cámara.}
+\caption[Modelo físico con y sin agua sobre la superficie]{Derecha: condición correcta para la medición. Izquierda: se observan espejos de agua que interfieren el sensor infrarrojo de la cámara.}
 \label{fig:modelo-condiciones-agua}
 \end{figure}
 
@@ -159,11 +158,11 @@ Se tuvieron en cuenta un conjunto de consideraciones que forman parte de la téc
 \end{center}
 \end{minipage}
 \hfill
-\caption{Derecha: Forma de colocar el nylon sobre el puente grúa para cubrir todo el largo del riel. Izquierda: La sombra producida por el nylon permite capturar las imágenes sin interferencia del sol.}
+\caption[Nailon utilizado para evitar interferencia de luz solar]{Derecha: Forma de colocar el nailon sobre el puente grúa para cubrir todo el largo del riel. Izquierda: La sombra producida por el nailon permite capturar las imágenes sin interferencia del sol.}
 \label{fig:modelo-lona}
 \end{figure}
 
-Habiendo verificado las condiciones anteriores, se introduce el carro-soporte en carril guía y se inicia la aplicación de registración \textit{ModelMapper} \ref{sec:model-mapper}. \\
+Habiendo verificado las condiciones anteriores, se introduce el carro-soporte en el carril-guía y se inicia la aplicación de registración \textit{ModelMapper} \ref{sec:model-mapper}. \\
  
 En la figura \ref{fig:aguas-abajo-desplazamiento-carro}, se observa cómo manipular la plataforma móvil para capturar la escena. Se propone un desplazamiento del carro de aproximadamente 40 cm entre cada captura, para que el área sobrelapada entre dos nubes puntos continuas esté próxima al 50\%. Si la aplicación no lograr realizar la registración correctamente se corrige la ubicación del sensor a una posición intermedia.
 
@@ -269,4 +268,3 @@ Se muestran los mapas de elevación en escala prototipo, generados a partir del 
 {Ensayo 10. Área aguas arriba del dique móvil. Modelo digital de elevaciones.}
 \label{fig:Q600_dem}
 \end{figure}
-
