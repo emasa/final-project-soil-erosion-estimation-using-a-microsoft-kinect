@@ -1,0 +1,19 @@
+\chapter{Trabajos futuros}
+
+Algunos de los trabajos futuros que se pueden realizar tomando como base el actual son:
+
+\begin{itemize}
+
+\item Realizar un proceso de calibración para estimar los parámetros internos \cite{wiki-calibracion-camara} de la cámara Kinect de forma precisa. En este trabajo, se utilizan valores definidos por el driver OpenNI, que han probado que dan buenos resultados. Sin embargo, mediante un proceso de calibración se espera reducir el error del sensor.
+
+\item Buscar una solución precisa para definir la cota de referencia en modelo. En este trabajo se recomienda utilizar estructuras sobre el dique (presentes en modelo 3D) para elegir cotas con mediciones conocidas en prototipo. No obstante, en el apartado \ref{sec:conversion-mapa3D-prototipo} se analiza la representación obtenida para dichas estructuras y se observa que el ruido intrínseco del sensor Kinect afecta a la representación. En vista de lo anterior, se propone estudiar soluciones automáticas que permitan extraer una cota de referencia robusta ante la presencia de estructuras con ruido.
+
+\item Probar y comparar diferentes algoritmos utilizados en las distintas etapas con el fin de aumentar la precisión de la registración y disminuir la presencia de datos erróneos o afectados por ruido.
+
+\item Evaluar la técnica digital en ambientes interiores con diferentes condiciones lumínicas a las observadas en modelos al aire libre. 
+
+\item Evaluar la robustez del sistema ante la presencia de extensas zonas ocultas (presentado en \ref{sec:consideraciones-kinect}). Modelos físicos con grandes diferencias en altitud pueden verse afectados por este problema.
+
+\item Desarrollar una interfaz gráfica de usuario (GUI) sencilla para facilitar el uso de las aplicaciones.
+
+\end{itemize}
