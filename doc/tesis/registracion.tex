@@ -1,12 +1,11 @@
-	 	 	
 
 \chapter{Registración de imágenes}
 
 \section{Descripción general}
 \label{sec:descripcion-general-registracion}
 
-La registración de imágenes es el proceso de transformación de diferentes conjuntos de datos a un mismo sistema de coordenadas. Los imágenes a registrar pueden ser provistas por varios sensores, haber sido tomadas en diferentes épocas o desde distintos puntos de vista. Esta técnica se utiliza en diversas áreas, tales como visión por computador, tratamiento de imágenes médica, reconocimiento automático de objetivos, procesamiento de datos satelitales, entre otros. El producto de la registración permite comparar o integrar los datos obtenidos a partir de diferentes fuentes. \\
-Una aplicación específica de la registración de imágenes, muy utilizada en el campo de la robótica, es la estimación de la odometría de un sensor en movimiento. En particular, la odometría visual determina los cambios en la posición y la orientación de la cámara entre pares de imágenes consecutivas en una secuencia de vídeo. \\
+La registración de imágenes es el proceso de transformación de diferentes conjuntos de datos a un mismo sistema de coordenadas. Los imágenes a registrar pueden ser provistas por varios sensores, haber sido tomadas en diferentes épocas o desde distintos puntos de vista. Esta técnica se utiliza en diversas áreas, tales como visión por computador, tratamiento de imágenes médicas, reconocimiento automático de objetivos, procesamiento de datos satelitales, entre otros. El producto de la registración permite comparar o integrar los datos obtenidos a partir de diferentes fuentes. \\
+Una aplicación específica de la registración de imágenes, muy utilizada en el campo de la robótica, es la estimación de la odometría de un sensor en movimiento. En particular, la odometría visual determina los cambios en la posición y la orientación de la cámara entre pares de imágenes consecutivas. \\
 En este trabajo, se sigue un enfoque de odometría visual para construir un mapa 3D de una superficie de interés, obtenido como resultado de un ensayo hidráulico en laboratorio, utilizando una cámara RGB-D Kinect. Como se describe en la sección \ref{cap:estado-del-arte}, el enfoque aplicado se inspira en un conjunto de trabajos anteriores, orientados al mapeo 3D de interiores, donde emplearon cámaras RGB-D. Varias de estas propuestas se basan en un proceso de reconstrucción acumulativo entre pares de frame RGB-D, conocido como \textit{Pairwise alignment} o \textit{alineación de pares}. Este método consiste en determinar la traslación y rotación del sensor, con seis grados de libertad, entre un frame de origen y otro de destino. \\
 La solución \textit{Pairwise alignment} implementada en este trabajo se divide en las siguientes etapas:
 \begin{enumerate}
@@ -18,7 +17,7 @@ La solución \textit{Pairwise alignment} implementada en este trabajo se divide 
 
 \item Eliminación de correspondencias erróneas (\textit{outliers}) entre puntos 3D.
 
-\item Estimación de la transformación rígida, a partir de las correspondencias de puntos 3D filtradas en la etapa (4).
+\item Aproximación de la transformación rígida, a partir de las correspondencias de puntos 3D filtradas en la etapa (4).
 
 \item Refinamiento iterativo de la transformación utilizando el algoritmo ICP sobre el conjunto de puntos 3D obtenidos en la etapa (3), hasta cumplir un criterio de convergencia.
 \end{enumerate}
@@ -28,14 +27,14 @@ En las siguientes secciones se describe con mayor detalle cada etapa del procedi
 \section{Características visuales}
 \label{sec:features}
 
-La extracción de características (\textit{features}) visuales es una técnica muy utilizada en visión por computador para la detección, reconocimiento y seguimiento de objetos. Este procedimiento está compuesto por dos etapas: la detección de un punto de interés (\textit{keypoint}) que identifica un área relevante en la imagen, y el cómputo de un \textit{descriptor}, que caracteriza a la región. Por lo general, el algoritmo de detección identifica regiones con gran variación de intensidad, por ejemplo bordes o esquinas de un objeto, y se selecciona el centro de la región como \textit{keypoint}. El \textit{descriptor} se representa como un vector multidimensional, que suele calcularse en función de ciertas métricas (por ejemplo la orientación o la escala) utilizando los puntos circundantes al \textit{keypoint}. Dependiendo el tipo de aplicación puede desearse que las características sean invariantes a diferentes transformaciones, entre ellas, rotación, traslación, cambios de iluminación y escala. En las siguientes secciones se presentan los algoritmos SURF y ORB, considerados actualmente parte del estado del arte en la detección y descripción de características visuales.
+La extracción de características (\textit{features}) visuales es una técnica muy utilizada en visión por computador para la detección, reconocimiento y seguimiento de objetos. Este procedimiento está compuesto por dos etapas: la detección de un punto de interés (\textit{keypoint}) que identifica un área distintiva de la imagen, y el cómputo de un \textit{descriptor}, que caracteriza a la región. Por lo general, el algoritmo de detección identifica regiones con gran variación de intensidad, por ejemplo bordes o esquinas de un objeto, y se selecciona el centro de la región como \textit{keypoint}. El \textit{descriptor} se representa como un vector multidimensional, que suele calcularse en función de ciertas métricas (por ejemplo la orientación o la escala) utilizando los puntos circundantes al \textit{keypoint}. Dependiendo el tipo de aplicación puede desearse que las características sean invariantes a diferentes transformaciones, entre ellas, rotación, traslación, cambios de iluminación y escala. En las siguientes secciones se presentan los algoritmos SURF y ORB, considerados actualmente parte del estado del arte en la detección y descripción de características visuales.
 
 \subsection{Speeded Up Robust Feature (SURF)}
 
-SURF \cite{bay2008speeded} es un detector y descriptor de características visuales inspirado por el descriptor de SIFT \cite{Lowe04}. Su principal diferencia radica en su velocidad, siendo la versión estándar de SURF un orden magnitud más rápido que SIFT, y según sus autores, más robusto ante diferentes tipos de transformaciones.
+SURF \cite{bay2008speeded} es un detector y descriptor de características visuales inspirado en el descriptor de SIFT \cite{Lowe04}. Su principal diferencia radica en su velocidad, siendo la versión estándar de SURF un orden magnitud más rápido que SIFT, y según sus autores, más robusto ante diferentes tipos de transformaciones.
 
 \subsubsection{El detector de características de SURF}
-EL detector de SURF se basa en el determinante de la matriz Hessiana. Dada una función continua $ f(x, y) $, la matriz Hessiana \textit{H} está formada por las derivadas parciales de \textit{f}:
+El detector de SURF se basa en el determinante de la matriz Hessiana. Dada una función continua $ f(x, y) $, la matriz Hessiana \textit{H} está formada por las derivadas parciales de \textit{f}:
 
 \begin{equation}
 H(f(x, y)) =
@@ -54,17 +53,16 @@ det(H) = \frac{\partial^2 f}{\partial x^2} \frac{\partial^2 f}{\partial y^2}
 	 - \left( \frac{\partial^2 f}{{\partial x}{\partial y}} \right)^ 2
 \end{equation}
 
-A partir del test de la segunda derivada,
-\footnote{Si la Hessiana es definida positiva en \textbf{x}, entonces \textit{f(\textbf{x})} tiene un mínimo local en \textbf{x}. Si la Hessiana es definida negativa, entonces \textit{f(\textbf{x})} tiene un máximo local en \textbf{x}. Si la Hessiana tiene autovalores positivos y negativos, \textit{f(\textbf{x})} es un punto de silla. En otro caso el test no aporta información.}
-se tiene que si el determinante es positivo se puede clasificar a ese punto de la función como un máximo o mínimo local, mientras que si es negativo se concluye que no es un extremo local.
-
-Al aplicar esta teoría al dominio de las imágenes, se sustituye $f(x,y)$ por la intensidad de los píxeles de la imagen $I(x,y)$ y se reemplaza el cálculo de las derivadas parciales por la aplicación de filtros de convolución. En particular, para calcular las derivadas parciales se pueden utilizar filtros de convolución que discretizan las derivadas parciales segundas de la función Gaussiana. Sin embargo, los autores de SURF proponen una aproximación a estos filtros por medio de \textit{box filters}. Como se observa en la figura \ref{fig:box-filters}, los \textit{box filters} son filtros de convolución muy simples, que pueden ser implementados eficientemente utilizando la representación de la \textit{imagen integral} \cite{wiki-imagen-integral}.
+A partir del test de la segunda derivada
+\footnote{Si la Hessiana es definida positiva en \textbf{x}, entonces \textit{f(\textbf{x})} tiene un mínimo local en \textbf{x}. Si la Hessiana es definida negativa, entonces \textit{f(\textbf{x})} tiene un máximo local en \textbf{x}. Si la Hessiana tiene autovalores positivos y negativos, \textit{f(\textbf{x})} es un punto de silla. En otro caso el test no aporta información.},
+se tiene que si el determinante es positivo se puede clasificar a ese punto de la función como un máximo o mínimo local, mientras que si es negativo se concluye que no es un extremo local. \\
+Al aplicar esta teoría al dominio de las imágenes, se sustituye $f(x,y)$ por la intensidad de los píxeles de la imagen $I(x,y)$ y se reemplaza el cálculo de las derivadas parciales por la aplicación de filtros de convolución \cite{wiki-convolucion}. En particular, para calcular las derivadas parciales se pueden utilizar filtros de convolución que discretizan las derivadas parciales segundas de la función Gaussiana \cite{wiki-gaussiana}. Sin embargo, los autores de SURF proponen una aproximación a estos filtros por medio de \textit{box filters}. Como se observa en la figura \ref{fig:box-filters}, los \textit{box filters} son filtros de convolución muy simples, que pueden ser implementados eficientemente utilizando la representación de la \textit{imagen integral} \cite{wiki-imagen-integral}.
 
 \begin{figure}[ht]
 \centering\includegraphics[width=\imsize]
 {box-filters}
 \caption[Box filters]
-{Arriba: Versión discreta de los filtros de las derivadas parciales segundas de la función Gaussiana con respecto a \textit{x}, \textit{y} y \textit{xy} respectivamente, denominadas $L_{xx}$, $L_{yy}$ y $L_{xy}$. Abajo: aproximaciones a los filtros de arriba mediante \textit{box filters} denotados $D_{xx}$, $D_{yy}$ y $D_{xy}$ respectivamente. Imagen original: \cite{bay2008speeded}.}
+{Arriba: Versión discreta de los filtros de las derivadas parciales segundas de la función Gaussiana con respecto a \textit{x}, \textit{y} y \textit{xy} respectivamente, denominadas $L_{xx}$, $L_{yy}$ y $L_{xy}$. Abajo: aproximaciones a los filtros de arriba mediante \textit{box filters} denotados $D_{xx}$, $D_{yy}$ y $D_{xy}$ respectivamente \cite{bay2008speeded}.}
 \label{fig:box-filters}
 \end{figure}
 
@@ -79,7 +77,7 @@ Para encontrar las características visuales se utiliza el concepto de espacio d
 \centering\includegraphics[width=\imsizeL]
 {scale-space}
 \caption[Espacio de escalas]
-{Enfoques para construir el espacio de escalas. Izquierda: enfoque tradicional donde iterativamente se reescala la imagen y se suaviza con un filtro Gaussiano de un determinado tamaño. Derecha: enfoque propuesto por SURF donde aplican filtros de diferente tamaño (utilizando la imagen integral) manteniendo la imagen original. Fuente: \cite{bay2008speeded}.}
+{Enfoques para construir el espacio de escalas. Izquierda: enfoque tradicional donde iterativamente se reescala la imagen y se suaviza con un filtro Gaussiano de un determinado tamaño. Derecha: enfoque propuesto por SURF donde aplican filtros de diferente tamaño (utilizando la imagen integral) manteniendo la imagen original \cite{bay2008speeded}.}
 \label{fig:scale-space}
 \end{figure}
 
@@ -94,7 +92,7 @@ El proceso de detección SURF se divide en 3 etapas:
 \end{itemize}
 
 \subsubsection{El descriptor de SURF}
-El descriptor de SURF describe cómo se distribuye la intensidad de los píxeles circundantes al centro de la característica. El cómputo del descriptor tiene 2 etapas: la extracción de la orientación \footnote{Para algunas aplicaciones, la invarianza de rotación no es necesaria, por lo que se puede evitar el cálculo de la orientación, dando lugar al denominado Upright SURF (U-SURF).}
+El descriptor de SURF describe cómo se distribuye la intensidad de los píxeles circundantes al centro de la característica. El cómputo del descriptor tiene 2 etapas: la extracción de la orientación\footnote{Para algunas aplicaciones, la invarianza de rotación no es necesaria, por lo que se puede evitar el cálculo de la orientación, dando lugar al denominado Upright SURF (U-SURF).} 
 predominante de la característica y el cómputo de los componentes del vector utilizando \textit{Haar wavelets}. Los \textit{Haars wavelets} son filtros de convolución que se utilizan para calcular los gradientes de intensidad en \textit{x} y \textit{y}. Como se observa en la figura \ref{fig:haar-wavelet}, la convolución con \textit{Haar wavelets} puede ser implementada de forma eficiente, utilizando la representación de la imagen integral.
 
 \begin{figure}[ht]
@@ -111,7 +109,7 @@ predominante de la característica y el cómputo de los componentes del vector u
 \end{center}
 \end{minipage}
 \hfill
-\caption[Haar wavelet]{Filtros \textit{Haar wavelet} utilizados para computar los gradientes en la dirección \textit{x} (izquierda) e \textit{y} (derecha). La zona negra representa el valor −1, mientras que la blanca +1. Imagen original: \cite{bay2008speeded}.}
+\caption[Haar wavelet]{Filtros \textit{Haar wavelet} utilizados para computar los gradientes en la dirección \textit{x} (izquierda) e \textit{y} (derecha). La zona negra representa el valor −1, mientras que la blanca +1 \cite{bay2008speeded}.}
 \label{fig:haar-wavelet}
 \end{figure}
 
@@ -125,10 +123,10 @@ Para extraer la orientación de una \textit{feature} se deben realizar 2 tareas:
 \end{enumerate}
 
 \begin{figure}[ht]
-\centering\includegraphics[width=\imsize]
+\centering\includegraphics[width=\imsizeS]
 {orientacion-surf}
 \caption[Cálculo de la orientación para una característica SURF]
-{La orientación dominante de la característica se encuentra rotando una ventana de tamaño $pi/3$ alrededor del keypoint, sumando las componentes de las respuestas producidas por los filtros \textit{Haar wavelets} dentro de la ventana y seleccionando la orientación del vector resultante con mayor módulo. Fuente: \cite{bay2008speeded}.}
+{La orientación dominante de la característica se encuentra rotando una ventana de tamaño $\pi/3$ alrededor del keypoint, sumando las componentes de las respuestas producidas por los filtros \textit{Haar wavelets} dentro de la ventana y seleccionando la orientación del vector resultante con mayor módulo \cite{bay2008speeded}.}
 \label{fig:orientacion-surf}
 \end{figure}
 
@@ -153,13 +151,21 @@ El descriptor resultante se compone por los vectores de cada subregión, por lo 
 \end{minipage}
 \hfill
 \caption[Componentes del descriptor SURF]
-{Izquierda: Cálculo de las componentes del descriptor. El rectángulo marcado limita una de las 16 subregiones, en las que se calcula la respuesta a los \textit{Haar wavelets} relativas a la orientación predominante de la característica. Derecha: componentes del descriptor SURF calculados para tres subregiones diferentes. Imagen original: \cite{bay2008speeded}.}
+{Izquierda: Cálculo de las componentes del descriptor. El rectángulo marcado limita una de las 16 subregiones, en las que se calcula la respuesta a los \textit{Haar wavelets} relativas a la orientación predominante de la característica. Derecha: componentes del descriptor SURF calculados para tres subregiones diferentes \cite{bay2008speeded}.}
 \label{fig:componentes-descriptor-surf}
+\end{figure}
+
+\begin{figure}[ht]
+\centering\includegraphics[width=\imsizeS]
+{butterfly-surf}
+\caption[Características SURF. Mariposa.]
+{Características tipo \textit{blob} extraídas con SURF sobre la imagen de una mariposa.}
+\label{fig:butterfly-surf}
 \end{figure}
 
 \subsection{Oriented FAST and Rotated BRIEF (ORB)}
 
-ORB \cite{RubleeRKB11} es un detector y descriptor de características basado en el detector FAST \cite{Rosten06machinelearning} y el descriptor BRIEF \cite{Calonder12}. Si bien BRIEF es robusto ante cambios de iluminación y presencia de ruido, es muy sensible a rotaciones en el plano(\textit{in-plane}). Teniendo en cuenta este problema, ORB extiende FAST para detectar la orientación de las características (tipo \textit{corner}) y aplica mejoras sobre BRIEF dirigidas a aprovechar dicha información de orientación.
+ORB \cite{RubleeRKB11} es un detector y descriptor de características basado en el detector FAST \cite{Rosten06machinelearning} y el descriptor BRIEF \cite{Calonder12}. Si bien BRIEF es robusto ante cambios de iluminación y presencia de ruido, es muy sensible a rotaciones en el plano (\textit{in-plane}). Teniendo en cuenta este problema, ORB extiende FAST para detectar la orientación de las características (tipo \textit{corner}) y aplica mejoras sobre BRIEF dirigidas a aprovechar dicha información.
 
 \subsubsection{Oriented FAST (oFAST)}
 
@@ -168,7 +174,7 @@ La detección de características oFAST se compone de 4 etapas :
 
 \item Detección de características FAST. Se utiliza un umbral \textsl{t} de intensidad apropiado entre el píxel del centro y los píxeles del anillo circular. En oFAST se utiliza FAST-9 (radio del anillo de 9 píxeles) porque se comprobó que ofrece buenos resultados.
 
-\item FAST no produce una medida de la bondad de los \textit{corners} y responde positivamente ante la presencia de bordes, por lo que en oFAST se realiza un filtrado con el fin de detectar las mejores características. Para obtener los mejores \textsl{N} \textit{corners}, se aplica una medida de bondad de los \textit{corners} dada por Harris\cite{Harris88alvey}, se ordenan las características en función de esa medida y se seleccionan las \textsl{N} mejores. Se establece un umbral suficientemente bajo para la bondad de los \textit{corners}, de forma tal de obtener al menos \textsl{N} características.
+\item FAST no produce una medida de la bondad de los \textit{corners} y responde positivamente ante la presencia de bordes, por lo que en oFAST se realiza un filtrado con el fin de detectar las mejores características. Para obtener los mejores \textsl{N} \textit{corners}, se aplica una medida de bondad de los \textit{corners} dada por Harris \cite{Harris88alvey}, se ordenan las características en función de esa medida y se seleccionan las \textsl{N} mejores. Se establece un umbral suficientemente bajo para la bondad de los \textit{corners}, de forma tal de obtener al menos \textsl{N} características.
 
 \item FAST no produce características multi-escala. Para solventar este problema, se construye una pirámide de escalas de la imagen (similar a SIFT y SURF), se calcula FAST (filtrado por Harris) en cada nivel y se aplica interpolación para obtener mejores resultados.
 
@@ -186,6 +192,7 @@ Se puede construir un vector $\vec{OC}$ desde el centro del corner O hacia el \t
 \begin{equation}
 \theta = atan2(m_{01}, m_{10})
 \end{equation}
+donde atan2 calcula el arcotangente con la particularidad de que determina el cuadrante apropiado para el ángulo obtenido.
 
 \end{enumerate}
 
@@ -224,7 +231,7 @@ BRIEF posee 2 características importantes para un descriptor :
 \end{itemize}
 
 Estas cualidades se ven disminuidas al agregar la información de orientación. Para solventar este problema, se sigue un enfoque de aprendizaje, por medio del cual se determinan un conjunto de pares de píxeles para ser comparados en cada test. \\
-Para comenzar se obtienen los \textit{patches} centrados en cada keypoint oFAST extraídos a partir de un conjunto de imágenes de entrenamiento. Cada test es un par de sub-ventanas de $5 \times 5$ píxeles de un \textit{patch} de $31 \times 31$. De todos los posibles tests, se eliminan aquellos que sobrelapan, finalizando con un total de $M = 205590$ tests.
+Para comenzar se obtienen los \textit{patches} centrados en cada keypoint oFAST extraídos a partir de un conjunto de imágenes de entrenamiento. Cada test es un par de sub-ventanas de $5 \times 5$ píxeles de un \textit{patch} de $31 \times 31$. De todos los posibles tests, se eliminan aquellos superpuestos, finalizando con un total de $M = 205590$ tests.
 El algoritmo de aprendizaje se puede dividir en:
 
 \begin{enumerate}
@@ -250,7 +257,7 @@ En la figura \ref{fig:correlacion-orb} se muestran los tests binarios aplicando 
 \centering\includegraphics[width=\imsize]
 {correlacion-orb}
 \caption[Comparación tests binarios con y sin aprendizaje ORB.]
-{Izquierda: conjunto de tests binarios obtenidos sin aprendizaje (utilizando la orientación y el enfoque de BRIEF para seleccionar los tests). Derecha: conjunto de tests binarios obtenidos por medio del algoritmo de aprendizaje. El color violeta indica poco correlación, mientras que el color naranja representa alta correlación. Se puede observar que los tests aprendidos tienen una mejor distribución y están menos correlacionados. Imagen original: \cite{RubleeRKB11}.}
+{Izquierda: conjunto de tests binarios obtenidos sin aprendizaje (utilizando la orientación y el enfoque de BRIEF para seleccionar los tests). Derecha: conjunto de tests binarios obtenidos por medio del algoritmo de aprendizaje. El color violeta indica poco correlación, mientras que el color naranja representa alta correlación. Se puede observar que los tests aprendidos tienen una mejor distribución y están menos correlacionados \cite{RubleeRKB11}.}
 \label{fig:correlacion-orb}
 \end{figure}
 
@@ -263,8 +270,8 @@ Para la construcción de cada descriptor, se utiliza la orientación obtenida en
 S =
 \left(
 \begin{array}{ccc}
-\textbf{x}_{1},&...,&\textbf{x}_{n} \\
-\textbf{y}_{1},&...,&\textbf{y}_{n} \\
+\textbf{x}_{1},&...&,\ \textbf{x}_{n} \\
+\textbf{y}_{1},&...&,\ \textbf{y}_{n} \\
 \end{array}
 \right)
 \end{equation}
@@ -282,11 +289,18 @@ g_{n}(\textbf{p}, \theta) := f_{n}(\textbf{p})|(\textbf{x}_{i}, \textbf{y}_{i}) 
 
 En la implementación, el algoritmo de aprendizaje se lleva a cabo en un proceso \textit{offline}. Además, se discretizan los ángulos en incrementos de $2\pi/30$ (12 grados) y se construye una \textit{lookup-table} de patrones punto-ángulo precalculados.
 
+\begin{figure}[ht]
+\centering\includegraphics[width=\imsize]
+{house-orb}
+\caption[Características ORB. Casa.]
+{Características tipo \textit{corner} extraídas con ORB sobre la imagen de una vivienda.}
+\label{fig:house-orb}
+\end{figure}
+
 \section{Correspondencia de características}
-% AGREGAR FIGURA QUE MUESTRE UN MATCHING.
 
 \subsection{Correspondencia de características 2D}
-En la sección \ref{sec:features}, se describe el concepto de detección y representación (construyendo un descriptor) de características visuales. El descriptor es un vector de tamaño fijo, que permite establecer correspondencias entre características observadas en distintas imágenes. \\
+En la sección \ref{sec:features}, se describe el concepto de detección y representación (construyendo un descriptor) de características visuales. El descriptor es un vector de tamaño fijo, que permite determinar las características en común observadas en distintas imágenes. \\
 Dado conjuntos de descriptores origen y destino, el procedimiento para establecer correspondencias consiste en hallar, para cada elemento del conjunto de origen, el elemento más próximo en el conjunto de destino.\\
 
 El concepto de distancia suele definirse en función de la naturaleza del descriptor:
@@ -299,7 +313,7 @@ El concepto de distancia suele definirse en función de la naturaleza del descri
 \end{itemize}
 
 Para evitar correspondencias incorrectas, se utiliza un umbral que descarta pares de características muy distantes (en el espacio de dimensiones del descriptor). \\
-El problema del emparejamiento de características tiene un alto costo computacional cuando se comparan grandes conjuntos de datos y/o cuando es elevada la dimensión de los descriptores. Para abordar este inconveniente, se hace uso de estructuras y algoritmos que resuelven el problema de encontrar el vecino más cercano (\textit{nearest neighbor search}) de forma muy eficiente. Según el tipo de distancia empleada, se utilizan diferentes enfoques. Para el caso de la norma euclídea, la búsqueda de proximidad se apoya en árboles k-dimensionales (\textit{kd-tree}) \cite{wiki-kdtree}, que siguen un enfoque de particionado del espacio de búsqueda \cite{wiki-particionado-espacio}. Por otro lado, cuando se emplea la distancia de Hamming, el enfoque utilizado es \textit{Locality-sensitive hashing (LSH)} \cite{wiki-lsh}, que se basa en una reducción probabilística del espacio.
+El procedimiento para emparejar características tiene un alto costo computacional cuando se comparan grandes conjuntos de datos y/o cuando es elevada la dimensión de los descriptores. Para abordar este inconveniente, se hace uso de estructuras y algoritmos que resuelven el problema de encontrar el vecino más cercano (\textit{nearest neighbor search}) de forma muy eficiente. Según el tipo de distancia empleada, se utilizan diferentes enfoques. Para el caso de la norma euclídea, la búsqueda de proximidad se apoya en árboles k-dimensionales (\textit{kd-tree}) \cite{wiki-kdtree}, que siguen un enfoque de particionado del espacio de búsqueda \cite{wiki-particionado-espacio}. Por otro lado, cuando se emplea la distancia de Hamming, el enfoque utilizado es \textit{Locality-sensitive hashing (LSH)} \cite{wiki-lsh}, que se basa en una reducción probabilística del espacio.
 
 \subsection{Extracción de puntos 3D y definición de correspondencias 3D}
 
@@ -309,10 +323,10 @@ En la sección \ref{sec:consideraciones-kinect} se explica que debido a la dispo
 \section{Aproximación y refinamiento de la transformación rígida}
 \label{sec:transformacion-rigida}
 
-Encontrar la transformación rígida óptima entre 2 conjuntos de puntos 3D es una tarea fundamental en la reconstrucción de mapas 3D. El problema se ilustra en la figura \ref{fig:esquema-encontrar-transformacion} para el caso más simple de 3 correspondencias (mínimo requerido). El objetivo es encontrar la transformación \textbf{T} que mejor alinea el conjunto \textbf{A} con el conjunto \textbf{B}, en otras palabras, se desea computar la traslación \textbf{t} y rotación \textbf{R} que minimiza el error cuadrático medio (MSE) dado por:
+Encontrar la transformación rígida óptima entre 2 nubes de puntos 3D es una tarea fundamental en la reconstrucción de mapas 3D. El problema se ilustra en la figura \ref{fig:esquema-encontrar-transformacion} para el caso más simple de 3 correspondencias (mínimo requerido). El objetivo es encontrar la transformación \textbf{T} que mejor alinea el conjunto \textbf{A} con el conjunto \textbf{B}, en otras palabras, se desea computar la traslación \textbf{t} y rotación \textbf{R} que minimiza el error cuadrático medio (MSE) dado por:
 \begin{equation}
 \label{ec:mse-rigid-transform}
-error = \sum_{i = 1}^{N} \norm{\textbf{T} P_{A}^{i} - P_{B}^{i}} = \sum_{i = 1}^{N} \norm{\textbf{R} P_{A}^{i} + \textbf{t} - P_{B}^{i}}
+error = \sum_{i = 1}^{N} \norm{\textbf{T} \cdot P_{A}^{i} - P_{B}^{i}}^{2} = \sum_{i = 1}^{N} \norm{\textbf{R} \cdot P_{A}^{i} + \textbf{t} - P_{B}^{i}}^{2}
 \end{equation}
 donde \textit{$P_{A}^{i}$}, \textit{$P_{B}^{i}$} son puntos 3D en \textbf{A} y \textbf{B} respectivamente (en correspondencia dada por el índice i).
 
@@ -324,12 +338,12 @@ donde \textit{$P_{A}^{i}$}, \textit{$P_{B}^{i}$} son puntos 3D en \textbf{A} y \
 \label{fig:esquema-encontrar-transformacion}
 \end{figure}
 
-En esta sección, se presentan 2 algoritmos que en conjunto abordan el problema de encontrar la transformación rígida. En primer lugar, se presenta un método directo para estimar la transformación a partir de un conjunto de correspondencias 3D y a continuación, se explica un algoritmo iterativo que permite refinar la transformación a partir de una estimación inicial.
+En esta sección, se presentan 2 algoritmos que en conjunto abordan el problema de encontrar la transformación rígida. En primer lugar, se presenta un método directo para aproximar la transformación a partir de un conjunto de correspondencias 3D y a continuación, se explica un algoritmo iterativo que permite refinar la transformación a partir de una estimación inicial.
 
 \subsection{Estimación de la transformación rígida utilizando SVD}
 El algoritmo directo presentado en este apartado requiere al menos 3 correspondencias de puntos 3D para poder aplicarse y asume que estas son correctas.
 
-Considerese $P_{A}^{i}, P_{B}^{i}$ ($i=1,...,N$) como las correspondencias entre las nubes de puntos \textbf{A}, \textbf{B} (con \textsl{N} elementos).
+Considere $P_{A}^{i}, P_{B}^{i}$ ($i=1,...,N$) como las correspondencias entre las nubes de puntos \textbf{A}, \textbf{B} (con \textsl{N} elementos).
 El algoritmo para aproximar la transformación rígida se divide en los siguientes pasos:
 \begin{enumerate}
 
@@ -352,16 +366,16 @@ donde $CP_{A}^{i}, CP_{B}^{i}$ (para $i=1,..,N$) denotan los respectivos conjunt
 
 \item Definir la matriz de covarianza
 \begin{equation}
-H = \sum_{i} CP_{A}^{i} \cdot (CP_{B}^{i})^{T}
+H = \sum_{i=1}^{N} CP_{A}^{i} \cdot (CP_{B}^{i})^{T}
 \end{equation}
 
 \item Encontrar la factorización por descomposición en valores singulares (SVD, por sus siglas en inglés) \cite{wiki-svd} de H, definida por:
 \begin{equation}
-H = U \Sigma V^{T}
+H = U \cdot \Sigma \cdot V^{T}
 \end{equation}
 y estimar la matriz de rotación \textbf{R} como sigue:
 \begin{equation}
-\textbf{R} = V U^{T}
+\textbf{R} = V \cdot U^{T}
 \end{equation}
 
 \item Finalmente, la traslación \textbf{t} se calcula como:
@@ -371,12 +385,12 @@ y estimar la matriz de rotación \textbf{R} como sigue:
 
 \end{enumerate}
 
-Este método es uno de los más simple para obtener la rotación y traslación entre dos nubes de puntos, pero tiene el inconveniente que supone que una de ellas es una versión trasladada y rotada de la otra. Por lo general, no es recomendable hacer esta suposición debido a que las correspondencias pueden ser incorrectas o estar afectadas por ruido. En la sección \ref{sec:ransac}, se explica el algoritmo RANSAC, que permite encontrar un conjunto consistente de correspondencias para ser utilizadas con el procedimiento descripto en esta sección.
+Este método es uno de los más simples para obtener la rotación y traslación entre dos nubes de puntos, pero tiene el inconveniente que supone que una de ellas es una versión trasladada y rotada de la otra. Por lo general, no es recomendable hacer esta suposición debido a que las correspondencias pueden ser incorrectas o estar afectadas por ruido. En la sección \ref{sec:ransac}, se explica el algoritmo RANSAC, que permite encontrar un conjunto consistente de correspondencias para ser utilizadas con el procedimiento descripto en esta sección.
 
 \subsection{Refinamiento de la transformación rígida utilizando ICP}
 
 El algoritmo Iterative Closest Point (ICP) \cite{Besl92} surgió a principios de los noventa como solución al problema de \textit{scan-matching}, es decir, encontrar la mejor transformación que minimiza la distancia entre dos nubes de puntos relevadas con sensores de rango. La principal desventaja del algoritmo original es que asume superposición total de las nubes de puntos a alinear y que los puntos no tienen error. Desde entonces se han propuesto algunas variantes de ICP enfocadas en mejorar su precisión y eficiencia.\\
-ICP toma como parámetros de entradas dos nubes de puntos $\textbf{A} = \{a_{i}\}, \textbf{B} = \{b_{i}\}$ y una transformación inicial $\textbf{T}_{0}$ que acerca la nube de puntos \textbf{A} con \textbf{B}, y devuelve la transformación \textbf{T} que mejor alinea ambas nubes de puntos, resolviendo un problema de minimización. Debido a que ICP busca un mínimo local, puede ocurrir que no converga a una solución óptima si $\textbf{T}_{0}$ no es una aproximación suficientemente buena. \\
+ICP toma como parámetros de entradas dos nubes de puntos $\textbf{A} = \{a_{i}\}, \textbf{B} = \{b_{i}\}$ y una transformación inicial $\textbf{T}_{0}$ que acerca la nube de puntos \textbf{A} con \textbf{B}, y devuelve la transformación \textbf{T} que mejor alinea ambas nubes de puntos, resolviendo un problema de minimización. Debido a que ICP busca un mínimo local, puede ocurrir que no converja a una solución óptima si $\textbf{T}_{0}$ no es una aproximación suficientemente buena. \\
 
 A continuación, se presenta la versión estándar de ICP en pseudocódigo :
 \begin{algorithm}
@@ -385,8 +399,8 @@ A continuación, se presenta la versión estándar de ICP en pseudocódigo :
 \STATE $\textbf{T} \leftarrow \textbf{T}_{0}$
 \WHILE {not converged}
 \FOR{$i \leftarrow 1\ to\ N$}
-\STATE $m_{i} \leftarrow FindClosestPointInB(\textbf{T} a_{i})$
-\IF{ $(\norm{ T \cdot a_{i} - m_{i} } )^{2} \geq d_{max}$ }
+\STATE $m_{i} \leftarrow FindClosestPointInB(\textbf{T} \cdot a_{i})$
+\IF{ $\norm{ \textbf{T} \cdot a_{i} - m_{i} }^{2} \leq d_{max}$ }
 \STATE $w_{i} \leftarrow 1$
 \ELSE
 \STATE $w_{i} \leftarrow 0$
@@ -411,10 +425,9 @@ Conceptualmente cada iteración ICP se divide en las siguiente etapas:
 
 \end{enumerate}
 
-Este proceso se repite iterativamente hasta que se cumpla alguna de las condiciones de convergencia.
-Los criterios de convergencia más comunes son :
+Este proceso se repite iterativamente hasta que se cumpla alguna de las condiciones de convergencia. Los criterios de convergencia más comunes son:
 \begin{itemize}
-\item Alcanzar límite de iteraciones.
+\item Alcanzar un límite de iteraciones.
 
 \item MSE definido en la ecuación \ref{ec:mse-rigid-transform} (para las nubes de puntos alineadas) cae por debajo de cierto umbral.
 
@@ -478,7 +491,7 @@ En el presente trabajo, se aplica RANSAC en la estimación de la transformación
 \centering\includegraphics[width=\imsizeL]
 {ransac-rigid-transform}
 \caption[Eliminación de correspondencias 3D erróneas]
-{Eliminación de outliers 3D con la transformación rígida \textbf{T} basándose en la distancia de \textbf{p'} a la correspondencia transformada $\textbf{p}_{t} = \textbf{T} \cdot \textbf{p}$. Izquierda: la distancia de la correspondencia \textbf{p'} de \textbf{p} al punto transformado $\textbf{p}_{t}$ es menor de un cierto umbral, por lo que se considera \textit{inlier}. Derecha: la distancia de \textbf{p} al punto transformado $\textbf{p}_{t}$ es mayor que un cierto umbral, por lo que se considera \textit{outlier}.}
+{Eliminación de outliers 3D con la transformación rígida \textbf{T} basándose en la distancia de \textbf{p'} a la correspondencia transformada $\textbf{p}_{t} = \textbf{T} \cdot \textbf{p}$. Izquierda: la distancia de la correspondencia \textbf{p'} de \textbf{p} al punto transformado $\textbf{p}_{t}$ es menor de un cierto umbral, por lo que se considera \textit{inlier}. Derecha: la distancia de \textbf{p} al punto transformado $\textbf{p}_{t}$ es mayor que un cierto umbral, por lo que se considera \textit{outlier} \cite{algaba12}.}
 \label{fig:ransac-rigid-transform}
 \end{figure}
 
@@ -503,13 +516,13 @@ Para enfrentar este problema, se presenta una técnica de optimización global, 
 \end{minipage}
 \hfill
 \caption[Efecto de la acumulación del error y optimización con SLAM sobre un mapa]
-{Izquierda: mapa inconsistente afectado por la acumulación del error. Derecha: Mapa refinado por SLAM. Imágenes originales : \cite{GrisettiKSB10}.}
+{Izquierda: mapa inconsistente afectado por la acumulación del error. Derecha: Mapa refinado por SLAM \cite{GrisettiKSB10}.}
 \label{fig:maps-noisy-slam}
 \end{figure}
 
 \subsection{Simultaneous Localization And Mapping (SLAM)}
 
-SLAM plantea la problemática de que un robot (de forma general, un sistema sensorial) pueda construir un mapa incrementalmente del entorno y al mismo tiempo determinar su ubicación dentro del mapa, sin conocimiento a priori de su ubicación inicial. La solución al problema SLAM ha sido objeto de estudio de la comunidad de robótica móvil durante los últimos 20 años. SLAM ha sido planteado y resuelto teóricamente de diferentes formas, y aplicado en áreas diversas de la robótica, tales como robots en interiores, exteriores, subacuáticos, incluso sistemas aéreos. La presencia de ruido en el sistema sensorial, los inevitables errores, las aproximaciones efectuadas en los modelos empleados y la complejidad creciente al procesar mayor cantidad de información, han sido inconvenientes en la aplicación práctica de soluciones SLAM, por lo que sigue siendo área de investigación. Debido a la presencia del error en las mediciones del sensor, las soluciones más exitosas se han basado en herramientas probabilísticas.
+SLAM plantea la problemática de que un robot (de forma general, un sistema sensorial) pueda construir un mapa incrementalmente del entorno y al mismo tiempo determinar su ubicación dentro del mapa, sin conocimiento a priori de su ubicación inicial. La solución al problema SLAM ha sido objeto de estudio de la comunidad de robótica móvil durante los últimos 20 años. SLAM ha sido planteado y resuelto teóricamente de diferentes formas, y aplicado en áreas diversas de la robótica, tales como robots en interiores, exteriores, subacuáticos, incluso sistemas aéreos. La presencia de ruido en el sistema sensorial, los inevitables errores, las aproximaciones efectuadas en los modelos empleados y la complejidad creciente al procesar mayor cantidad de información, han sido inconvenientes en la aplicación práctica de soluciones SLAM, por lo que sigue siendo un área de investigación. Debido a la presencia del error en las mediciones del sensor, las soluciones más exitosas se han basado en herramientas probabilísticas.
 
 \subsubsection{Formulación probabilística de SLAM}
 
@@ -517,7 +530,7 @@ La formulación clásica de SLAM asume que el sensor se desplaza en un entorno d
 \begin{equation}
 p(\textbf{x}_{1:T}, \textbf{m} | \textbf{z}_{1:T}, \textbf{u}_{1:T}, \textbf{x}_{0}).
 \end{equation}
-Las poses $\textbf{x}_{1:T}$ y las mediciones de odometría $\textbf{u}_{1:T}$ suelen representarse como transformaciones 2D o 3D, mientras que las formas más comunes para representar el mapa son puntos de interés distribuidos en el espacio, \textit{occupancy grids} e incluso el conjunto completo medido por el sensor. \\
+Las poses $\textbf{x}_{1:T}$ y las mediciones de odometría $\textbf{u}_{1:T}$ suelen representarse como transformaciones 2D o 3D, mientras que las formas más comunes para representar el mapa son puntos de interés distribuidos en el espacio, \textit{occupancy grids} \cite{wiki-ocuppancy-grids} e incluso el conjunto completo medido por el sensor. \\
 En la práctica, resolver el problema SLAM requiere:
 \begin{itemize}
 
@@ -531,7 +544,7 @@ En la práctica, resolver el problema SLAM requiere:
 \centering\includegraphics[width=\imsize]
 {slam-esquema}
 \caption[Formulación SLAM]
-{El problema esencial de SLAM. Se requiere una estimación simultánea tanto de la localización del sensor como de los landmarks. Las localizaciones reales no se pueden conocer ni medir directamente debido a las limitaciones del sensor. Las observaciones se toman entre el sensor real y las localizaciones de los \textit{landmarks}.}
+{El problema esencial de SLAM. Se requiere una estimación simultánea tanto de la localización del sensor como de los landmarks. Las localizaciones reales no se pueden conocer ni medir directamente debido a las limitaciones del sensor. Las observaciones se toman entre el sensor real y las localizaciones de los \textit{landmarks} \cite{algaba12}}.
 \label{fig:slam-esquema}
 \end{figure}
 
@@ -564,7 +577,7 @@ Detectar zonas por donde ya se ha pasado anteriormente, se conoce en la literatu
 \centering\includegraphics[width=\imsize]
 {grafo-graphslam}
 \caption[Representación de SLAM con un grafo de poses]
-{Cada nodo representa una pose del sensor. Las aristas representan restricciones espaciales entre los nodos.}
+{Cada nodo representa una pose del sensor. Las aristas representan restricciones espaciales entre los nodos \cite{GrisettiKSB10}.}
 \label{fig:grafo-graphslam}
 \end{figure}
 
@@ -610,8 +623,9 @@ Cabe notar que se requiere minimizar la suma, dado que los términos individuale
 \centering\includegraphics[width=\imsize]
 {arista-graphslam}
 \caption[Arista del grafo de poses en \textit{GraphSLAM}]
-{Aspecto de una arista que conecta los vértices $\textbf{x}_{i}, \textbf{x}_{j}$. Esta arista se origina a partir de la medición $\textbf{z}_{ij}$. Dadas las posiciones de dos nodos, es posible computar la medición esperada $\hat{\textbf{z}}_{ij}$ que representa $\textbf{x}_{j}$ visto desde $\textbf{x}_{i}$. El error $\textbf{e}_{ij}(\textbf{x}_{i},\textbf{x}_{j})$ depende del desplazamiento entre la medida real y la esperada. Una arista se caracteriza completamente por su función de error $\textbf{e}_{ij}(\textbf{x}_{i},\textbf{x}_{j})$ y por la matriz de información $\Omega_{ij}$ de la medida que tiene en cuenta su incertidumbre.}
+{Aspecto de una arista que conecta los vértices $\textbf{x}_{i}, \textbf{x}_{j}$. Esta arista se origina a partir de la medición $\textbf{z}_{ij}$. Dadas las posiciones de dos nodos, es posible computar la medición esperada $\hat{\textbf{z}}_{ij}$ que representa $\textbf{x}_{j}$ visto desde $\textbf{x}_{i}$. El error $\textbf{e}_{ij}(\textbf{x}_{i},\textbf{x}_{j})$ depende del desplazamiento entre la medida real y la esperada. Una arista se caracteriza completamente por su función de error $\textbf{e}_{ij}(\textbf{x}_{i},\textbf{x}_{j})$ y por la matriz de información $\Omega_{ij}$ de la medida que tiene en cuenta su incertidumbre \cite{GrisettiKSB10}.}
 \label{fig:arista-graphslam}
 \end{figure}
 
 En este trabajo, el problema de minimización se resuelve por medio del enfoque aplicado en \cite{lingemannefficient}, basado en la propuesta original de \textit{GraphSLAM} presentada por Lu y Milios \cite{Lu97globallyconsistent} (1997).
+

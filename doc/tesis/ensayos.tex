@@ -3,8 +3,8 @@
 
 \section{Descripción del modelo}
 
-Los ensayos que se llevaron a cabo en este trabajo se realizaron en un modelo físico ubicado en el Laboratorio de Hidráulica de la Facultad de Ciencias Exactas, Físicas y Naturales (UNC). El modelo es una representación del Dique Los Molinos a escala reducida de longitudes 1:65. Este Dique se encuentra ubicado en la provincia Jujuy, sobre el río Grande, aguas debajo de la confluencia con el río Reyes. \\
-Este modelo físico hidráulico está representado con fondo fijo en las márgenes y fondo móvil en el lecho del río. Se representaron las obras de regulación, con todos sus componentes y elementos auxiliares de relevancia hidrosedimentológica. Cuenta con un tramo del curso fluvial con un desarrollo total de aproximadamente 1520 m (1000 m aguas arriba y 520 m aguas abajo del dique), y un ancho efectivo variable entre los 250 m a 700 m en prototipo. Estas características permiten analizar adecuadamente el comportamiento hidrosedimentológico del flujo en cercanías de las obras, el funcionamiento de las operaciones de maniobra y la erosión en el tramo de río aguas abajo del dique. Como se observa en la figura \ref{fig:modelo-fisico-dique-los-molinos}, el dique está constituido por un terraplén de materiales sueltos y dos vertederos, un tramo a nivel fijo (dique fijo), y otro regulado por 4 compuertas, conocido como dique móvil. Sobre margen derecha, se encuentra el canal moderador.
+Los ensayos llevados a cabo en este trabajo se realizaron en un modelo físico ubicado en el Laboratorio de Hidráulica de la Facultad de Ciencias Exactas, Físicas y Naturales (UNC). El modelo es una representación del Dique Los Molinos a escala reducida de longitudes 1:65. Este Dique se encuentra ubicado en la provincia Jujuy, sobre el río Grande, aguas debajo de la confluencia con el río Reyes. \\
+El modelo físico hidráulico está representado con fondo fijo en las márgenes y fondo móvil en el lecho del río. Se representaron las obras de regulación, con todos sus componentes y elementos auxiliares de relevancia hidrosedimentológica. Cuenta con un tramo del curso fluvial con un desarrollo total de aproximadamente 1520 m (1000 m aguas arriba y 520 m aguas abajo del dique), y un ancho efectivo variable entre los 250 m a 700 m en prototipo. Estas características permiten analizar adecuadamente el comportamiento hidrosedimentológico del flujo en cercanías de las obras, el funcionamiento de las operaciones de maniobra y la erosión en el tramo de río aguas abajo del dique. Como se observa en la figura \ref{fig:modelo-fisico-dique-los-molinos}, el dique está constituido por un terraplén de materiales sueltos y dos vertederos, un tramo a nivel fijo (dique fijo), y otro regulado por 4 compuertas, conocido como dique móvil. Sobre margen derecha, se encuentra el canal moderador.
 
 \begin{figure}[ht]
 \centering\includegraphics[width=\imsize]
@@ -105,9 +105,9 @@ La técnica tradicional consiste en el relevamiento manual de puntos sobre perfi
 \label{fig:nivel-optico}
 \end{figure}
 
-Por último, se realiza la digitalización manual y conversión de modelo a prototipo de los puntos relevados.
-
-\section{Metodología de medición con la cámara RGB-D}
+Por último, se realiza la digitalización manual y conversión de modelo a prototipo de los puntos relevados. \\
+Cabe destacar que para implementar esta técnica suelen participar 3 personas e invertir aproximadamente 20 minutos por cada metro cuadrado, relevando puntos cada 15 cm.
+\section{Metodología de medición con cámara RGB-D}
 \label{sec:metodologia-medicion-digital}
 
 En esta sección, se describe la aplicación de la técnica digital de medición de erosión propuesta en este trabajo. \\
@@ -116,13 +116,13 @@ Se tuvieron en cuenta un conjunto de consideraciones que forman parte de la téc
 
 \begin{itemize}
 
-\item La superficie a relevar debe estar libre de agua. Como se mencionó en \ref{sec:consideraciones-kinect}, se observó que los objetos con características reflectantes afectan al sensor de profundidad de la Kinect. Figura \ref{fig:modelo-condiciones-agua}.
+\item La superficie a relevar debe estar libre de agua. Como se mencionó en el apartado \ref{sec:consideraciones-kinect}, se observó que los objetos con características reflectantes afectan al sensor de profundidad de la Kinect. Figura \ref{fig:modelo-condiciones-agua}.
 
-\item La escena debe estar al resguardo de la luz solar, como se explica en \ref{sec:consideraciones-kinect}. Debido a que el modelo físico utilizado se encontraba al aire libre, en el exterior del Laboratorio de Hidráulica, fue necesario utilizar un nailon de color negro colocado sobre el puente grúa, como se puede observar en la figura \ref{fig:modelo-lona}. Alternativamente, se considero realizar las mediciones al atardecer cuando la luz solar es más tenue. Se concluye que utilizando el nailon se obtienen condiciones lumínicas estables, quitando así una restricción para el horario de medición.
+\item La escena debe estar al resguardo de la luz solar, como se explica en el apartado \ref{sec:consideraciones-kinect}. Debido a que el modelo físico utilizado se encuentra al aire libre, en el exterior del Laboratorio de Hidráulica, fue necesario utilizar un nailon de color negro colocado sobre el puente grúa, como se puede observar en la figura \ref{fig:modelo-lona}. Alternativamente, se consideró realizar las mediciones al atardecer cuando la luz solar es más tenue. Se concluye que utilizando el nailon se obtienen condiciones lumínicas estables, quitando así una restricción para el horario de medición.
 
 \item La guía debe estar horizontalizada. El plano desde el que se captura la escena debe estar a una altitud constante para que la representación de la superficie sea consistente. Esta condición debe ser verificada al iniciar cada ensayo hidráulico.
 
-\item La cámara debe ubicarse en un rango de 0.4 m  a 1.5 m de altura sobre escena a relevar, para que el error de medición se mantenga dentro del intervalo aceptable (aproximadamente 5 mm), según el análisis del sensor Kinect presentado en \ref{sec:consideraciones-kinect}.
+\item La cámara debe ubicarse en un rango de 0.4 m  a 1.5 m de altura sobre la escena a relevar, para que el error de medición se mantenga dentro del intervalo aceptable (aproximadamente 5 mm), según el análisis del sensor Kinect presentado en el apartado \ref{sec:consideraciones-kinect}.
 
 \end{itemize}
 
@@ -164,7 +164,7 @@ Se tuvieron en cuenta un conjunto de consideraciones que forman parte de la téc
 
 Habiendo verificado las condiciones anteriores, se introduce el carro-soporte en el carril-guía y se inicia la aplicación de registración \textit{ModelMapper} \ref{sec:model-mapper}. \\
  
-En la figura \ref{fig:aguas-abajo-desplazamiento-carro}, se observa cómo manipular la plataforma móvil para capturar la escena. Se propone un desplazamiento del carro de aproximadamente 40 cm entre cada captura, para que el área sobrelapada entre dos nubes puntos continuas esté próxima al 50\%. Si la aplicación no lograr realizar la registración correctamente se corrige la ubicación del sensor a una posición intermedia.
+En la figura \ref{fig:aguas-abajo-desplazamiento-carro}, se observa cómo manipular la plataforma móvil para capturar la escena. Se propone un desplazamiento del carro de aproximadamente 40 cm entre cada captura, para que el área superpuesta entre dos nubes puntos consecutivas esté próxima al 50\%. Si la aplicación no lograr realizar la registración correctamente se corrige la ubicación del sensor a una posición intermedia.
 
 \begin{figure}[ht]
 \centering\includegraphics[width=\imsize]
@@ -173,7 +173,8 @@ En la figura \ref{fig:aguas-abajo-desplazamiento-carro}, se observa cómo manipu
 \label{fig:aguas-abajo-desplazamiento-carro}
 \end{figure}
 
-En el apartado \ref{sec:conversion-mapa3D-prototipo} se describe que para realizar la conversión a prototipo es necesario un punto fijo con cotas conocidas en los sistemas del modelo y del prototipo. Con este fin, se recomienda que la escena capture las estructuras fijas en el modelo físico con medidas de elevación dada por mediciones topográficas. En caso contrario, se puede medir con nivel óptico un punto visible en la escena y utilizar su cota prototipo como referencia.  
+En el apartado \ref{sec:conversion-mapa3D-prototipo} se describe que para realizar la conversión a prototipo es necesario un punto fijo con cotas conocidas en los sistemas del modelo y del prototipo. Con este fin, se recomienda que la escena capture las estructuras fijas en el modelo físico con medidas de elevación dada por mediciones topográficas. En caso contrario, se puede medir con nivel óptico un punto visible en la escena y utilizar su cota prototipo como referencia. \\
+Utilizando la técnica digital se invierte aproximadamente 1 min para trasladar la cámara y procesar un nuevo frame. Teniendo en cuenta que se requieren 6 frames (aprox.) por $m^{2}$ y posiblemente se descarte algún frame en el proceso, se estiman 10 min para relevar un área de un $m^{2}$. Comparando con la técnica tradicional, se observa que se reduce por la mitad el tiempo invertido para cada ensayo.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -226,7 +227,7 @@ Se muestran los mapas de elevación en escala prototipo, generados a partir del 
 \centering\includegraphics[width=\imsizeL]
 {Q900_dem}
 \caption[DEM Ensayo 1]
-{Ensayo 1. Foso de erosión aguas abajo del dique móvil. Modelo digital de elevaciones (DEM).}
+{Ensayo 1. Foso de erosión aguas abajo del dique móvil. Modelo digital de elevaciones.}
 \label{fig:Q900_dem}
 \end{figure}
 

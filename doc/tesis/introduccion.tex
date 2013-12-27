@@ -1,26 +1,20 @@
 \chapter{Introducci\'{o}n}
 
-\section{Motivaciones}
-\label{sec:motivaciones}
+\section{Problemática}
+\label{sec:problematica}
 
 Los modelos físicos hidráulicos son una de las principales herramientas que cuenta el campo de la Ingeniería Civil para la medición y estudio de la erosión, así como la acumulación y transporte de sedimentos. \\
 Tradicionalmente, la medición de variables sedimentarias en laboratorio ha consistido en el relevamiento manual de puntos, generalmente distribuidos sobre una grilla equidistante, por medio de un nivel óptico y una mira. Esta metodología, de carácter intrusiva (debido a que se apoya la mira sobre la superficie a relevar), presenta errores intrínsecos generados por la intervención humana y restricciones relativas a los instrumentos de medición, que pueden alcanzar los 1.5 cm. Algunas fuentes de error están relacionados con la incorrecta verticalidad de la mira, el apoyo del palpador sobre el modelo (que puede alterar la superficie a medir), errores en las lecturas y/o transcripción de las mismas, entre otros. \\
-Por otro lado, la precisión de los productos derivados (curvas de nivel\cite{wiki-curva-de-nivel}, modelos tridimensionales (3D), perfiles transversales, etc) y los análisis de dichos productos, se verán afectados por la densidad de puntos relevados y la elección de los mismos. Estas limitaciones producen un \textit{trade off} entre la densidad de puntos obtenida, el área relevada y el tiempo dedicado a cada ensayo, que el ingeniero debe afrontar a la hora de realizar y completar un ensayo hidráulico fluvial en laboratorio. \\
-En el campo de la robótica, la construcción de mapas 3D del entorno físico ha sido considerado por años, una tarea fundamental para su aplicación en la navegación autónoma y la manipulación de objetos por parte de un robot. Diferentes sensores han sido utilizados para lograr este propósito, entre ellos se puede mencionar el uso de sonares\cite{varveropoulos2005robot}, sensores láser\cite{chou2013robotic}, cámaras estereoscópicas\cite{Konolige08}.
-En los últimos años, sensores RGB-D (rojo, verde, azul y profundidad), tales como el Microsoft Kinect \cite{microsoft-kinect}, han sido comercializados en la industria del entretenimiento. Sus prestaciones técnicas y costo asequible los han convertido en una solución idónea para ser utilizada en diferentes tareas de Visión por Computador (\textit{Computer Vision}), como es el caso de la construcción de mapas 3D\cite{henry2010rgb,engelhard2011real}. \\
-
+Por otro lado, la precisión de productos derivados (curvas de nivel \cite{wiki-curva-de-nivel}, modelos tridimensionales, perfiles transversales, etc.) y los análisis de dichos productos, se verán afectados por la densidad de puntos relevados y la elección de los mismos. Estas limitaciones producen una restricción entre la densidad de puntos obtenida, el área relevada y el tiempo dedicado a cada ensayo, que el ingeniero debe afrontar a la hora de realizar y completar un ensayo hidráulico fluvial en laboratorio. \\
+En el campo de la robótica, la construcción de mapas 3D del entorno físico ha sido considerado por años, una tarea fundamental para su aplicación en la navegación autónoma y la manipulación de objetos por parte de un robot. Diferentes sensores han sido utilizados para lograr este propósito, entre ellos se puede mencionar el uso de sonares \cite{varveropoulos2005robot}, sensores láser \cite{chou2013robotic}, cámaras estereoscópicas \cite{Konolige08}.
+En los últimos años, sensores RGB-D (rojo, verde, azul y profundidad, por sus siglas en inglés), tales como el Microsoft Kinect \cite{microsoft-kinect}, han sido comercializados en la industria del entretenimiento. Sus prestaciones técnicas y costo asequible los convierten en una solución idónea para ser utilizada en diferentes tareas de Visión por Computador (\textit{Computer Vision}), como es el caso de la construcción de mapas 3D \cite{henry2010rgb,engelhard2011real}. \\
 En este trabajo se propone una nueva técnica para la medición de erosión y sedimentación en modelos físicos a escala reducida mediante la generación automática de un mapa 3D utilizando el sensor Microsoft Kinect. Esta técnica digital aplicada a procesos fluviales permite representar la superficie erosionada y/o sedimentada resultante de un ensayo hidráulico. \\
-La metodología propuesta busca mejorar la caracterización obtenida del modelo físico basándose en una mayor densidad de puntos medidos, respecto a las técnicas tradicionales. Además, persigue relevar mayor área de superficie y reducir el tiempo de medición. La técnica propuesta no es intrusiva, y se considera automática debido a que el único requerimiento sobre el operador es el desplazamiento de la cámara.
+La metodología propuesta busca mejorar la caracterización obtenida del modelo físico basándose en una mayor densidad de puntos medidos, respecto a las técnicas tradicionales. Además, persigue relevar mayor área de superficie y reducir considerablemente el tiempo de medición. La técnica propuesta no es intrusiva, y se considera automática debido a que el único requerimiento sobre el operador es el desplazamiento de la cámara.
 
 \section{Objetivos}
-\label{S:objetivos}
+\label{sec:objetivos}
 
 El objetivo de este trabajo es desarrollar un software para la generación de un mapa 3D de un modelo físico a escala reducida utilizando una cámara RGB-D. Esta aplicación permitirá medir digital y automáticamente las variables de erosión y sedimentación en laboratorio. \\
-  Para crear un mapa 3D del modelo, el sistema deberá capturar nubes de puntos del área de trabajo, alinearlas en un mismo sistema de coordenadas, filtrar posibles inconsistencias y realizar una conversión de escala modelo a prototipo. \\
-  Se validará la nueva técnica digital con respecto a la técnica tradicional con la finalidad de realizar una evaluación de su precisión y verificar si es factible su aplicación. \\
-  Dentro de este marco, se propone desarrollar una librería extensible y modular que sirva como base para la creación de nuevas aplicaciones, y permita aportar novedosas soluciones al problema de la medición de erosión. \\
-
-%%% Local Variables: 
-%%% mode: latex
-%%% TeX-master: "template"
-%%% End: 
+Para crear un mapa 3D del modelo, el sistema deberá capturar nubes de puntos del área de trabajo, alinearlas en un mismo sistema de coordenadas, filtrar posibles inconsistencias y realizar una conversión de escala modelo a prototipo. \\
+Se validará la nueva técnica digital con respecto a la técnica tradicional con la finalidad de realizar una evaluación de su precisión y verificar si es factible su aplicación. \\
+Dentro de este marco, se propone desarrollar una biblioteca extensible y modular que sirva como base para la creación de nuevas aplicaciones, y permita aportar novedosas soluciones al problema de la medición de erosión. \\
