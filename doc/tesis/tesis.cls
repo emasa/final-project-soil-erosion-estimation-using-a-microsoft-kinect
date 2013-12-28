@@ -109,6 +109,7 @@
 \def\laboratorio#1{\gdef\@laboratorio{#1}}
 \def\palabrasclave#1{\gdef\@keywordsEspanol{#1}}
 \def\keywords#1{\gdef\@keywordsIngles{#1}}
+\def\clasificacion#1{\gdef\@clasificacionEspanol{#1}}
 
 \newcommand\SetPdfInfo{\ifpdf\hypersetup{pdfauthor={\@author},
   pdftitle={\@carrera},
@@ -380,6 +381,8 @@
 \noindent}%
 {\vfill%
 {\noindent {\bfseries Palabras clave:} \MakeUppercase \@keywordsEspanol}% \vfill%
+\newline
+{\noindent {\bfseries Clasificaci\'{o}n:} \@clasificacionEspanol}% \vfill%
 \cleardoublepage}
 
 \newenvironment{abstract}{\cleardoublepage%
