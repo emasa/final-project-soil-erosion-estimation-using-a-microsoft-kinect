@@ -139,27 +139,22 @@
       {\Large  \MakeUppercase \@carrera\\}
       \vskip 10ex%     Titulo
       {\bfseries \MakeUppercase \@title \par}%
-      \vskip 10ex%     Autor
-      % \vfill
-      {%
-        \begin{tabular}[t]{c}%
-          \bfseries \@author \\ \bfseries \@grado
-        \end{tabular}\par}%
-      \vskip 8ex%    Director(es)
+      \vfill
+      \vspace{5ex}
+      \hspace{8ex}
       {%
         \begin{center}
-        \begin{tabular}[t]{cc}%
-          \textbf{\@director}\\\directorname%    Director
+        \vskip 8ex
+        % \hfill
+        \fontsize{12}{14.4}
+        \selectfont
+        \begin{tabular}[h]{lll}%
+          \textbf{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Autor}: \@author\\
+          \textbf{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \directorname}: \@director\\%    Director
+          \textbf{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \codirectorname}: \@codirector \\%    Co-Director
         \end{tabular}%
-      \hfill%
-        \ifx\@codirector\undefined{}\else{%
-          \begin{tabular}[t]{cc}%
-            \textbf{\@codirector}\\\codirectorname%    Co-Director
-          \end{tabular}%
-          \par}%
-        \fi%
-      \end{center}
-    }
+        \end{center}
+      }
     \ifx\@jurado\undefined{}\else{%     Jurado
       \vskip 4ex \vfill\begin{center}{\normalsize
           {\bfseries \juradoname}\\ 
